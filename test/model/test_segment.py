@@ -17,6 +17,7 @@ class TestSegment(unittest.TestCase):
 
         self.seg_0_1 = Segment(p0, p1)
         self.seg_2_3 = Segment(p2, p3)
+        self.seg_2_4 = Segment(p2, p4)
     #end
 
     def test_init(self):
@@ -25,6 +26,24 @@ class TestSegment(unittest.TestCase):
         self.assertEqual(self.seg_0_1.e.x, 1.0)
         self.assertEqual(self.seg_0_1.e.y, 1.0)
     #end
+
+    def test_max_min(self):
+        self.assertEqual(self.seg_0_1.maxX(), 1.0)
+        self.assertEqual(self.seg_0_1.minX(), 0.0)
+        self.assertEqual(self.seg_0_1.maxY(), 1.0)
+        self.assertEqual(self.seg_0_1.minY(), 0.0)
+    #end
+
+
+    def test_intersection(self):
+        inter_p_01_23 = self.seg_0_1.intersection(self.seg_2_3)
+        self.assertAlmostEqual(inter_p_01_23.x, 0.5)
+        self.assertAlmostEqual(inter_p_01_23.y, 0.5)
+
+        inter_p_01_24 = self.seg_0_1.intersection(self.seg_2_4)
+        self.assertEqual(inter_p_01_24, False)
+    #end
+
 
 
 #end
