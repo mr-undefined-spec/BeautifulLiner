@@ -1,6 +1,6 @@
 
 from point import Point
-class CubicBezierControlPoint:
+class Curve:
     def __init__(self, p0, p1, p2, p3):
         if not type(p0) is Point:
             raise TypeError("p0 must be Point")
