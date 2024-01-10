@@ -4,8 +4,10 @@ class Segment:
     def __init__(self, start, end):
         if not type(start) is Point:
             raise TypeError("p0 must be Point")
+        #end if
         if not type(end) is Point:
             raise TypeError("p1 must be Point")
+        #end if
         self.__start = start
         self.__end   = end
     #end
