@@ -8,7 +8,7 @@ from segment import Segment
 from segment_set import SegmentSet
 import unittest
 
-class TestCurve(unittest.TestCase):
+class TestSegmentSet(unittest.TestCase):
     def setUp(self):
         p0 = Point(0.0, 0.0)
         p1 = Point(1.0, 2.0)
