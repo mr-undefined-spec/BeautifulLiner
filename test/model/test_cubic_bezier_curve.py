@@ -4,17 +4,17 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
 from point import Point
-from curve import Curve
+from cubic_bezier_curve import CubicBezierCurve
 import unittest
 
-class TestCurve(unittest.TestCase):
+class TestCubicBezierCurve(unittest.TestCase):
     def setUp(self):
         p0 = Point(0.0, 0.0)
         p1 = Point(1.0, 2.0)
         p2 = Point(10.0, 20.0)
         p3 = Point(100.0, 200.0)
 
-        self.curve = Curve(p0, p1, p2, p3)
+        self.curve = CubicBezierCurve(p0, p1, p2, p3)
     #end
 
     def test_init(self):
@@ -32,22 +32,22 @@ class TestCurve(unittest.TestCase):
         p = Point(1.0, 2.1)
 
         with self.assertRaises(TypeError) as e:
-            curve = Curve(0, p, p, p)
+            curve = CubicBezierCurve(0, p, p, p)
         #end with
         self.assertEqual(e.exception.args[0], 'p0 must be Point')
 
         with self.assertRaises(TypeError) as e:
-            curve = Curve(p, 0, p, p)
+            curve = CubicBezierCurve(p, 0, p, p)
         #end with
         self.assertEqual(e.exception.args[0], 'p1 must be Point')
 
         with self.assertRaises(TypeError) as e:
-            curve = Curve(p, p, 0, p)
+            curve = CubicBezierCurve(p, p, 0, p)
         #end with
         self.assertEqual(e.exception.args[0], 'p2 must be Point')
 
         with self.assertRaises(TypeError) as e:
-            curve = Curve(p, p, p, 0)
+            curve = CubicBezierCurve(p, p, p, 0)
         #end with
         self.assertEqual(e.exception.args[0], 'p3 must be Point')
     #end
