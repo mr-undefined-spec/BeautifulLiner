@@ -6,10 +6,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
 from point import Point
 from cubic_bezier_curve import CubicBezierCurve
 from curve_set import CubicBezierCurveSet
-from layer import CubicBezierCurveSetLayer
 from segment import Segment
 from curve_set import SegmentSet
-from layer import SegmentSetLayer
+from layer import Layer
 import unittest
 
 class TestLayer(unittest.TestCase):
@@ -26,7 +25,7 @@ class TestLayer(unittest.TestCase):
         s_set.append(s01)
         s_set.append(s23)
 
-        self.s_layer = SegmentSetLayer()
+        self.s_layer = Layer()
         self.s_layer.append(s_set)
         self.s_layer.append(s_set)
 
@@ -36,7 +35,7 @@ class TestLayer(unittest.TestCase):
         c_set.append(curve)
         c_set.append(curve)
 
-        self.c_layer = CubicBezierCurveSetLayer()
+        self.c_layer = Layer()
         self.c_layer.append(c_set)
         self.c_layer.append(c_set)
     #end
