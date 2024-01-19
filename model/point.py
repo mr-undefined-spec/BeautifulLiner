@@ -1,5 +1,5 @@
 
-class ControlPoint:
+class Point:
     def __init__(self, x, y):
         self.__x = float(x)
         self.__y = float(y)
@@ -17,7 +17,7 @@ class ControlPoint:
 
     def __str__(self):
         s = ""
-        s += "{:.3f} {:.3f}".format( self.__x, self.__y )
+        s += "{:.3f},{:.3f}".format( self.__x, self.__y )
         return s
     #end 
 #end
