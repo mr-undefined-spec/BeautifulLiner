@@ -33,8 +33,8 @@ class TestSvgData(unittest.TestCase):
         c_set.append(curve)
 
         c_layer = Layer()
-        c_layer.append(c_set)
-        c_layer.append(c_set)
+        c_layer.append("c0", c_set)
+        c_layer.append("c1", c_set)
 
         self.svg.append(c_layer)
         self.svg.append(c_layer)
