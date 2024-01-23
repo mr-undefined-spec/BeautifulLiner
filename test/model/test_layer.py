@@ -26,8 +26,8 @@ class TestLayer(unittest.TestCase):
         s_set.append(s23)
 
         self.s_layer = Layer()
-        self.s_layer.append("s0", s_set)
-        self.s_layer.append("s1", s_set)
+        self.s_layer.append(s_set)
+        self.s_layer.append(s_set)
 
         curve = CubicBezierCurve(p0, p1, p2, p3)
         
@@ -36,31 +36,31 @@ class TestLayer(unittest.TestCase):
         c_set.append(curve)
 
         self.c_layer = Layer()
-        self.c_layer.append("c0", c_set)
-        self.c_layer.append("c1", c_set)
+        self.c_layer.append(c_set)
+        self.c_layer.append(c_set)
     #end
 
     def test_init_segment_set(self):
-        self.assertEqual(self.s_layer[0].path[0].s.x, 0.0)
-        self.assertEqual(self.s_layer[0].path[0].s.y, 0.0)
-        self.assertEqual(self.s_layer[0].path[0].e.x, 1.0)
-        self.assertEqual(self.s_layer[0].path[0].e.y, 2.0)
+        self.assertEqual(self.s_layer[0][0].s.x, 0.0)
+        self.assertEqual(self.s_layer[0][0].s.y, 0.0)
+        self.assertEqual(self.s_layer[0][0].e.x, 1.0)
+        self.assertEqual(self.s_layer[0][0].e.y, 2.0)
 
-        self.assertEqual(self.s_layer[0].path[1].s.x, 10.0)
-        self.assertEqual(self.s_layer[0].path[1].s.y, 20.0)
-        self.assertEqual(self.s_layer[0].path[1].e.x, 100.0)
-        self.assertEqual(self.s_layer[0].path[1].e.y, 200.0)
+        self.assertEqual(self.s_layer[0][1].s.x, 10.0)
+        self.assertEqual(self.s_layer[0][1].s.y, 20.0)
+        self.assertEqual(self.s_layer[0][1].e.x, 100.0)
+        self.assertEqual(self.s_layer[0][1].e.y, 200.0)
     #end
 
     def test_init_cubic_bezier_curve_set(self):
-        self.assertEqual(self.c_layer[0].path[0].p0.x, 0.0)
-        self.assertEqual(self.c_layer[0].path[0].p0.y, 0.0)
-        self.assertEqual(self.c_layer[0].path[0].p1.x, 1.0)
-        self.assertEqual(self.c_layer[0].path[0].p1.y, 2.0)
-        self.assertEqual(self.c_layer[0].path[0].p2.x, 10.0)
-        self.assertEqual(self.c_layer[0].path[0].p2.y, 20.0)
-        self.assertEqual(self.c_layer[0].path[0].p3.x, 100.0)
-        self.assertEqual(self.c_layer[0].path[0].p3.y, 200.0)
+        self.assertEqual(self.c_layer[0][0].p0.x, 0.0)
+        self.assertEqual(self.c_layer[0][0].p0.y, 0.0)
+        self.assertEqual(self.c_layer[0][0].p1.x, 1.0)
+        self.assertEqual(self.c_layer[0][0].p1.y, 2.0)
+        self.assertEqual(self.c_layer[0][0].p2.x, 10.0)
+        self.assertEqual(self.c_layer[0][0].p2.y, 20.0)
+        self.assertEqual(self.c_layer[0][0].p3.x, 100.0)
+        self.assertEqual(self.c_layer[0][0].p3.y, 200.0)
     #end
 
     def test_append_segment_set(self):
@@ -72,16 +72,13 @@ class TestLayer(unittest.TestCase):
         other_s_set = SegmentSet()
         other_s_set.append(s45)
 
-        self.s_layer.append("s2", other_s_set)
+        self.s_layer.append(other_s_set)
 
-        self.assertEqual(self.s_layer[2].path[0].s.x, 11.0)
-        self.assertEqual(self.s_layer[2].path[0].s.y, 22.0)
-        self.assertEqual(self.s_layer[2].path[0].e.x, 111.0)
-        self.assertEqual(self.s_layer[2].path[0].e.y, 222.0)
+        self.assertEqual(self.s_layer[2][0].s.x, 11.0)
+        self.assertEqual(self.s_layer[2][0].s.y, 22.0)
+        self.assertEqual(self.s_layer[2][0].e.x, 111.0)
+        self.assertEqual(self.s_layer[2][0].e.y, 222.0)
 
-        self.assertEqual(self.s_layer[0].name, "s0")
-        self.assertEqual(self.s_layer[1].name, "s1")
-        self.assertEqual(self.s_layer[2].name, "s2")
     #end
 
     def test_append_cubic_bezier_curve(self):
@@ -95,21 +92,19 @@ class TestLayer(unittest.TestCase):
         other_c_set = CubicBezierCurveSet()
         other_c_set.append(curve)
 
-        self.c_layer.append("c2", other_c_set)
-        self.assertEqual(self.c_layer[2].path[0].p2.x, 11.0)
-        self.assertEqual(self.c_layer[2].path[0].p2.y, 22.0)
-        self.assertEqual(self.c_layer[2].path[0].p3.x, 111.0)
-        self.assertEqual(self.c_layer[2].path[0].p3.y, 222.0)
+        self.c_layer.append(other_c_set)
 
-        self.assertEqual(self.c_layer[0].name, "c0")
-        self.assertEqual(self.c_layer[1].name, "c1")
-        self.assertEqual(self.c_layer[2].name, "c2")
+        self.assertEqual(self.c_layer[2][0].p2.x, 11.0)
+        self.assertEqual(self.c_layer[2][0].p2.y, 22.0)
+        self.assertEqual(self.c_layer[2][0].p3.x, 111.0)
+        self.assertEqual(self.c_layer[2][0].p3.y, 222.0)
+
     #end
 
     def test_iter_segment_set(self):
         s = ""
         for s_set in self.s_layer:
-            for seg in s_set.path:
+            for seg in s_set:
                 s += str(seg)
             #end
         #end
@@ -120,7 +115,7 @@ class TestLayer(unittest.TestCase):
     def test_iter_cubic_bezier_curve_set(self):
         s = ""
         for c_set in self.c_layer:
-            for curve in c_set.path:
+            for curve in c_set:
                 s += str(curve)
             #end
         #end
