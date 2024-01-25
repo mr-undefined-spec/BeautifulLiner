@@ -33,11 +33,11 @@ class TestSvgData(unittest.TestCase):
         c_set.append(curve)
 
         c_layer = Layer()
-        c_layer.append("c0", c_set)
-        c_layer.append("c1", c_set)
+        c_layer.append(c_set)
+        c_layer.append(c_set)
 
-        self.svg.append(c_layer)
-        self.svg.append(c_layer)
+        self.svg.append("c0", c_layer)
+        self.svg.append("c1", c_layer)
     #end
 
     def test_read(self):
@@ -50,6 +50,14 @@ class TestSvgData(unittest.TestCase):
             self.assertEqual(group.getAttributeNode('id').nodeValue, 'senga')
             self.assertEqual(paths[0].getAttributeNode('d').nodeValue, 'M532.031 499.344L531.844 499.438C532.649 500.227 533.803 501.251 534.688 502.094C533.871 501.215 532.761 500.17 532.031 499.344ZM534.688 502.094C555.617 524.626 604.021 563.031 653.625 555.281C653.826 555.221 654.089 555.187 654.281 555.125C654.289 555.102 654.286 555.069 654.312 555.062C654.4 555.04 654.467 555.01 654.562 554.969C654.884 554.829 655.271 554.459 655.656 554.125C605.701 561.662 557.416 523.748 534.688 502.094Z')
         #end
+
+#        for layer in svg_from_file:
+#            for curve_set in layer.path_data:
+#                for curve in curve_set:
+#                    print( str(curve) )
+#                    break
+#                break
+#            break
     #end
 
     def test_raise_error_with_set_file_name_as_int(self):
