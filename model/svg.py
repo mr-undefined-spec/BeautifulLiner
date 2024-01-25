@@ -1,10 +1,10 @@
 
 from xml.dom import minidom
-from layer import Layer
-from cubic_bezier_curve import CubicBezierCurve
-from curve_set import CubicBezierCurveSet
-from point import Point
 
+from point import Point
+from control_point import CubicBezierCurveControlPoint
+from curve import CubicBezierCurve
+from layer import Layer
 
 import re
 class LayerData:
@@ -45,9 +45,9 @@ class Svg:
     #end def
     
     # IN  nodeValue of d in path of svg as string
-    # OUT CubicBezierCurveSet
+    # OUT CubicBezierCurve
     def make_cubic_bezier_curve_set(self, d_str):
-        curve_set = CubicBezierCurveSet()
+        curve = CubicBezierCurve()
     
         point_strs = re.split("[C|L|M|Z]", d_str)
         point_strs.pop(0)
@@ -83,13 +83,11 @@ class Svg:
                 p2 = Point( float(items[2]), float(items[3]) )
                 p3 = Point( float(items[4]), float(items[5]) )
             #end if
-            curve_set.append( CubicBezierCurve(last_point, p1, p2, p3) )
+            curve.append( CubicBezierCurveControlPoint(last_point, p1, p2, p3) )
             last_point = p3
         #end for
     
-        
-    
-        return curve_set
+        return curve
     #end def
 
     def make_layer(self, paths):

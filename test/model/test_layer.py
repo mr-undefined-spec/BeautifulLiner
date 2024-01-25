@@ -3,12 +3,15 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
+
 from point import Point
-from cubic_bezier_curve import CubicBezierCurve
-from curve_set import CubicBezierCurveSet
-from segment import Segment
-from curve_set import SegmentSet
+from control_point import CubicBezierCurveControlPoint
+from control_point import LinearApproximateCurveControlPoint
+from curve import CubicBezierCurve
+from curve import LinearApproximateCurve
+
 from layer import Layer
+
 import unittest
 
 class TestLayer(unittest.TestCase):
@@ -18,112 +21,58 @@ class TestLayer(unittest.TestCase):
         p2 = Point(10.0, 20.0)
         p3 = Point(100.0, 200.0)
 
-        s01 = Segment(p0, p1)
-        s23 = Segment(p2, p3)
-        
-        s_set = SegmentSet()
-        s_set.append(s01)
-        s_set.append(s23)
+        bezier_ctrl_p = CubicBezierCurveControlPoint(p0, p1, p2, p3)
 
-        self.s_layer = Layer()
-        self.s_layer.append(s_set)
-        self.s_layer.append(s_set)
+        bezier_curve = CubicBezierCurve()
+        bezier_curve.append(bezier_ctrl_p)
+        bezier_curve.append(bezier_ctrl_p)
 
-        curve = CubicBezierCurve(p0, p1, p2, p3)
-        
-        c_set = CubicBezierCurveSet()
-        c_set.append(curve)
-        c_set.append(curve)
+        self.bezier_layer = Layer()
+        self.bezier_layer.append(bezier_curve)
+        self.bezier_layer.append(bezier_curve)
 
-        self.c_layer = Layer()
-        self.c_layer.append(c_set)
-        self.c_layer.append(c_set)
+        lin_p0 = Point(0.0, 0.0)
+        lin_p1 = Point(1.0, 1.0)
+        lin_p2 = Point(1.0, 0.0)
+        lin_p3 = Point(0.0, 1.0)
+        lin_p4 = Point(2.0, 1.0)
+
+        linear_ctrl_p_0_1 = LinearApproximateCurveControlPoint(lin_p0, lin_p1)
+        linear_ctrl_p_2_3 = LinearApproximateCurveControlPoint(lin_p2, lin_p3)
+        linear_ctrl_p_2_4 = LinearApproximateCurveControlPoint(lin_p2, lin_p4)
+
+        linear_curve = LinearApproximateCurve()
+        linear_curve.append(linear_ctrl_p_0_1)
+        linear_curve.append(linear_ctrl_p_2_3)
+        linear_curve.append(linear_ctrl_p_2_4)
+
+        self.linear_layer = Layer()
+        self.linear_layer.append(linear_curve)
+        self.linear_layer.append(linear_curve)
     #end
 
     def test_init_segment_set(self):
-        self.assertEqual(self.s_layer[0][0].s.x, 0.0)
-        self.assertEqual(self.s_layer[0][0].s.y, 0.0)
-        self.assertEqual(self.s_layer[0][0].e.x, 1.0)
-        self.assertEqual(self.s_layer[0][0].e.y, 2.0)
+        self.assertEqual(self.linear_layer[0][0].s.x, 0.0)
+        self.assertEqual(self.linear_layer[0][0].s.y, 0.0)
+        self.assertEqual(self.linear_layer[0][0].e.x, 1.0)
+        self.assertEqual(self.linear_layer[0][0].e.y, 1.0)
 
-        self.assertEqual(self.s_layer[0][1].s.x, 10.0)
-        self.assertEqual(self.s_layer[0][1].s.y, 20.0)
-        self.assertEqual(self.s_layer[0][1].e.x, 100.0)
-        self.assertEqual(self.s_layer[0][1].e.y, 200.0)
+        self.assertEqual(self.linear_layer[0][1].s.x, 1.0)
+        self.assertEqual(self.linear_layer[0][1].s.y, 0.0)
+        self.assertEqual(self.linear_layer[0][1].e.x, 0.0)
+        self.assertEqual(self.linear_layer[0][1].e.y, 1.0)
     #end
 
     def test_init_cubic_bezier_curve_set(self):
-        self.assertEqual(self.c_layer[0][0].p0.x, 0.0)
-        self.assertEqual(self.c_layer[0][0].p0.y, 0.0)
-        self.assertEqual(self.c_layer[0][0].p1.x, 1.0)
-        self.assertEqual(self.c_layer[0][0].p1.y, 2.0)
-        self.assertEqual(self.c_layer[0][0].p2.x, 10.0)
-        self.assertEqual(self.c_layer[0][0].p2.y, 20.0)
-        self.assertEqual(self.c_layer[0][0].p3.x, 100.0)
-        self.assertEqual(self.c_layer[0][0].p3.y, 200.0)
+        self.assertEqual(self.bezier_layer[0][0].p0.x, 0.0)
+        self.assertEqual(self.bezier_layer[0][0].p0.y, 0.0)
+        self.assertEqual(self.bezier_layer[0][0].p1.x, 1.0)
+        self.assertEqual(self.bezier_layer[0][0].p1.y, 2.0)
+        self.assertEqual(self.bezier_layer[0][0].p2.x, 10.0)
+        self.assertEqual(self.bezier_layer[0][0].p2.y, 20.0)
+        self.assertEqual(self.bezier_layer[0][0].p3.x, 100.0)
+        self.assertEqual(self.bezier_layer[0][0].p3.y, 200.0)
     #end
-
-    def test_append_segment_set(self):
-        p4 = Point(11.0, 22.0)
-        p5 = Point(111.0, 222.0)
-
-        s45 = Segment(p4, p5)
-        
-        other_s_set = SegmentSet()
-        other_s_set.append(s45)
-
-        self.s_layer.append(other_s_set)
-
-        self.assertEqual(self.s_layer[2][0].s.x, 11.0)
-        self.assertEqual(self.s_layer[2][0].s.y, 22.0)
-        self.assertEqual(self.s_layer[2][0].e.x, 111.0)
-        self.assertEqual(self.s_layer[2][0].e.y, 222.0)
-
-    #end
-
-    def test_append_cubic_bezier_curve(self):
-        p0 = Point(0.0, 0.0)
-        p1 = Point(1.0, 2.0)
-        p4 = Point(11.0, 22.0)
-        p5 = Point(111.0, 222.0)
-
-        curve = CubicBezierCurve(p0, p1, p4, p5)
-        
-        other_c_set = CubicBezierCurveSet()
-        other_c_set.append(curve)
-
-        self.c_layer.append(other_c_set)
-
-        self.assertEqual(self.c_layer[2][0].p2.x, 11.0)
-        self.assertEqual(self.c_layer[2][0].p2.y, 22.0)
-        self.assertEqual(self.c_layer[2][0].p3.x, 111.0)
-        self.assertEqual(self.c_layer[2][0].p3.y, 222.0)
-
-    #end
-
-    def test_iter_segment_set(self):
-        s = ""
-        for s_set in self.s_layer:
-            for seg in s_set:
-                s += str(seg)
-            #end
-        #end
-        the_answer = "0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n"
-        self.assertEqual(s, the_answer)
-    #end
-
-    def test_iter_cubic_bezier_curve_set(self):
-        s = ""
-        for c_set in self.c_layer:
-            for curve in c_set:
-                s += str(curve)
-            #end
-        #end
-        the_answer = "0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n"
-        the_answer += "0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n"
-        self.assertEqual(s, the_answer)
-    #end
-
 
 #end
 

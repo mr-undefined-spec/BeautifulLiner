@@ -1,5 +1,5 @@
 
-from curve_set import CurveSet
+from curve import Curve
 class Layer:
     def __init__(self):
         self.__curve_set = []
@@ -19,11 +19,11 @@ class Layer:
         return self.__curve_set[self.__index-1]
     #end def
 
-    def append(self, curve_set):
-        if not isinstance(curve_set, CurveSet):
-            raise TypeError("The argument of the append method must be a CurveSet(CubicBezierCurveSet or SegmentSet)")
+    def append(self, curve):
+        if not isinstance(curve, Curve):
+            raise TypeError("The argument of the append method must be a Curve(CubicBezierCurve or LinearApproximateCurve)")
         #end if
-        self.__curve_set.append(curve_set)
+        self.__curve_set.append(curve)
     #end def
 #end
 

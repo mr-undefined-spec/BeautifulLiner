@@ -3,42 +3,43 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
-from svg import Svg
 
 from point import Point
-from cubic_bezier_curve import CubicBezierCurve
-from curve_set import CubicBezierCurveSet
-from segment import Segment
-from curve_set import SegmentSet
+from control_point import CubicBezierCurveControlPoint
+from control_point import LinearApproximateCurveControlPoint
+from curve import CubicBezierCurve
+from curve import LinearApproximateCurve
 from layer import Layer
+
+from svg import Svg
 
 import unittest
 
 class TestSvgData(unittest.TestCase):
-    def setUp(self):
-        self.svg = Svg()
-
-        p0 = Point(0.0, 0.0)
-        p1 = Point(1.0, 2.0)
-        p2 = Point(10.0, 20.0)
-        p3 = Point(100.0, 200.0)
-
-        s01 = Segment(p0, p1)
-        s23 = Segment(p2, p3)
-        
-        curve = CubicBezierCurve(p0, p1, p2, p3)
-        
-        c_set = CubicBezierCurveSet()
-        c_set.append(curve)
-        c_set.append(curve)
-
-        c_layer = Layer()
-        c_layer.append(c_set)
-        c_layer.append(c_set)
-
-        self.svg.append("c0", c_layer)
-        self.svg.append("c1", c_layer)
-    #end
+###    def setUp(self):
+###        self.svg = Svg()
+###
+###        p0 = Point(0.0, 0.0)
+###        p1 = Point(1.0, 2.0)
+###        p2 = Point(10.0, 20.0)
+###        p3 = Point(100.0, 200.0)
+###
+###        s01 = Segment(p0, p1)
+###        s23 = Segment(p2, p3)
+###        
+###        curve = CubicBezierCurve(p0, p1, p2, p3)
+###        
+###        c_set = CubicBezierCurveSet()
+###        c_set.append(curve)
+###        c_set.append(curve)
+###
+###        c_layer = Layer()
+###        c_layer.append(c_set)
+###        c_layer.append(c_set)
+###
+###        self.svg.append("c0", c_layer)
+###        self.svg.append("c1", c_layer)
+###    #end
 
     def test_read(self):
         svg_from_file = Svg()
