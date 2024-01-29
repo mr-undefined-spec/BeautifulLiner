@@ -4,11 +4,11 @@ from control_point import LinearApproximateCurveControlPoint
 
 class Curve:
     def __init__(self):
-        self._data = []
+        self._ctrl_p_set = []
     #end
 
     def __getitem__(self, i):
-        return self._data[i]
+        return self._ctrl_p_set[i]
     #end def
 
     def __iter__(self):
@@ -16,9 +16,9 @@ class Curve:
         return self
     #end def
     def __next__(self):
-        if self._index >= len(self._data): raise StopIteration
+        if self._index >= len(self._ctrl_p_set): raise StopIteration
         self._index += 1
-        return self._data[self._index-1]
+        return self._ctrl_p_set[self._index-1]
     #end def
 
 #end
@@ -28,8 +28,18 @@ class CubicBezierCurve(Curve):
         if not type(bezier_ctrl_p) is CubicBezierCurveControlPoint:
             raise TypeError("The argument of the append method must be a CubicBezierCurveControlPoint")
         #end if
-        self._data.append(bezier_ctrl_p)
+        self._ctrl_p_set.append(bezier_ctrl_p)
     #end def
+
+    def to_svg(self):
+        is_first_ctrl_p = True
+        s = ""
+        for ctrl_p in self._ctrl_p_set:
+            s += ctrl_p.to_svg(is_first_ctrl_p)
+            is_first_ctrl_p = False
+        #end
+        return s
+    #end
 #end
 
 class LinearApproximateCurve(Curve):
@@ -37,7 +47,7 @@ class LinearApproximateCurve(Curve):
         if not type(linear_ctrl_p) is LinearApproximateCurveControlPoint:
             raise TypeError("The argument of the append method must be a LinearApproximateCurveControlPoint")
         #end if
-        self._data.append(linear_ctrl_p)
+        self._ctrl_p_set.append(linear_ctrl_p)
     #end def
 #end
 

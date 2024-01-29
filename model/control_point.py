@@ -58,6 +58,17 @@ class CubicBezierCurveControlPoint(ControlPoint):
         s += str(self.__p3) + "\n"
         return s
     #end
+
+    def to_svg(self, is_first_ctrl_p):
+        s = ""
+        if is_first_ctrl_p:
+            s += "M " + str(self.__p0) + " "
+        #end
+        s += "C " + str(self.__p1) + " "
+        s += str(self.__p2) + " "
+        s += str(self.__p3) + " "
+        return s
+    #end
 #end
 
 class LinearApproximateCurveControlPoint(ControlPoint):

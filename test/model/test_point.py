@@ -12,7 +12,7 @@ class TestPoint(unittest.TestCase):
         self.p = Point(1.2, 2.4)
         self.assertAlmostEqual(self.p.x, 1.2)
         self.assertAlmostEqual(self.p.y, 2.4)
-        self.assertEqual(str(self.p), "1.200,2.400")
+        self.assertEqual(str(self.p), "1.200 2.400")
     #end
 
     def test_errorRaise(self):

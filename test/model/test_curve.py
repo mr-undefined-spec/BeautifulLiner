@@ -96,7 +96,7 @@ class TestCurve(unittest.TestCase):
         for segment in self.linear_curve:
             s += str(segment)
         #end
-        the_answer = "0.000,0.000\n1.000,1.000\n1.000,0.000\n0.000,1.000\n1.000,0.000\n2.000,1.000\n"
+        the_answer = "0.000 0.000\n1.000 1.000\n1.000 0.000\n0.000 1.000\n1.000 0.000\n2.000 1.000\n"
         self.assertEqual(s, the_answer)
     #end
 
@@ -105,7 +105,7 @@ class TestCurve(unittest.TestCase):
         for curve in self.bezier_curve:
             s += str(curve)
         #end
-        the_answer = "0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n0.000,0.000\n1.000,2.000\n10.000,20.000\n100.000,200.000\n"
+        the_answer = "0.000 0.000\n1.000 2.000\n10.000 20.000\n100.000 200.000\n0.000 0.000\n1.000 2.000\n10.000 20.000\n100.000 200.000\n"
         self.assertEqual(s, the_answer)
     #end
 

@@ -17,7 +17,7 @@ class Point:
 
     def __str__(self):
         s = ""
-        s += "{:.3f},{:.3f}".format( self.__x, self.__y )
+        s += "{:.3f} {:.3f}".format( self.__x, self.__y )
         return s
     #end 
 #end

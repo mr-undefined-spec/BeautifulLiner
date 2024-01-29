@@ -25,5 +25,15 @@ class Layer:
         #end if
         self.__curve_set.append(curve)
     #end def
+
+    def to_svg(self):
+        s = ''
+        for curve in self.__curve_set:
+            s += '<path d="'
+            s += curve.to_svg()
+            s += '" fill="none" opacity="1" stroke="#ff0000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+        #end
+        return s
+    #end
 #end
 
