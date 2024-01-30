@@ -1,4 +1,6 @@
 
+import math
+
 class Point:
     def __init__(self, x, y):
         self.__x = float(x)
@@ -20,5 +22,12 @@ class Point:
         s += "{:.3f} {:.3f}".format( self.__x, self.__y )
         return s
     #end 
+
+    def distance(self, other_point):
+        delta_x = self.__x - other_point.x
+        delta_y = self.__y - other_point.y
+        return math.sqrt( delta_x*delta_x + delta_y*delta_y )
+    #end 
+        
 #end
 

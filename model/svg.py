@@ -173,5 +173,15 @@ class Svg:
             f.write(s)
         #end
     #end def
+
+    def convert_to_linear_approximate_curve(self, micro_segment_length):
+        new_svg = Svg()
+        for layer in self.__layers:
+            new_layer = layer.path_data.convert_to_linear_approximate_curve(micro_segment_length)
+            new_svg.append(new_layer)
+        #end
+        return new_svg
+    #end
+
 #end
 

@@ -10,6 +10,7 @@ from curve import CubicBezierCurve
 from curve import LinearApproximateCurve
 import unittest
 
+import math
 class TestCurve(unittest.TestCase):
     def setUp(self):
         p0 = Point(0.0, 0.0)
@@ -109,6 +110,25 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(s, the_answer)
     #end
 
+    def test_convert_linear(self):
+        p0 = Point(100.0,                              0.0)
+        p1 = Point(100.0,                              400.0*( math.sqrt(2.0) - 1.0 )/3.0)
+        p2 = Point(400.0*( math.sqrt(2.0) - 1.0 )/3.0, 100.0)
+        p3 = Point(0.0,                                100.0)
+        ctrl_p = CubicBezierCurveControlPoint(p0, p1, p2, p3)
+        # This control point is 90degree arc (radius=100) approximated with CubicBezierCurve
+
+        curve = CubicBezierCurve()
+        curve.append(ctrl_p)
+
+        linear_approximate_curve = curve.convert_to_linear_approximate_curve(0.1)
+
+        origin = Point(0.0, 0.0)
+        for ctrl_p in linear_approximate_curve:
+            distance_from_origin = round( origin.distance(ctrl_p.s) )
+            self.assertEqual(distance_from_origin, 100)
+        #end
+    #end
 
 #end
 

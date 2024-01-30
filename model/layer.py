@@ -35,5 +35,14 @@ class Layer:
         #end
         return s
     #end
+
+    def convert_to_linear_approximate_curve(self, micro_segment_length):
+        linear_approximate_layer = Layer()
+        for curve in self.__curve_set:
+            linear_approximate_curve = curve.convert_to_linear_approximate_curve(micro_segment_length)
+            linear_approximate_layer.append( linear_approximate_curve )
+        #end
+        return linear_approximate_layer
+    #end
 #end
 
