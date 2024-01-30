@@ -27,6 +27,13 @@ class Curve:
         return len(self._ctrl_p_set)
     #end
 
+    def to_svg(self):
+        s = ""
+        for i, ctrl_p in enumerate(self._ctrl_p_set):
+            s += ctrl_p.to_svg(i==0)
+        #end
+        return s
+    #end
 #end
 
 class CubicBezierCurve(Curve):
@@ -36,16 +43,6 @@ class CubicBezierCurve(Curve):
         #end if
         self._ctrl_p_set.append(bezier_ctrl_p)
     #end def
-
-    def to_svg(self):
-        is_first_ctrl_p = True
-        s = ""
-        for ctrl_p in self._ctrl_p_set:
-            s += ctrl_p.to_svg(is_first_ctrl_p)
-            is_first_ctrl_p = False
-        #end
-        return s
-    #end
 
     # 
     # The Algorithm
@@ -301,8 +298,7 @@ class CubicBezierCurve(Curve):
             #end
             for j in range( len(points)-1 ):
                 linear_approximate_curve.append( LinearApproximateCurveControlPoint(points[j], points[j+1]) )
-            #print("convert linear approximate curve {}/{} in {} {}/{}".format(j+1, total_curve_num_in_a_layer, layer_name, layer_index+1, total_layer_num))
-            #end for
+            #end
         #end for
         return linear_approximate_curve
     #end def

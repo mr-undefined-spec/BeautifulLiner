@@ -100,6 +100,7 @@ class Svg:
     #
     def __init__(self):
         self.__layers = []
+        self.__view_box = ""
     #end
 
     def read(self, file_name):
@@ -176,9 +177,10 @@ class Svg:
 
     def convert_to_linear_approximate_curve(self, micro_segment_length):
         new_svg = Svg()
+        new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_layer = layer.path_data.convert_to_linear_approximate_curve(micro_segment_length)
-            new_svg.append(new_layer)
+            new_svg.append("L_" + layer.name, new_layer)
         #end
         return new_svg
     #end
