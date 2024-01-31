@@ -6,30 +6,30 @@ from control_point import LinearApproximateCurveControlPoint
 
 class Curve:
     def __init__(self):
-        self._ctrl_p_set = []
+        self._going_ctrl_p_set = []
     #end
 
     def __getitem__(self, i):
-        return self._ctrl_p_set[i]
-    #end def
+        return self._going_ctrl_p_set[i]
+    #end
 
     def __iter__(self):
         self._index = 0
         return self
-    #end def
+    #end
     def __next__(self):
-        if self._index >= len(self._ctrl_p_set): raise StopIteration
+        if self._index >= len(self._going_ctrl_p_set): raise StopIteration
         self._index += 1
-        return self._ctrl_p_set[self._index-1]
-    #end def
+        return self._going_ctrl_p_set[self._index-1]
+    #end
 
     def __len__(self):
-        return len(self._ctrl_p_set)
+        return len(self._going_ctrl_p_set)
     #end
 
     def to_svg(self):
         s = ""
-        for i, ctrl_p in enumerate(self._ctrl_p_set):
+        for i, ctrl_p in enumerate(self._going_ctrl_p_set):
             s += ctrl_p.to_svg(i==0)
         #end
         return s
@@ -40,9 +40,9 @@ class CubicBezierCurve(Curve):
     def append(self, bezier_ctrl_p):
         if not type(bezier_ctrl_p) is CubicBezierCurveControlPoint:
             raise TypeError("The argument of the append method must be a CubicBezierCurveControlPoint")
-        #end if
-        self._ctrl_p_set.append(bezier_ctrl_p)
-    #end def
+        #end
+        self._going_ctrl_p_set.append(bezier_ctrl_p)
+    #end
 
     # 
     # The Algorithm
@@ -188,7 +188,7 @@ class CubicBezierCurve(Curve):
         division_num_p2_p3 = math.ceil(length_p2_p3 / micro_segment_length)
     
         return max(division_num_p0_p1, division_num_p1_p2, division_num_p2_p3)
-    #end def
+    #end
     
     #
     #  point_a                         point_b
@@ -215,7 +215,7 @@ class CubicBezierCurve(Curve):
         return_points.append(point_b)
     
         return return_points
-    #end def
+    #end
     
     #
     #  point_a                         point_b
@@ -233,7 +233,7 @@ class CubicBezierCurve(Curve):
         x = ( point_a.x*ratio_n + point_b.x*ratio_m ) / (ratio_m + ratio_n)
         y = ( point_a.y*ratio_n + point_b.y*ratio_m ) / (ratio_m + ratio_n)
         return Point(x, y)
-    #end def
+    #end
     
     #    P1 ...........Q1........................................   P2
     #     __          x  ooooo                                         `
@@ -267,7 +267,7 @@ class CubicBezierCurve(Curve):
         if division_num == 1:
             if is_first:
                 return_points.append( Point(ctrl_p.p0.x, ctrl_p.p0.y) )
-            #end if
+            #end
             return_points.append( Point(ctrl_p.p3.x, ctrl_p.p3.y) )
         else:
             start = 0 if is_first else 1
@@ -283,15 +283,15 @@ class CubicBezierCurve(Curve):
                 r1 = self.__get_internal_divided_point(q1, q2, ratio_n, ratio_m)
     
                 return_points.append( self.__get_internal_divided_point(r0, r1, ratio_n, ratio_m) )
-            #end for
-        #end if
+            #end
+        #end
     
         return return_points
-    #end def
+    #end
     
     def convert_to_linear_approximate_curve(self, micro_segment_length):
         linear_approximate_curve = LinearApproximateCurve()
-        for i, ctrl_p in enumerate(self._ctrl_p_set):
+        for i, ctrl_p in enumerate(self._going_ctrl_p_set):
             points = []
             for point in self.__approximate_linear_curve(ctrl_p, i==0, micro_segment_length):
                 points.append( point )
@@ -299,17 +299,215 @@ class CubicBezierCurve(Curve):
             for j in range( len(points)-1 ):
                 linear_approximate_curve.append( LinearApproximateCurveControlPoint(points[j], points[j+1]) )
             #end
-        #end for
+        #end
         return linear_approximate_curve
-    #end def
+    #end
 #end
 
 class LinearApproximateCurve(Curve):
     def append(self, linear_ctrl_p):
         if not type(linear_ctrl_p) is LinearApproximateCurveControlPoint:
             raise TypeError("The argument of the append method must be a LinearApproximateCurveControlPoint")
-        #end if
-        self._ctrl_p_set.append(linear_ctrl_p)
-    #end def
+        #end
+        self._going_ctrl_p_set.append(linear_ctrl_p)
+    #end
+
+    # 
+    # The Algorithm
+    #                                                                                                                                        
+    # 0. Prerequisite
+    #
+    #  Cubic Bezier curves are approximated by line segments with convert_to_linear_approximate_curve method in CubicBezierCurve
+    #   
+    #    P1 ...........Q1........................................   P2
+    #     __          x  ooooo                                         `
+    #      __        x        ooooooooooR1oooooooooooooooooo           ``
+    #       _        x            """""""                  oooooooooo    ``
+    #        _       x        """""     *****************           oooooo Q2 
+    #         _     x      """""*********               **********           `` 
+    #          _    x   """" ****                                 ******       `` 
+    #          _    x ""  ***                                           ******   ``
+    #           _   R0  ***                                                  ***** ```
+    #           __ x   **                                                         *** ``
+    #            _ x  **                                                            *** ``
+    #             _x **                                                               **  ``
+    #             __ *                                                                 **  ``
+    #             Q0 *                                                                  ***  ``
+    #               _*                                                                    ***  ```
+    #               _*                                                                      ***  ``
+    #                _*                                                                            P3
+    #                                                                           
+    #                P0                                                        
+    #                     * = Points (= Both ends of a line segment)
+    #
+    #
+    #
+    #
+    # This method broaden line as below
+    #
+    #
+    #  A ******************************************* B
+    #
+    #                     |
+    #                     V
+    #
+    #                    ************       
+    #            ***************************
+    #       *************************************
+    #  A ******************************************* B
+    #       *************************************
+    #            ***************************
+    #                    ************       
+    #
+    #
+    # Line AB consists of multiple line segments
+    #
+    #  A o****o******o****o*******o**o****o***o****o B
+    #
+    # Now turn attention to the line segments at the first two points
+    #
+    #    This! 
+    #    |
+    #    V
+    #    +----+
+    #    |    |
+    #  A o****o******o****o*******o**o****o***o****o B
+    #
+    # Consider it a vector
+    #
+    #  A o---->******o****o*******o**o****o***o****o B
+    #
+    # Rotate 90 degrees from the focused vector and find a point slightly away from it.
+    #
+    #  A o---->******o****o*******o**o****o***o****o B
+    #         |
+    #         V
+    #         x
+    #       
+    # Compute sameway in the second, third ... line segment
+    #
+    #  A o---->------>****o*******o**o****o***o****o B
+    #         |      |    |       |  |    |   |    |
+    #         V      V    V       V  V    V   V    V
+    #         x      x    x       x  x    x   x    x
+    #       
+    # The distance delta from the original line is a position-dependent function.
+    # These are small deltas at both ends and large in the center.      
+    #       
+    #  A o---->------>****o*******o**o****o***o****o B
+    #         |      |    |       |  |    |   |    |
+    #         V      |    |       |  |    |   |    V
+    #         x      V    V       |  |    V   V    x
+    #                x    x       V  V    x   x    
+    #                             x  x
+    #       
+    # By calculating this on both sides, a thin line at both ends and a thick line in the center can be obtained.
+    #       
+    #       
+    #                             x  x
+    #                x    x       A  A    x   x
+    #         x      A    A       |  |    A   A    x
+    #         A      |    |       |  |    |   |    A
+    #         |      |    |       |  |    |   |    |
+    #  A o****o******o****o*******o**o****o***o****o B
+    #         |      |    |       |  |    |   |    |
+    #         V      |    |       |  |    |   |    V
+    #         x      V    V       |  |    V   V    x
+    #                x    x       V  V    x   x    
+    #                             x  x
+    #       
+    
+    def get_delta_point(self, prev_point, current_point, delta):
+        vec_x = current_point.x - prev_point.x
+        vec_y = current_point.y - prev_point.y
+        len_vec = math.sqrt( vec_x*vec_x + vec_y*vec_y )
+        if len_vec == 0:
+            return None
+        #end
+    
+        final_x = current_point.x - ( vec_y * delta/len_vec)
+        final_y = current_point.y + ( vec_x * delta/len_vec)
+        return Point(final_x, final_y)
+    #end 
+
+    def get_slightly_away_control_point_set(self, ctrl_p_set, broaden_width, is_going):
+        slightly_away_control_point_set = []
+
+
+        points = []
+        if is_going:
+            for ctrl_p in ctrl_p_set:
+                points.append(ctrl_p.s)
+            #end
+            points.append(ctrl_p_set[-1].e)
+        else:
+            reversed_ctrl_p_set = list( reversed(ctrl_p_set) )
+            for ctrl_p in reversed_ctrl_p_set:
+                points.append(ctrl_p.e)
+            #end
+            points.append(reversed_ctrl_p_set[-1].s)
+        #end
+    
+        half_length = len(points)/2.0 - 0.5 
+    
+        # first point is equal to original first point
+        last_slightly_away_point = points[0]
+    
+        # middle points are slightly away points
+        for i in range( len(points) - 2 ):
+            delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+            delta += 0.5
+            prev_point = points[i]
+            current_point = points[i+1]
+            slightly_away_point = self.get_delta_point(prev_point, current_point, delta)
+            if slightly_away_point is not None:
+                the_ctrl_p = LinearApproximateCurveControlPoint(last_slightly_away_point, slightly_away_point)
+                slightly_away_control_point_set.append(the_ctrl_p)
+                last_slightly_away_point = slightly_away_point
+            #end
+        #end
+    
+        # last point is equal to original last point
+        the_ctrl_p = LinearApproximateCurveControlPoint(last_slightly_away_point, points[-1])
+        slightly_away_control_point_set.append( the_ctrl_p )
+    
+        return slightly_away_control_point_set
+    #end 
+
+    def broaden(self, broaden_width):
+        broad_curve = BroadCurve()
+        
+        tmp_going_ctrl_p_set = self.get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, True)
+        tmp_returning_ctrl_p_set = self.get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, False)
+
+        broad_curve.set_ctrl_point_set(tmp_going_ctrl_p_set, tmp_returning_ctrl_p_set)
+
+        return broad_curve
+    #end
 #end
 
+class BroadCurve(Curve):
+    def __init__(self):
+        Curve.__init__(self)
+        self._returning_ctrl_p_set = []
+    #end
+
+    def set_ctrl_point_set(self, going_ctrl_p_set, returning_ctrl_p_set):
+        self._going_ctrl_p_set = going_ctrl_p_set
+        self._returning_ctrl_p_set = returning_ctrl_p_set
+    #end def
+
+    def to_svg(self):
+        s = ""
+        for i, ctrl_p in enumerate(self._going_ctrl_p_set):
+            s += ctrl_p.to_svg(i==0)
+        #end
+        for i, ctrl_p in enumerate(self._returning_ctrl_p_set):
+            if i == len(self._returning_ctrl_p_set)-1:
+                break
+            s += ctrl_p.to_svg(False)
+        #end
+        s += "Z"
+        return s
+    #end
+#end
