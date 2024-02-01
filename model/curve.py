@@ -7,6 +7,8 @@ from control_point import LinearApproximateCurveControlPoint
 class Curve:
     def __init__(self):
         self._going_ctrl_p_set = []
+        self._going_coarse_intersect_judge_rectangle = None
+        self._going_fine_intersect_judge_rectangle_set = []
     #end
 
     def __getitem__(self, i):
@@ -27,6 +29,7 @@ class Curve:
         return len(self._going_ctrl_p_set)
     #end
 
+
     def to_svg(self):
         s = ""
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
@@ -36,6 +39,7 @@ class Curve:
     #end
 #end
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class CubicBezierCurve(Curve):
     def append(self, bezier_ctrl_p):
         if not type(bezier_ctrl_p) is CubicBezierCurveControlPoint:
@@ -304,6 +308,7 @@ class CubicBezierCurve(Curve):
     #end
 #end
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class LinearApproximateCurve(Curve):
     def append(self, linear_ctrl_p):
         if not type(linear_ctrl_p) is LinearApproximateCurveControlPoint:
@@ -417,7 +422,7 @@ class LinearApproximateCurve(Curve):
     #                             x  x
     #       
     
-    def get_delta_point(self, prev_point, current_point, delta):
+    def __get_delta_point(self, prev_point, current_point, delta):
         vec_x = current_point.x - prev_point.x
         vec_y = current_point.y - prev_point.y
         len_vec = math.sqrt( vec_x*vec_x + vec_y*vec_y )
@@ -430,7 +435,7 @@ class LinearApproximateCurve(Curve):
         return Point(final_x, final_y)
     #end 
 
-    def get_slightly_away_control_point_set(self, ctrl_p_set, broaden_width, is_going):
+    def __get_slightly_away_control_point_set(self, ctrl_p_set, broaden_width, is_going):
         slightly_away_control_point_set = []
 
 
@@ -440,7 +445,7 @@ class LinearApproximateCurve(Curve):
                 points.append(ctrl_p.s)
             #end
             points.append(ctrl_p_set[-1].e)
-        else:
+        else: # is returning
             reversed_ctrl_p_set = list( reversed(ctrl_p_set) )
             for ctrl_p in reversed_ctrl_p_set:
                 points.append(ctrl_p.e)
@@ -459,7 +464,7 @@ class LinearApproximateCurve(Curve):
             delta += 0.5
             prev_point = points[i]
             current_point = points[i+1]
-            slightly_away_point = self.get_delta_point(prev_point, current_point, delta)
+            slightly_away_point = self.__get_delta_point(prev_point, current_point, delta)
             if slightly_away_point is not None:
                 the_ctrl_p = LinearApproximateCurveControlPoint(last_slightly_away_point, slightly_away_point)
                 slightly_away_control_point_set.append(the_ctrl_p)
@@ -474,11 +479,17 @@ class LinearApproximateCurve(Curve):
         return slightly_away_control_point_set
     #end 
 
+# reserved
+#    def intersection(self):
+#        """ This algorithm is ... """
+#        
+#    #end 
+
     def broaden(self, broaden_width):
         broad_curve = BroadCurve()
         
-        tmp_going_ctrl_p_set = self.get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, True)
-        tmp_returning_ctrl_p_set = self.get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, False)
+        tmp_going_ctrl_p_set = self.__get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, True)
+        tmp_returning_ctrl_p_set = self.__get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, False)
 
         broad_curve.set_ctrl_point_set(tmp_going_ctrl_p_set, tmp_returning_ctrl_p_set)
 
@@ -486,6 +497,7 @@ class LinearApproximateCurve(Curve):
     #end
 #end
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class BroadCurve(Curve):
     def __init__(self):
         Curve.__init__(self)
@@ -494,7 +506,6 @@ class BroadCurve(Curve):
 
     def set_ctrl_point_set(self, going_ctrl_p_set, returning_ctrl_p_set):
         self._going_ctrl_p_set = going_ctrl_p_set
-        self._returning_ctrl_p_set = returning_ctrl_p_set
     #end def
 
     def to_svg(self):
