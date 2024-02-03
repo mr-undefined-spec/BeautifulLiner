@@ -10,6 +10,9 @@ from curve import CubicBezierCurve
 from curve import LinearApproximateCurve
 import unittest
 
+import numpy as np
+
+
 import math
 class TestCurve(unittest.TestCase):
     def setUp(self):
@@ -111,12 +114,13 @@ class TestCurve(unittest.TestCase):
     #end
 
     def test_convert_linear(self):
+
+        # CubicBezierCurve of 90degree arc (radius=100)
         p0 = Point(100.0,                              0.0)
         p1 = Point(100.0,                              400.0*( math.sqrt(2.0) - 1.0 )/3.0)
         p2 = Point(400.0*( math.sqrt(2.0) - 1.0 )/3.0, 100.0)
         p3 = Point(0.0,                                100.0)
         ctrl_p = CubicBezierCurveControlPoint(p0, p1, p2, p3)
-        # This control point is 90degree arc (radius=100) approximated with CubicBezierCurve
 
         curve = CubicBezierCurve()
         curve.append(ctrl_p)
@@ -128,6 +132,32 @@ class TestCurve(unittest.TestCase):
             distance_from_origin = round( origin.distance(ctrl_p.s) )
             self.assertEqual(distance_from_origin, 100)
         #end
+    #end
+
+    def test_smoothen(self):
+        num_angle_divisions = 100
+        # LinearApproximateCurve of 90degree arc (radius=100)
+        radius = 100.0
+        linear_approximate_curve = LinearApproximateCurve()
+        for i in range(num_angle_divisions):
+            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
+            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
+            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
+            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
+            linear_approximate_curve.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
+        #end
+
+        smooth_curve = linear_approximate_curve.smoothen()
+        ctrl_p = smooth_curve[0]
+
+        self.assertAlmostEqual(round(ctrl_p.p0.x, 3), 100.000)
+        self.assertAlmostEqual(round(ctrl_p.p0.y, 3),   0.000)
+        self.assertAlmostEqual(round(ctrl_p.p1.x, 3), 101.572) 
+        self.assertAlmostEqual(round(ctrl_p.p1.y, 3),  53.551) 
+        self.assertAlmostEqual(round(ctrl_p.p2.x, 3),  53.551) 
+        self.assertAlmostEqual(round(ctrl_p.p2.y, 3), 101.572)
+        self.assertAlmostEqual(round(ctrl_p.p3.x, 3),   0.000)
+        self.assertAlmostEqual(round(ctrl_p.p3.y, 3), 100.000)
     #end
 
     def test_broaden(self):

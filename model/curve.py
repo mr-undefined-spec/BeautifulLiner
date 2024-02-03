@@ -1,14 +1,18 @@
 
+import numpy as np
+from scipy.special import comb
+
 import math
 from point import Point
 from control_point import CubicBezierCurveControlPoint
 from control_point import LinearApproximateCurveControlPoint
 
+from rectangular import Rectangular
+
 class Curve:
     def __init__(self):
         self._going_ctrl_p_set = []
-        self._going_coarse_intersect_judge_rectangle = None
-        self._going_fine_intersect_judge_rectangle_set = []
+        self.__intersect_judge_rectangular = None
     #end
 
     def __getitem__(self, i):
@@ -29,6 +33,19 @@ class Curve:
         return len(self._going_ctrl_p_set)
     #end
 
+    def create_intersect_judge_rectangle(self):
+        min_x = self._going_ctrl_p_set[0].get_min_x()
+        max_x = self._going_ctrl_p_set[0].get_max_x()
+        min_y = self._going_ctrl_p_set[0].get_min_y()
+        max_y = self._going_ctrl_p_set[0].get_max_y()
+        for ctrl_p in self._going_ctrl_p_set:
+            min_x = min( min_x, ctrl_p.get_min_x() )
+            max_x = max( max_x, ctrl_p.get_max_x() )
+            min_y = min( min_y, ctrl_p.get_min_y() )
+            max_y = max( max_y, ctrl_p.get_max_y() )
+        #end
+        self.__intersect_judge_rectangular = Rectangular(min_x, max_x, min_y, max_y)
+    #end
 
     def to_svg(self):
         s = ""
@@ -310,11 +327,96 @@ class CubicBezierCurve(Curve):
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class LinearApproximateCurve(Curve):
+    def __init__(self):
+        super().__init__()
+        self.__start_index = 0
+        self.__end_index   = -1
+    #end
+
     def append(self, linear_ctrl_p):
         if not type(linear_ctrl_p) is LinearApproximateCurveControlPoint:
             raise TypeError("The argument of the append method must be a LinearApproximateCurveControlPoint")
         #end
         self._going_ctrl_p_set.append(linear_ctrl_p)
+    #end
+
+    def convert_ctrl_p_to_xy_array(self):
+        x_array = []
+        y_array = []
+
+        the_end = len(self._going_ctrl_p_set) if (self.__end_index >= len(self._going_ctrl_p_set) or self.__end_index == -1 ) else self.__end_index
+
+        x_array.append( self._going_ctrl_p_set[self.__start_index].s.x )
+        y_array.append( self._going_ctrl_p_set[self.__start_index].s.y )
+        for i in range( self.__start_index, the_end ):
+            x_array.append( self._going_ctrl_p_set[i].e.x )
+            y_array.append( self._going_ctrl_p_set[i].e.y )
+        #end
+
+        return x_array, y_array
+    #end
+
+    def smoothen(self):
+        """ Least square qbezier fit using penrose pseudoinverse.
+
+        Based on https://stackoverflow.com/questions/12643079/b%C3%A9zier-curve-fitting-with-scipy
+        and probably on the 1998 thesis by Tim Andrew Pastva, "Bezier Curve Fitting".
+        """
+        degree = 3 # only cubic bezier curve
+
+        x_array, y_array = self.convert_ctrl_p_to_xy_array()
+
+        if len(x_array)==0:
+            return None
+        #end
+        if len(x_array)==1:
+            point = curve[ curve.end_index - 1 ]
+            x_array.append( float( point.x_array ) )
+            y_array.append( float( point.y_array ) )
+        #end
+        if len(x_array) < degree + 1:
+            x_array.insert(1, (x_array[0] + x_array[1])/2.0 )
+            y_array.insert(1, (y_array[0] + y_array[1])/2.0 )
+            x_array.insert(1, (x_array[0] + x_array[1])/2.0 )
+            y_array.insert(1, (y_array[0] + y_array[1])/2.0 )
+            x_array.insert(1, (x_array[0] + x_array[1])/2.0 )
+            y_array.insert(1, (y_array[0] + y_array[1])/2.0 )
+        #end
+        xdata = np.array(x_array)
+        ydata = np.array(y_array)
+
+        def bpoly(n, t, k):
+            """ Bernstein polynomial when a = 0 and b = 1. """
+            return t ** k * (1 - t) ** (n - k) * comb(n, k)
+
+        def bmatrix(T):
+            """ Bernstein matrix for Bezier curves. """
+            matrix = []
+            for t in T:
+                row = []
+                for k in range(degree + 1):
+                    row.append( bpoly(degree, t, k) )
+                #end
+                matrix.append(row)
+            #end
+            return np.array(matrix)
+
+        def least_square_fit(points, M):
+            M_ = np.linalg.pinv(M)
+            return M_ @ points
+
+        T = np.linspace(0, 1, len(xdata))
+        M = bmatrix(T)
+        points = np.array(list(zip(xdata, ydata)))
+
+        fit = least_square_fit(points, M).tolist()
+
+        first_point = Point(x_array[0], y_array[0] )
+        last_point  = Point(x_array[-1], y_array[-1] )
+
+        cubic_bezier_curve = CubicBezierCurve()
+        cubic_bezier_curve.append( CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point) )
+        return cubic_bezier_curve
     #end
 
     # 
@@ -479,12 +581,6 @@ class LinearApproximateCurve(Curve):
         return slightly_away_control_point_set
     #end 
 
-# reserved
-#    def intersection(self):
-#        """ This algorithm is ... """
-#        
-#    #end 
-
     def broaden(self, broaden_width):
         broad_curve = BroadCurve()
         
@@ -495,6 +591,13 @@ class LinearApproximateCurve(Curve):
 
         return broad_curve
     #end
+
+# reserved
+#    def intersection(self):
+#        """ This algorithm is ... """
+#        
+#    #end 
+
 #end
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------

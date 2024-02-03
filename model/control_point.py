@@ -26,22 +26,22 @@ class CubicBezierCurveControlPoint(ControlPoint):
     @property
     def p0(self):
         return self.__p0
-    #end def
+    #end
 
     @property
     def p1(self):
         return self.__p1
-    #end def
+    #end
 
     @property
     def p2(self):
         return self.__p2
-    #end def
+    #end
 
     @property
     def p3(self):
         return self.__p3
-    #end def
+    #end
 
     def __iter__(self):
         yield self.__p0
@@ -49,6 +49,19 @@ class CubicBezierCurveControlPoint(ControlPoint):
         yield self.__p2
         yield self.__p3
     #end 
+
+    def get_max_x(self):
+        return max(self.__p0.x, self.__p1.x, self.__p2.x, self.__p3.x)
+    #end
+    def get_min_x(self):
+        return min(self.__p0.x, self.__p1.x, self.__p2.x, self.__p3.x)
+    #end
+    def get_max_y(self):
+        return max(self.__p0.y, self.__p1.y, self.__p2.y, self.__p3.y)
+    #end
+    def get_min_y(self):
+        return min(self.__p0.y, self.__p1.y, self.__p2.y, self.__p3.y)
+    #end
 
     def __str__(self):
         s = ""
@@ -86,35 +99,35 @@ class LinearApproximateCurveControlPoint(ControlPoint):
     @property
     def s(self):
         return self.__start
-    #end def
+    #end
 
     @property
     def e(self):
         return self.__end
-    #end def
+    #end
 
-    def maxX(self):
+    def get_max_x(self):
         return max(self.__start.x, self.__end.x)
-    #end def
-    def minX(self):
+    #end
+    def get_min_x(self):
         return min(self.__start.x, self.__end.x)
-    #end def
-    def maxY(self):
+    #end
+    def get_max_y(self):
         return max(self.__start.y, self.__end.y)
-    #end def
-    def minY(self):
+    #end
+    def get_min_y(self):
         return min(self.__start.y, self.__end.y)
-    #end def
+    #end
 
     def dot3(self, o, a, b):
         return (a.x - o.x) * (b.x - o.x) + (a.y - o.y) * (b.y - o.y)
-    #end def
+    #end
     def cross3(self, o, a, b):
         return (a.x - o.x) * (b.y - o.y) - (b.x - o.x) * (a.y - o.y)
-    #end def
+    #end
     def dist2(self, a, b):
         return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
-    #end def
+    #end
     def is_intersection(self, other_segment):
         c0 = self.cross3(self.__start, self.__end, other_segment.s)
         c1 = self.cross3(self.__start, self.__end, other_segment.e)
@@ -127,7 +140,7 @@ class LinearApproximateCurveControlPoint(ControlPoint):
                 e0, e1 = e1, e0
             return e0 <= self.dist2(self.__start, self.__end) and 0 <= e1
         return c0 * c1 <= 0 and d0 * d1 <= 0
-    #end def
+    #end
 
     def intersection(self, other_segment):
         if self.is_intersection(other_segment):
@@ -142,7 +155,7 @@ class LinearApproximateCurveControlPoint(ControlPoint):
         else:
             return False
         #end if
-    #end def
+    #end
 
     def __str__(self):
         s = ""
