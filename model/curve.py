@@ -47,6 +47,11 @@ class Curve:
         self.__intersect_judge_rectangular = Rectangular(min_x, max_x, min_y, max_y)
     #end
 
+    @property
+    def rect(self):
+        return self.__intersect_judge_rectangular
+    #end
+
     def to_svg(self):
         s = ""
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
@@ -340,6 +345,17 @@ class LinearApproximateCurve(Curve):
         self._going_ctrl_p_set.append(linear_ctrl_p)
     #end
 
+    def to_svg(self):
+        s = ""
+        the_end = len(self._going_ctrl_p_set) if (self.__end_index >= len(self._going_ctrl_p_set) or self.__end_index == -1 ) else self.__end_index
+
+        for i in range( self.__start_index, the_end ):
+            ctrl_p = self._going_ctrl_p_set[i]
+            s += ctrl_p.to_svg(i==self.__start_index)
+        #end
+        return s
+    #end
+
     def convert_ctrl_p_to_xy_array(self):
         x_array = []
         y_array = []
@@ -403,7 +419,7 @@ class LinearApproximateCurve(Curve):
 
         def least_square_fit(points, M):
             M_ = np.linalg.pinv(M)
-            return M_ @ points
+            return np.matmul(M_, points)
 
         T = np.linspace(0, 1, len(xdata))
         M = bmatrix(T)
@@ -418,6 +434,29 @@ class LinearApproximateCurve(Curve):
         cubic_bezier_curve.append( CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point) )
         return cubic_bezier_curve
     #end
+
+    def update_start_end_index_with_intersection(self, other_curve, ratio):
+        the_end_of_start_side_index = int( len(self._going_ctrl_p_set)*ratio )
+        for i in range( self.__start_index, the_end_of_start_side_index ):
+            the_segment = self._going_ctrl_p_set[i]
+            for other_segment in other_curve:
+                if the_segment.is_intersection(other_segment):
+                    self.__start_index = i
+                #end
+            #end
+        #end
+
+        the_start_of_end_side_index = int( len(self._going_ctrl_p_set)*(1.0-ratio) )
+        the_end = len(self._going_ctrl_p_set) if (self.__end_index >= len(self._going_ctrl_p_set) or self.__end_index == -1 ) else self.__end_index
+        for i in range( the_start_of_end_side_index, the_end ):
+            the_segment = self._going_ctrl_p_set[i]
+            for other_segment in other_curve:
+                if the_segment.is_intersection(other_segment):
+                    self.__end_index = i
+                #end
+            #end
+        #end
+    #end 
 
     # 
     # The Algorithm
@@ -591,12 +630,6 @@ class LinearApproximateCurve(Curve):
 
         return broad_curve
     #end
-
-# reserved
-#    def intersection(self):
-#        """ This algorithm is ... """
-#        
-#    #end 
 
 #end
 

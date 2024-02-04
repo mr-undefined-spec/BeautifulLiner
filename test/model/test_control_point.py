@@ -49,8 +49,7 @@ class TestControlPoint(unittest.TestCase):
         self.assertAlmostEqual(inter_p_01_23.x, 0.5)
         self.assertAlmostEqual(inter_p_01_23.y, 0.5)
 
-        inter_p_01_24 = self.linear_ctrl_p_0_1.intersection(self.linear_ctrl_p_2_4)
-        self.assertEqual(inter_p_01_24, False)
+        self.assertEqual(self.linear_ctrl_p_0_1.is_intersection(self.linear_ctrl_p_2_4), False)
     #end
 
     def test_raise_error_with_set_p0_to_p3_as_int(self):

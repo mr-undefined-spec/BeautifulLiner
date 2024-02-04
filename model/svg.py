@@ -185,5 +185,14 @@ class Svg:
         return new_svg
     #end
 
+    def smoothen(self):
+        new_svg = Svg()
+        new_svg.set_view_box( self.__view_box )
+        for layer in self.__layers:
+            new_svg.append("S_" + layer.name, layer.path_data.smoothen(micro_segment_length) )
+        #end
+        return new_svg
+    #end
+
 #end
 

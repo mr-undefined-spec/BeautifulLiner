@@ -1,4 +1,9 @@
 
+import copy
+
+from point import Point
+from control_point import LinearApproximateCurveControlPoint
+
 from curve import Curve
 class Layer:
     def __init__(self):
@@ -43,6 +48,45 @@ class Layer:
             linear_approximate_layer.append( linear_approximate_curve )
         #end
         return linear_approximate_layer
+    #end
+
+    def smoothen(self):
+        new_layer = Layer()
+        for curve in self.__curve_set:
+            new_layer.append( curve.smoothen() )
+        #end
+        return new_layer
+    #end
+
+    def __get_edge_deleted_curve(self, target_curve, ratio):
+        new_curve = copy.deepcopy(target_curve)
+
+        intersected_curve_set = []
+        for curve in self.__curve_set:
+            if curve == target_curve:
+                continue
+            #end
+            if target_curve.rect.test_collision(curve.rect):
+                intersected_curve_set.append(curve)
+            #end
+        #end
+
+        for intersected_curve in intersected_curve_set:
+            new_curve.update_start_end_index_with_intersection(intersected_curve, ratio)
+        #end
+
+        return new_curve
+    #end
+
+    def delete_edge(self, ratio):
+        new_layer = Layer()
+        for curve in self.__curve_set:
+            curve.create_intersect_judge_rectangle()
+        #end
+        for curve in self.__curve_set:
+            new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
+        #end
+        return new_layer
     #end
 #end
 

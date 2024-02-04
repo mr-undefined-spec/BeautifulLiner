@@ -128,6 +128,7 @@ class LinearApproximateCurveControlPoint(ControlPoint):
     def dist2(self, a, b):
         return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
     #end
+
     def is_intersection(self, other_segment):
         c0 = self.cross3(self.__start, self.__end, other_segment.s)
         c1 = self.cross3(self.__start, self.__end, other_segment.e)
@@ -153,7 +154,7 @@ class LinearApproximateCurveControlPoint(ControlPoint):
             t = b_other * (other_segment.s.x - self.__start.x) - a_other * (other_segment.s.y - self.__start.y)
             return Point(self.__start.x + a_self*t/d, self.__start.y + b_self*t/d)
         else:
-            return False
+            raise ValueError("ERROR. Not intersect. Please use \"is_intersection\" method before calling \"intersection\" method.")
         #end if
     #end
 

@@ -11,9 +11,8 @@ from curve import LinearApproximateCurve
 import unittest
 
 import numpy as np
-
-
 import math
+
 class TestCurve(unittest.TestCase):
     def setUp(self):
         p0 = Point(0.0, 0.0)
