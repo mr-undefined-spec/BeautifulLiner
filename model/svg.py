@@ -175,11 +175,11 @@ class Svg:
         #end
     #end def
 
-    def convert_to_linear_approximate_curve(self, micro_segment_length):
+    def linearize(self, micro_segment_length):
         new_svg = Svg()
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_layer = layer.path_data.convert_to_linear_approximate_curve(micro_segment_length)
+            new_layer = layer.path_data.linearize(micro_segment_length)
             new_svg.append("L_" + layer.name, new_layer)
         #end
         return new_svg

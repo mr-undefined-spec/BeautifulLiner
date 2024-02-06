@@ -13,6 +13,8 @@ class Curve:
     def __init__(self):
         self._going_ctrl_p_set = []
         self.__intersect_judge_rectangular = None
+        self._start_index = 0
+        self._end_index   = -1
     #end
 
     def __getitem__(self, i):
@@ -315,7 +317,7 @@ class CubicBezierCurve(Curve):
         return return_points
     #end
     
-    def convert_to_linear_approximate_curve(self, micro_segment_length):
+    def linearize(self, micro_segment_length):
         linear_approximate_curve = LinearApproximateCurve()
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
             points = []
@@ -334,8 +336,6 @@ class CubicBezierCurve(Curve):
 class LinearApproximateCurve(Curve):
     def __init__(self):
         super().__init__()
-        self.__start_index = 0
-        self.__end_index   = -1
     #end
 
     def append(self, linear_ctrl_p):
@@ -347,11 +347,11 @@ class LinearApproximateCurve(Curve):
 
     def to_svg(self):
         s = ""
-        the_end = len(self._going_ctrl_p_set) if (self.__end_index >= len(self._going_ctrl_p_set) or self.__end_index == -1 ) else self.__end_index
+        the_end = len(self._going_ctrl_p_set) if (self._end_index >= len(self._going_ctrl_p_set) or self._end_index == -1 ) else self._end_index
 
-        for i in range( self.__start_index, the_end ):
+        for i in range( self._start_index, the_end ):
             ctrl_p = self._going_ctrl_p_set[i]
-            s += ctrl_p.to_svg(i==self.__start_index)
+            s += ctrl_p.to_svg(i==self._start_index)
         #end
         return s
     #end
@@ -360,11 +360,11 @@ class LinearApproximateCurve(Curve):
         x_array = []
         y_array = []
 
-        the_end = len(self._going_ctrl_p_set) if (self.__end_index >= len(self._going_ctrl_p_set) or self.__end_index == -1 ) else self.__end_index
+        the_end = len(self._going_ctrl_p_set) if (self._end_index >= len(self._going_ctrl_p_set) or self._end_index == -1 ) else self._end_index
 
-        x_array.append( self._going_ctrl_p_set[self.__start_index].s.x )
-        y_array.append( self._going_ctrl_p_set[self.__start_index].s.y )
-        for i in range( self.__start_index, the_end ):
+        x_array.append( self._going_ctrl_p_set[self._start_index].s.x )
+        y_array.append( self._going_ctrl_p_set[self._start_index].s.y )
+        for i in range( self._start_index, the_end ):
             x_array.append( self._going_ctrl_p_set[i].e.x )
             y_array.append( self._going_ctrl_p_set[i].e.y )
         #end
@@ -437,22 +437,22 @@ class LinearApproximateCurve(Curve):
 
     def update_start_end_index_with_intersection(self, other_curve, ratio):
         the_end_of_start_side_index = int( len(self._going_ctrl_p_set)*ratio )
-        for i in range( self.__start_index, the_end_of_start_side_index ):
+        for i in range( self._start_index, the_end_of_start_side_index ):
             the_segment = self._going_ctrl_p_set[i]
             for other_segment in other_curve:
                 if the_segment.is_intersection(other_segment):
-                    self.__start_index = i
+                    self._start_index = i
                 #end
             #end
         #end
 
         the_start_of_end_side_index = int( len(self._going_ctrl_p_set)*(1.0-ratio) )
-        the_end = len(self._going_ctrl_p_set) if (self.__end_index >= len(self._going_ctrl_p_set) or self.__end_index == -1 ) else self.__end_index
+        the_end = len(self._going_ctrl_p_set) if (self._end_index >= len(self._going_ctrl_p_set) or self._end_index == -1 ) else self._end_index
         for i in range( the_start_of_end_side_index, the_end ):
             the_segment = self._going_ctrl_p_set[i]
             for other_segment in other_curve:
                 if the_segment.is_intersection(other_segment):
-                    self.__end_index = i
+                    self._end_index = i
                 #end
             #end
         #end
@@ -463,7 +463,7 @@ class LinearApproximateCurve(Curve):
     #                                                                                                                                        
     # 0. Prerequisite
     #
-    #  Cubic Bezier curves are approximated by line segments with convert_to_linear_approximate_curve method in CubicBezierCurve
+    #  Cubic Bezier curves are approximated by line segments with linearize method in CubicBezierCurve
     #   
     #    P1 ...........Q1........................................   P2
     #     __          x  ooooo                                         `
@@ -622,11 +622,11 @@ class LinearApproximateCurve(Curve):
 
     def broaden(self, broaden_width):
         broad_curve = BroadCurve()
-        
+
         tmp_going_ctrl_p_set = self.__get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, True)
         tmp_returning_ctrl_p_set = self.__get_slightly_away_control_point_set(self._going_ctrl_p_set, broaden_width, False)
 
-        broad_curve.set_ctrl_point_set(tmp_going_ctrl_p_set, tmp_returning_ctrl_p_set)
+        broad_curve.set_ctrl_point_set(tmp_going_ctrl_p_set, tmp_returning_ctrl_p_set, self._start_index, self._end_index)
 
         return broad_curve
     #end
@@ -640,18 +640,29 @@ class BroadCurve(Curve):
         self._returning_ctrl_p_set = []
     #end
 
-    def set_ctrl_point_set(self, going_ctrl_p_set, returning_ctrl_p_set):
-        self._going_ctrl_p_set = going_ctrl_p_set
+    def set_ctrl_point_set(self, going_ctrl_p_set, returning_ctrl_p_set, start_index, end_index):
+        self._going_ctrl_p_set     = going_ctrl_p_set
+        self._returning_ctrl_p_set = returning_ctrl_p_set
+        self._start_index          = start_index
+        self._end_index            = end_index
     #end def
 
     def to_svg(self):
         s = ""
-        for i, ctrl_p in enumerate(self._going_ctrl_p_set):
-            s += ctrl_p.to_svg(i==0)
+        the_end = len(self._going_ctrl_p_set) if (self._end_index >= len(self._going_ctrl_p_set) or self._end_index == -1 ) else self._end_index
+        for i in range( self._start_index, the_end ):
+            ctrl_p = self._going_ctrl_p_set[i]
+            s += ctrl_p.to_svg(i==self._start_index)
         #end
-        for i, ctrl_p in enumerate(self._returning_ctrl_p_set):
+
+        returning_start = len(self._returning_ctrl_p_set) - the_end 
+        returning_end   = len(self._returning_ctrl_p_set) - self._start_index 
+
+        #print( self._start_index, self._end_index, returning_start, returning_end )
+        for i in range( returning_start, returning_end):
             if i == len(self._returning_ctrl_p_set)-1:
                 break
+            ctrl_p = self._returning_ctrl_p_set[i]
             s += ctrl_p.to_svg(False)
         #end
         s += "Z"

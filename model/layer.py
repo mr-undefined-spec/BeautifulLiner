@@ -41,10 +41,10 @@ class Layer:
         return s
     #end
 
-    def convert_to_linear_approximate_curve(self, micro_segment_length):
+    def linearize(self, micro_segment_length):
         linear_approximate_layer = Layer()
         for curve in self.__curve_set:
-            linear_approximate_curve = curve.convert_to_linear_approximate_curve(micro_segment_length)
+            linear_approximate_curve = curve.linearize(micro_segment_length)
             linear_approximate_layer.append( linear_approximate_curve )
         #end
         return linear_approximate_layer
@@ -85,6 +85,14 @@ class Layer:
         #end
         for curve in self.__curve_set:
             new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
+        #end
+        return new_layer
+    #end
+
+    def broaden(self, broaden_width):
+        new_layer = Layer()
+        for curve in self.__curve_set:
+            new_layer.append( curve.broaden(broaden_width) )
         #end
         return new_layer
     #end
