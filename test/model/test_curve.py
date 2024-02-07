@@ -159,6 +159,19 @@ class TestCurve(unittest.TestCase):
         self.assertAlmostEqual(round(ctrl_p.p3.y, 3), 100.000)
     #end
 
+    def test_broad_and_smoothen(self):
+        linear_approximate_curve = LinearApproximateCurve()
+        for i in range(100):
+            linear_approximate_curve.append(  LinearApproximateCurveControlPoint( Point(float(i), 10.0), Point(float(i+1), 10.0) )  )
+        #end
+
+        broad_linear_curve = linear_approximate_curve.broaden(1.0)
+        broad_smooth_curve = broad_linear_curve.smoothen()
+
+        print( broad_smooth_curve.to_svg() )
+
+    #end
+
     def test_broaden(self):
         linear_approximate_curve = LinearApproximateCurve()
         for i in range(100):
