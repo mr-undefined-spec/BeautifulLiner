@@ -129,6 +129,11 @@ class Svg:
         self.__view_box = val
     #end
 
+    def get_bbox(self):
+        arr = self.__view_box.split(" ")
+        return ( float(arr[0]), float(arr[1]), float(arr[2]), float(arr[3]) )
+    #end
+
     @property
     def doc(self):
         return self.__doc
@@ -196,9 +201,10 @@ class Svg:
         return new_svg
     #end
 
-    def delete_edge(self, bbox, ratio):
+    def delete_edge(self, ratio):
         new_svg = Svg()
         new_svg.set_view_box( self.__view_box )
+        bbox = self.get_bbox()
         for layer in self.__layers:
             #print("delete edge in {}".format(layer.name))
             new_layer = layer.path_data.delete_edge(bbox, ratio)
