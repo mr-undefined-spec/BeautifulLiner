@@ -20,11 +20,11 @@ class Curve:
     def get_the_end(self):
         # if self._end_index is initial state, then ...
         if (self._end_index == -1):
-            return len(self._going_ctrl_p_set)
+            return len(self._going_ctrl_p_set) - 1
         #end
         # if self._end_index is over the array size
         if ( self._end_index >= len(self._going_ctrl_p_set) ):
-            return len(self._going_ctrl_p_set)
+            return len(self._going_ctrl_p_set) - 1
         #end
         # others, self._end_index is correct
         return self._end_index
@@ -404,11 +404,9 @@ class LinearApproximateCurve(Curve):
         x_array = []
         y_array = []
 
-        the_end = self.get_the_end()
-
         x_array.append( ctrl_p_set[start_index].s.x )
         y_array.append( ctrl_p_set[start_index].s.y )
-        for i in range( start_index, the_end ):
+        for i in range( start_index, end_index ):
             x_array.append( ctrl_p_set[i].e.x )
             y_array.append( ctrl_p_set[i].e.y )
         #end
@@ -666,11 +664,11 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
     #end
 
     def smoothen(self):
-        """ In LinearApproximateCurve class, public smoothen method calls only one protected _smoothen method
-        On the other hand, in BroadLinearApproximateCurve class, public smoothen method calls two protected _smoothen methods(going & returning)"""
-        going_smooth_ctrl_p = self._smoothen(self._going_ctrl_p_set, self._start_index, self._end_index)
-
+        """ In LinearApproximateCurve, public smoothen method calls only one protected _smoothen method
+        On the other hand, in BroadLinearApproximateCurve, public smoothen method calls two protected _smoothen methods(going & returning)"""
         the_end = self.get_the_end()
+        going_smooth_ctrl_p = self._smoothen(self._going_ctrl_p_set, self._start_index, the_end)
+
         returning_start = len(self._returning_ctrl_p_set) - the_end 
         returning_end   = len(self._returning_ctrl_p_set) - self._start_index 
         returning_smooth_ctrl_p = self._smoothen(self._returning_ctrl_p_set, returning_start, returning_end)
@@ -719,7 +717,7 @@ class BroadCubicBezierCurve(CubicBezierCurve):
     def to_svg(self):
         s = ""
         s += self._going_ctrl_p_set[0].to_svg(True)
-        s += self._returning_ctrl_p_set[0].to_svg(False)
+        s += self._returning_ctrl_p_set[0].to_svg(False, True)
         s += "Z"
         return s
     #end
