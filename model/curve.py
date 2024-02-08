@@ -339,6 +339,14 @@ class CubicBezierCurve(Curve):
             for point in self.__approximate_linear_curve(ctrl_p, i==0, micro_segment_length):
                 points.append( point )
             #end
+
+            # If the target curve is too whort and the linearize results are less than 4 points,
+            # smoothen method will not work.
+            # So ignore the target curve
+            if len(points) < 5:
+                continue
+            #end
+
             for j in range( len(points)-1 ):
                 linear_approximate_curve.append( LinearApproximateCurveControlPoint(points[j], points[j+1]) )
             #end
@@ -413,23 +421,6 @@ class LinearApproximateCurve(Curve):
             y_array.append( ctrl_p_set[i].e.y )
         #end
 
-        ## not support now
-        ##if len(x_array)==0:
-        ##    return None
-        ###end
-        ##if len(x_array)==1:
-        ##    point = curve[ curve.end_index - 1 ]
-        ##    x_array.append( float( point.x_array ) )
-        ##    y_array.append( float( point.y_array ) )
-        ###end
-        ##if len(x_array) < degree + 1:
-        ##    x_array.insert(1, (x_array[0] + x_array[1])/2.0 )
-        ##    y_array.insert(1, (y_array[0] + y_array[1])/2.0 )
-        ##    x_array.insert(1, (x_array[0] + x_array[1])/2.0 )
-        ##    y_array.insert(1, (y_array[0] + y_array[1])/2.0 )
-        ##    x_array.insert(1, (x_array[0] + x_array[1])/2.0 )
-        ##    y_array.insert(1, (y_array[0] + y_array[1])/2.0 )
-        ###end
         x_data = np.array(x_array)
         y_data = np.array(y_array)
 

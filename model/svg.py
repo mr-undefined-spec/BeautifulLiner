@@ -112,10 +112,6 @@ class Svg:
             paths = group_paths_set[1]
             layer_name = group.getAttributeNode('id').nodeValue
     
-            if re.match("xxx", layer_name):
-                #print("skip layer {}".format(layer_name))
-                continue
-            #end if
             #print("read layer {}".format(layer_name))
             self.append(layer_name, self.__make_layer(paths) )
         #end for group_paths_set
