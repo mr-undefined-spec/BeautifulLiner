@@ -9,6 +9,8 @@ from control_point import LinearApproximateCurveControlPoint
 
 from rectangular import Rectangular
 
+from pyqtree import Index
+
 class Curve:
     def __init__(self):
         self._going_ctrl_p_set = []
@@ -349,6 +351,7 @@ class CubicBezierCurve(Curve):
 class LinearApproximateCurve(Curve):
     def __init__(self):
         super().__init__()
+        self.qtree_ctrl_p_set = None
     #end
 
     def append(self, linear_ctrl_p):
@@ -451,11 +454,25 @@ class LinearApproximateCurve(Curve):
         return cubic_bezier_curve
     #end
 
+    def create_qtree_ctrl_p_set(self, bbox):
+        self.qtree_ctrl_p_set = Index(bbox=bbox)
+
+        for ctrl_p in self._going_ctrl_p_set:
+            rect_tuple = ctrl_p.get_rect_tuple()
+            self.qtree_ctrl_p_set.insert(ctrl_p, rect_tuple)
+        #end
+    #end
+
+    def get_intersect_segment_set(self, target_rect_tuple):
+        return self.qtree_ctrl_p_set.intersect(target_rect_tuple)
+    #end
+
     def update_start_end_index_with_intersection(self, other_curve, ratio):
         the_end_of_start_side_index = int( len(self._going_ctrl_p_set)*ratio )
         for i in range( self._start_index, the_end_of_start_side_index ):
             the_segment = self._going_ctrl_p_set[i]
-            for other_segment in other_curve:
+            the_rect_tuple = the_segment.get_rect_tuple()
+            for other_segment in other_curve.get_intersect_segment_set(the_rect_tuple):
                 if the_segment.is_intersection(other_segment):
                     self._start_index = i
                 #end
@@ -466,7 +483,8 @@ class LinearApproximateCurve(Curve):
         the_end = self.get_the_end()
         for i in range( the_start_of_end_side_index, the_end ):
             the_segment = self._going_ctrl_p_set[i]
-            for other_segment in other_curve:
+            the_rect_tuple = the_segment.get_rect_tuple()
+            for other_segment in other_curve.get_intersect_segment_set(the_rect_tuple):
                 if the_segment.is_intersection(other_segment):
                     self._end_index = i
                 #end

@@ -31,12 +31,15 @@ class Layer:
         self.__curve_set.append(curve)
     #end def
 
-    def to_svg(self):
+    def to_svg(self, is_fill):
         s = ''
         for curve in self.__curve_set:
             s += '<path d="'
             s += curve.to_svg()
-            s += '" fill="none" opacity="1" stroke="#ff0000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+            if is_fill:
+                s += '" fill="#ff0000" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+            else:
+                s += '" fill="none" opacity="1" stroke="#ff0000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
         #end
         return s
     #end
@@ -71,19 +74,23 @@ class Layer:
             #end
         #end
 
-        for intersected_curve in intersected_curve_set:
+        inter_num = len(intersected_curve_set)
+
+        for i, intersected_curve in enumerate(intersected_curve_set):
             new_curve.update_start_end_index_with_intersection(intersected_curve, ratio)
         #end
 
         return new_curve
     #end
 
-    def delete_edge(self, ratio):
+    def delete_edge(self, bbox, ratio):
         new_layer = Layer()
         for curve in self.__curve_set:
             curve.create_intersect_judge_rectangle()
+            curve.create_qtree_ctrl_p_set(bbox)
         #end
-        for curve in self.__curve_set:
+        curve_num = len(self.__curve_set)
+        for i, curve in enumerate(self.__curve_set):
             new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
         #end
         return new_layer

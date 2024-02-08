@@ -114,10 +114,10 @@ class Svg:
             layer_name = group.getAttributeNode('id').nodeValue
     
             if re.match("xxx", layer_name):
-                print("skip layer {}".format(layer_name))
+                #print("skip layer {}".format(layer_name))
                 continue
             #end if
-            print("read layer {}".format(layer_name))
+            #print("read layer {}".format(layer_name))
             self.append(layer_name, self.__make_layer(paths) )
         #end for group_paths_set
         root = self.__doc.getElementsByTagName("svg")
@@ -157,7 +157,7 @@ class Svg:
         return self.__layers[self.__index-1]
     #end def
 
-    def write(self, path):
+    def write(self, path, is_fill):
         s = ""
         s += '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
         s += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
@@ -166,7 +166,7 @@ class Svg:
         s += '>\n'
         for layer in self.__layers:
             s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
-            s += layer.path_data.to_svg()
+            s += layer.path_data.to_svg(is_fill)
             s += '</g>\n'
         #end
         s += '</svg>'
@@ -179,6 +179,7 @@ class Svg:
         new_svg = Svg()
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
+            #print("linearize in {}".format(layer.name))
             new_layer = layer.path_data.linearize(micro_segment_length)
             new_svg.append("L_" + layer.name, new_layer)
         #end
@@ -189,7 +190,30 @@ class Svg:
         new_svg = Svg()
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append("S_" + layer.name, layer.path_data.smoothen(micro_segment_length) )
+            #print("smoothen in {}".format(layer.name))
+            new_svg.append("S_" + layer.name, layer.path_data.smoothen() )
+        #end
+        return new_svg
+    #end
+
+    def delete_edge(self, bbox, ratio):
+        new_svg = Svg()
+        new_svg.set_view_box( self.__view_box )
+        for layer in self.__layers:
+            #print("delete edge in {}".format(layer.name))
+            new_layer = layer.path_data.delete_edge(bbox, ratio)
+            new_svg.append("D_" + layer.name, new_layer)
+        #end
+        return new_svg
+    #end
+
+    def broaden(self, broaden_width):
+        new_svg = Svg()
+        new_svg.set_view_box( self.__view_box )
+        for layer in self.__layers:
+            #print("broaden in {}".format(layer.name))
+            new_layer = layer.path_data.broaden(broaden_width)
+            new_svg.append("B_" + layer.name, new_layer)
         #end
         return new_svg
     #end

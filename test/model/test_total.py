@@ -47,7 +47,9 @@ class TestTotal(unittest.TestCase):
         layer.append(linear_approximate_curve)
         layer.append(lin_curve2)
 
-        new_layer = layer.delete_edge(0.5)
+        bbox = (0.0, 0.0, 180.0, 180.0)
+
+        new_layer = layer.delete_edge(bbox, 0.5)
 
         broad_linear_layer = new_layer.broaden(1.0)
         broad_smooth_layer = broad_linear_layer.smoothen()
@@ -105,12 +107,13 @@ class TestTotal(unittest.TestCase):
         layer.append(lin_curve3)
         layer.append(lin_curve4)
 
-        new_layer = layer.delete_edge(0.5)
+        bbox = (0.0, 0.0, 180.0, 180.0)
+        new_layer = layer.delete_edge(bbox, 0.5)
 
         broad_linear_layer = new_layer.broaden(1.0)
         broad_smooth_layer = broad_linear_layer.smoothen()
 
-        print( broad_smooth_layer.to_svg() )
+#        print( broad_smooth_layer.to_svg(False) )
     #end
 #end
 

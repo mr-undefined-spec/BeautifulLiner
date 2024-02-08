@@ -161,6 +161,17 @@ class LinearApproximateCurveControlPoint(ControlPoint):
         #end if
     #end
 
+    def get_rect_tuple(self):
+        min_x = min(self.__start.x, self.__end.x)
+        max_x = max(self.__start.x, self.__end.x)
+        min_y = min(self.__start.y, self.__end.y)
+        max_y = max(self.__start.y, self.__end.y)
+
+        return (min_x, min_y, max_x, max_y)
+    #end
+        
+
+
     def __str__(self):
         s = ""
         s += str(self.__start) + "\n"

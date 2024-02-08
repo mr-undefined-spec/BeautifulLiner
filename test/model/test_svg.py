@@ -58,7 +58,7 @@ class TestSvgData(unittest.TestCase):
         svg_from_file.read("data/test.svg")
 
         # just write
-        svg_from_file.write("data/write_test.svg")
+        svg_from_file.write("data/write_test.svg", False)
 
         reread_svg = Svg()
         reread_svg.read("data/write_test.svg")
