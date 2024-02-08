@@ -20,11 +20,11 @@ class Curve:
     def get_the_end(self):
         # if self._end_index is initial state, then ...
         if (self._end_index == -1):
-            return len(self._going_ctrl_p_set) - 1
+            return len(self._going_ctrl_p_set) 
         #end
         # if self._end_index is over the array size
         if ( self._end_index >= len(self._going_ctrl_p_set) ):
-            return len(self._going_ctrl_p_set) - 1
+            return len(self._going_ctrl_p_set)
         #end
         # others, self._end_index is correct
         return self._end_index
@@ -361,7 +361,6 @@ class LinearApproximateCurve(Curve):
     def to_svg(self):
         s = ""
         the_end = self.get_the_end()
-
         for i in range( self._start_index, the_end ):
             ctrl_p = self._going_ctrl_p_set[i]
             s += ctrl_p.to_svg(i==self._start_index)
@@ -392,7 +391,7 @@ class LinearApproximateCurve(Curve):
         return np.matmul(M_, points)
     #end
 
-    def _smoothen(self, ctrl_p_set, start_index, end_index):
+    def _smoothen(self, ctrl_p_set, start_index, the_end):
         """ Least square qbezier fit using penrose pseudoinverse.
 
         Based on https://stackoverflow.com/questions/12643079/b%C3%A9zier-curve-fitting-with-scipy
@@ -406,7 +405,7 @@ class LinearApproximateCurve(Curve):
 
         x_array.append( ctrl_p_set[start_index].s.x )
         y_array.append( ctrl_p_set[start_index].s.y )
-        for i in range( start_index, end_index ):
+        for i in range( start_index, the_end ):
             x_array.append( ctrl_p_set[i].e.x )
             y_array.append( ctrl_p_set[i].e.y )
         #end
@@ -447,7 +446,8 @@ class LinearApproximateCurve(Curve):
         """ In LinearApproximateCurve class, public smoothen method calls only one protected _smoothen method
         On the other hand, in BroadLinearApproximateCurve class, public smoothen method calls two protected _smoothen methods(going & returning)"""
         cubic_bezier_curve = CubicBezierCurve()
-        cubic_bezier_curve.append( self._smoothen(self._going_ctrl_p_set, self._start_index, self._end_index) )
+        the_end = self.get_the_end()
+        cubic_bezier_curve.append( self._smoothen(self._going_ctrl_p_set, self._start_index, the_end) )
         return cubic_bezier_curve
     #end
 
