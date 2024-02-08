@@ -8,38 +8,45 @@ from curve import Curve
 class Layer:
     def __init__(self):
         self.__curve_set = []
+        self.is_fill = False
+        self.color   = "#000000"
     #end
 
     def __getitem__(self, i):
         return self.__curve_set[i]
-    #end def
+    #end
 
     def __iter__(self):
         self.__index = 0
         return self
-    #end def
+    #end
     def __next__(self):
         if self.__index >= len(self.__curve_set): raise StopIteration
         self.__index += 1
         return self.__curve_set[self.__index-1]
-    #end def
+    #end
 
     def append(self, curve):
         if not isinstance(curve, Curve):
             raise TypeError("The argument of the append method must be a Curve(CubicBezierCurve or LinearApproximateCurve)")
         #end if
         self.__curve_set.append(curve)
-    #end def
+    #end
 
-    def to_svg(self, is_fill):
+    def set_write_options(self, is_fill, color):
+        self.is_fill = is_fill
+        self.color   = color
+    #end
+
+    def to_svg(self):
         s = ''
         for curve in self.__curve_set:
             s += '<path d="'
             s += curve.to_svg()
-            if is_fill:
-                s += '" fill="#ff0000" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+            if self.is_fill:
+                s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
             else:
-                s += '" fill="none" opacity="1" stroke="#ff0000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+                s += '" fill="none" opacity="1" stroke="' + self.color + '" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
         #end
         return s
     #end
@@ -91,6 +98,7 @@ class Layer:
         #end
         curve_num = len(self.__curve_set)
         for i, curve in enumerate(self.__curve_set):
+            #print(i)
             new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
         #end
         return new_layer

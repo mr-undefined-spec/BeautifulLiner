@@ -38,7 +38,6 @@ class Svg:
     
         for point_str in point_strs:
             items = self.__split_to_xy( point_str.strip() )
-            #print(items)
             if len(items)==2:
                 p3 = Point( float(items[0]), float(items[1]) )
                 x1, y1, x2, y2 = 0.0, 0.0, 0.0, 0.0
@@ -162,7 +161,13 @@ class Svg:
         return self.__layers[self.__index-1]
     #end def
 
-    def write(self, path, is_fill):
+    def set_write_options(self, is_fill, color):
+        for layer in self.__layers:
+            layer.path_data.set_write_options(is_fill, color)
+        #end
+    #end
+
+    def write(self, path):
         s = ""
         s += '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
         s += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
@@ -171,7 +176,7 @@ class Svg:
         s += '>\n'
         for layer in self.__layers:
             s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
-            s += layer.path_data.to_svg(is_fill)
+            s += layer.path_data.to_svg()
             s += '</g>\n'
         #end
         s += '</svg>'
@@ -220,6 +225,20 @@ class Svg:
             #print("broaden in {}".format(layer.name))
             new_layer = layer.path_data.broaden(broaden_width)
             new_svg.append("B_" + layer.name, new_layer)
+        #end
+        return new_svg
+    #end
+
+    def combine(self, other_svg):
+        new_svg = Svg()
+        new_svg.set_view_box( self.__view_box )
+        for layer in self.__layers:
+            #print("combine in {}".format(layer.name))
+            new_svg.append(layer.name, layer.path_data)
+        #end
+        for other_layer in other_svg:
+            #print("combine in {}".format(layer.name))
+            new_svg.append(other_layer.name, other_layer.path_data)
         #end
         return new_svg
     #end
