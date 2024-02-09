@@ -73,6 +73,7 @@ class Svg:
         layer = Layer()
         for path in paths:
             layer.append(  self.__make_cubic_bezier_curve_set( path.getAttributeNode('d').nodeValue )  )
+            self.__total_path_num += 1
         #end for
         return layer
     #end
@@ -97,9 +98,15 @@ class Svg:
     #
     # public
     #
-    def __init__(self):
+    def __init__(self, mode):
         self.__layers = []
         self.__view_box = ""
+        self.__total_path_num = 0
+
+        if not mode in ["CUI", "GUI", "TEST"]:
+            raise ValueError('The arg "mode" can be "CUI", "GUI" or "TEST"')
+        #end
+        self.__mode = mode
     #end
 
     def read(self, file_name):
@@ -111,10 +118,16 @@ class Svg:
             group = group_paths_set[0]
             paths = group_paths_set[1]
             layer_name = group.getAttributeNode('id').nodeValue
-    
-            #print("read layer {}".format(layer_name))
+
+            if self.__mode == "CUI":
+                print("read layer {}".format(layer_name))
+            elif self.__mode == "GUI":
+                # kari jissou
+                print("read layer {}".format(layer_name))
+            #end
+
             self.append(layer_name, self.__make_layer(paths) )
-        #end for group_paths_set
+        #end
         root = self.__doc.getElementsByTagName("svg")
         self.__view_box = root[0].attributes["viewBox"].value
     #end
@@ -182,10 +195,15 @@ class Svg:
     #end def
 
     def linearize(self, micro_segment_length):
-        new_svg = Svg()
+        new_svg = Svg(self.__mode)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            #print("linearize in {}".format(layer.name))
+            if self.__mode == "CUI":
+                print("linearize in {}".format(layer.name))
+            elif self.__mode == "GUI":
+                # kari jissou
+                print("linearize in {}".format(layer.name))
+            #end
             new_layer = layer.path_data.linearize(micro_segment_length)
             new_svg.append("L_" + layer.name, new_layer)
         #end
@@ -193,32 +211,41 @@ class Svg:
     #end
 
     def smoothen(self):
-        new_svg = Svg()
+        new_svg = Svg(self.__mode)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            #print("smoothen in {}".format(layer.name))
+            if self.__mode == "CUI":
+                print("smoothen in {}".format(layer.name))
+            elif self.__mode == "GUI":
+                # kari jissou
+                print("smoothen in {}".format(layer.name))
+            #end
             new_svg.append("S_" + layer.name, layer.path_data.smoothen() )
         #end
         return new_svg
     #end
 
     def delete_edge(self, ratio):
-        new_svg = Svg()
+        new_svg = Svg(self.__mode)
         new_svg.set_view_box( self.__view_box )
         bbox = self.get_bbox()
         for layer in self.__layers:
-            #print("delete edge in {}".format(layer.name))
-            new_layer = layer.path_data.delete_edge(bbox, ratio)
+            new_layer = layer.path_data.delete_edge(bbox, ratio, self.__mode)
             new_svg.append("D_" + layer.name, new_layer)
         #end
         return new_svg
     #end
 
     def broaden(self, broaden_width):
-        new_svg = Svg()
+        new_svg = Svg(self.__mode)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            #print("broaden in {}".format(layer.name))
+            if self.__mode == "CUI":
+                print("broaden in {}".format(layer.name))
+            elif self.__mode == "GUI":
+                # kari jissou
+                print("broaden in {}".format(layer.name))
+            #end
             new_layer = layer.path_data.broaden(broaden_width)
             new_svg.append("B_" + layer.name, new_layer)
         #end
@@ -226,14 +253,24 @@ class Svg:
     #end
 
     def combine(self, other_svg):
-        new_svg = Svg()
+        new_svg = Svg(self.__mode)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            #print("combine in {}".format(layer.name))
+            if self.__mode == "CUI":
+                print("combine in {}".format(layer.name))
+            elif self.__mode == "GUI":
+                # kari jissou
+                print("combine in {}".format(layer.name))
+            #end
             new_svg.append(layer.name, layer.path_data)
         #end
         for other_layer in other_svg:
-            #print("combine in {}".format(layer.name))
+            if self.__mode == "CUI":
+                print("combine in {}".format(other_layer.name))
+            elif self.__mode == "GUI":
+                # kari jissou
+                print("combine in {}".format(other_layer.name))
+            #end
             new_svg.append(other_layer.name, other_layer.path_data)
         #end
         return new_svg

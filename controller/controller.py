@@ -12,10 +12,10 @@ from layer import Layer
 from svg import Svg
 
 class Controller:
-    def run(self, reading_file_path, linear_approximate_length, delete_ratio, broad_width):
-        svg = Svg()
+    def run(self, mode, reading_file_path, linear_approximate_length, delete_ratio, broad_width):
+        svg = Svg(mode)
         svg.read(reading_file_path)
-        
+
         once_linearized = svg.linearize(linear_approximate_length)
         once_smoothened = once_linearized.smoothen()
         once_smoothened.set_write_options(is_fill=False, color="#00FF00")

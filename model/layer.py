@@ -90,7 +90,7 @@ class Layer:
         return new_curve
     #end
 
-    def delete_edge(self, bbox, ratio):
+    def delete_edge(self, bbox, ratio, mode, progress_bar=None):
         new_layer = Layer()
         for curve in self.__curve_set:
             curve.create_intersect_judge_rectangle()
@@ -98,7 +98,12 @@ class Layer:
         #end
         curve_num = len(self.__curve_set)
         for i, curve in enumerate(self.__curve_set):
-            #print(i)
+            if mode == "CUI":
+                print("delete edge No.{} / {}".format(i+1, curve_num))
+            elif mode == "GUI":
+                # kari jissou
+                print("delete edge No.{} / {}".format(i+1, curve_num))
+            #end
             new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
         #end
         return new_layer

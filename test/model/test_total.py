@@ -49,7 +49,7 @@ class TestTotal(unittest.TestCase):
 
         bbox = (0.0, 0.0, 180.0, 180.0)
 
-        new_layer = layer.delete_edge(bbox, 0.5)
+        new_layer = layer.delete_edge(bbox, 0.5, "TEST")
 
         broad_linear_layer = new_layer.broaden(1.0)
         broad_smooth_layer = broad_linear_layer.smoothen()
@@ -108,7 +108,7 @@ class TestTotal(unittest.TestCase):
         layer.append(lin_curve4)
 
         bbox = (0.0, 0.0, 180.0, 180.0)
-        new_layer = layer.delete_edge(bbox, 0.5)
+        new_layer = layer.delete_edge(bbox, 0.5, "TEST")
 
         broad_linear_layer = new_layer.broaden(1.0)
         broad_smooth_layer = broad_linear_layer.smoothen()

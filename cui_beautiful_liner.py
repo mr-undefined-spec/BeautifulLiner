@@ -1,6 +1,10 @@
 import os
 import sys
 
+global calc_step
+calc_step = 0
+global total_calc_step
+
 sys.path.append(os.path.join(os.path.dirname(__file__), 'controller'))
 from controller import Controller
 
@@ -33,7 +37,7 @@ def main():
     args = argparser.parse_args()
 
     controller = Controller()
-    controller.run(args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width)
+    controller.run("CUI", args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width)
     print("Create " + args.reading_file_path.replace(".svg", "_BeauL.svg") )
     print("END OF JOB")
 #end
