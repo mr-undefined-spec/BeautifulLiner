@@ -12,14 +12,12 @@ from layer import Layer
 from svg import Svg
 
 class Controller:
-    def run(self, mode, reading_file_path, linear_approximate_length, delete_ratio, broad_width, progress_bar=None):
-        svg = Svg(mode)
+    def run(self, mode, reading_file_path, linear_approximate_length, delete_ratio, broad_width, progress_bar=None, log_text=None):
+        svg = Svg(0, mode, progress_bar, log_text)
         svg.read(reading_file_path)
 
         once_linearized = svg.linearize(linear_approximate_length)
-
         once_smoothened = once_linearized.smoothen()
-        once_smoothened.set_write_options(is_fill=False, color="#00FF00")
         
         linearized  = once_smoothened.linearize(linear_approximate_length)
         delete_edge = linearized.delete_edge(delete_ratio)
@@ -31,6 +29,3 @@ class Controller:
         smoothened.write(writing_file_path)
     #end
 #end
-
-
-
