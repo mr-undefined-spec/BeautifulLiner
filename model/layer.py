@@ -55,7 +55,13 @@ class Layer:
         linear_approximate_layer = Layer()
         for curve in self.__curve_set:
             linear_approximate_curve = curve.linearize(micro_segment_length)
-            linear_approximate_layer.append( linear_approximate_curve )
+
+            # If the target curve is too whort and the linearize results are less than 4 points,
+            # smoothen method will not work.
+            # So ignore the target curve
+            if len(linear_approximate_curve) > 4:
+                linear_approximate_layer.append( linear_approximate_curve )
+            #end
         #end
         return linear_approximate_layer
     #end

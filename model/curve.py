@@ -340,17 +340,12 @@ class CubicBezierCurve(Curve):
                 points.append( point )
             #end
 
-            # If the target curve is too whort and the linearize results are less than 4 points,
-            # smoothen method will not work.
-            # So ignore the target curve
-            if len(points) < 5:
-                continue
-            #end
-
             for j in range( len(points)-1 ):
                 linear_approximate_curve.append( LinearApproximateCurveControlPoint(points[j], points[j+1]) )
             #end
+
         #end
+
         return linear_approximate_curve
     #end
 #end
