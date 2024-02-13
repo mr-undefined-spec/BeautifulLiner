@@ -61,11 +61,11 @@ class GuiBeautifulLiner:
         self.japanese_button = tk.Radiobutton(self.init_setting, text="日本語", variable=self.language_var, value="Japanese")
         self.japanese_button.pack()
 
-        self.save_button = tk.Button(self.init_setting, text="OK", command=self.save_language)
+        self.save_button = tk.Button(self.init_setting, text="OK", command=self.__save_language)
         self.save_button.pack()
     #end
 
-    def save_language(self):
+    def __save_language(self):
         # Save selected language to a JSON file
         language_data = {"language": self.language_var.get()}
         with open("language_settings.json", "w") as json_file:
@@ -199,8 +199,6 @@ class GuiBeautifulLiner:
 #end
 
 gui = GuiBeautifulLiner()
-
-
 try:
     # Load saved language from JSON file
     with open("language_settings.json", "r") as json_file:
