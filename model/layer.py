@@ -53,20 +53,31 @@ class Layer:
         return s
     #end
 
+    def __print_step(self, mode, global_calc_step, local_calc_step, step_name, progress_bar, log_text):
+        curve_num = len(self.__curve_set)
+        total_step_num = 7*curve_num
+        if mode == "CUI":
+            print("{} {} / {}".format(step_name, local_calc_step + curve_num*global_calc_step + 1, total_step_num))
+        elif mode == "GUI":
+            progress_bar.configure(  value=int( 100*(local_calc_step + curve_num*global_calc_step)/total_step_num )  )
+            progress_bar.update()
+            log_text.insert( tk.END, "{} {} / {}\n".format(step_name, local_calc_step + curve_num*global_calc_step + 1, total_step_num) )
+            log_text.see(tk.END)
+            log_text.update()
+        #end
+    #end
+
     def linearize(self, micro_segment_length, global_calc_step, mode, progress_bar=None, log_text=None):
         linear_approximate_layer = Layer()
 
-        curve_num = len(self.__curve_set)
+        step_name = ""
+        if global_calc_step == 0:
+            step_name = "linearize 1st"
+        else:
+            step_name = "linearize 2nd"
+        #end
         for i, curve in enumerate(self.__curve_set):
-            if mode == "CUI":
-                print("linearize {} / {}".format(i + curve_num*global_calc_step, curve_num*6))
-            elif mode == "GUI":
-                progress_bar.configure(  value=int( 100*(i + curve_num*global_calc_step)/curve_num/6.0 )  )
-                progress_bar.update()
-                log_text.insert( tk.END, "linearize {} / {}\n".format(i + curve_num*global_calc_step, curve_num*6) )
-                log_text.see(tk.END)
-                log_text.update()
-            #end
+            self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
             linear_approximate_curve = curve.linearize(micro_segment_length)
 
             # If the target curve is too whort and the linearize results are less than 4 points,
@@ -81,17 +92,15 @@ class Layer:
 
     def smoothen(self, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
-        curve_num = len(self.__curve_set)
+
+        step_name = ""
+        if global_calc_step == 1:
+            step_name = "smoothen 1st"
+        else:
+            step_name = "smoothen 2nd"
+        #end
         for i, curve in enumerate(self.__curve_set):
-            if mode == "CUI":
-                print("smoothen {} / {}".format(i + curve_num*global_calc_step, curve_num*6))
-            elif mode == "GUI":
-                progress_bar.configure(  value=int( 100*(i + curve_num*global_calc_step)/curve_num/6.0 )  )
-                progress_bar.update()
-                log_text.insert( tk.END, "smoothen {} / {}\n".format(i + curve_num*global_calc_step, curve_num*6) )
-                log_text.see(tk.END)
-                log_text.update()
-            #end
+            self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
             new_layer.append( curve.smoothen() )
         #end
         return new_layer
@@ -122,27 +131,13 @@ class Layer:
     def delete_edge(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
         for i, curve in enumerate(self.__curve_set):
-            if mode == "CUI":
-                print("prepare delete edge {}".format(i))
-            elif mode == "GUI":
-                log_text.insert( tk.END, "prepare delete edge {}\n".format(i) )
-                log_text.see(tk.END)
-                log_text.update()
-            #end
+            self.__print_step(mode, global_calc_step, i, "prepare delete edge", progress_bar, log_text)
             curve.create_intersect_judge_rectangle()
             curve.create_qtree_ctrl_p_set(bbox)
         #end
         curve_num = len(self.__curve_set)
         for i, curve in enumerate(self.__curve_set):
-            if mode == "CUI":
-                print("delete edge {} / {}".format(i + curve_num*global_calc_step, curve_num*6))
-            elif mode == "GUI":
-                progress_bar.configure(  value=int( 100*(i + curve_num*global_calc_step)/curve_num/6.0 )  )
-                progress_bar.update()
-                log_text.insert( tk.END, "delete edge {} / {}\n".format(i + curve_num*global_calc_step, curve_num*6) )
-                log_text.see(tk.END)
-                log_text.update()
-            #end
+            self.__print_step(mode, global_calc_step+1, i, "delete edge", progress_bar, log_text)
             new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
         #end
         return new_layer
@@ -152,15 +147,7 @@ class Layer:
         new_layer = Layer()
         curve_num = len(self.__curve_set)
         for i, curve in enumerate(self.__curve_set):
-            if mode == "CUI":
-                print("broaden {} / {}".format(i + curve_num*global_calc_step, curve_num*6))
-            elif mode == "GUI":
-                progress_bar.configure(  value=int( 100*(i + curve_num*global_calc_step)/curve_num/6.0 )  )
-                progress_bar.update()
-                log_text.insert( tk.END, "broaden {} / {}\n".format(i + curve_num*global_calc_step, curve_num*6) )
-                log_text.see(tk.END)
-                log_text.update()
-            #end
+            self.__print_step(mode, global_calc_step, i, "broaden", progress_bar, log_text)
             new_layer.append( curve.broaden(broaden_width) )
         #end
         return new_layer

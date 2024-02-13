@@ -225,7 +225,8 @@ class Svg:
     #end
 
     def broaden(self, broaden_width):
-        new_svg = Svg(self.__global_calc_step+1, self.__mode, self.__progress_bar, self.__log_text)
+        new_svg = Svg(self.__global_calc_step+2, self.__mode, self.__progress_bar, self.__log_text)
+        # delete edge process has 2 global_calc_step, so increment 2
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_layer = layer.path_data.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
