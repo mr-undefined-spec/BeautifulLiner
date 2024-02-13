@@ -20,9 +20,9 @@ class GuiBeautifulLiner:
 
     MENU_BAR_LABEL     = ["Language",          "言語"]
     FILE_SELECT_BUTTON = ["Choose svg file",   "ファイル"]
-    LINEALIZE_PARAM    = ["linearize param",   "線形化近似の最小長さ"]
+    LINEALIZE_PARAM    = ["linearize param",   "線形化近似の細かさ"]
     DELETE_EDGE_RATIO  = ["delete edge ratio", "端部除去率"]
-    BROAD_WIDTH        = ["broaden width",     "幅広化処理時の幅"]
+    BROAD_WIDTH        = ["broaden width",     "線の幅"]
     EXECUTE_BUTTON     = ["execute",           "実行"]
 
     def __create_main_window(self):
@@ -120,13 +120,18 @@ class GuiBeautifulLiner:
         return filedialog.askopenfilename(initialdir=initial_dir, filetypes=file_types)
     #end
 
+    def __set_file_select_entry(self):
+        self.file_select_entry.delete(0, tk.END)
+        self.file_select_entry.insert( tk.END, self.__select_file() )
+    #end
+
     def __add_file_select_button(self):
-        self.file_select_button = tk.Button(self.window, text="Choose svg file", command=lambda: entry.insert(tk.END, self.__select_file()))
+        self.file_select_button = tk.Button(self.window, text="Choose svg file", command=self.__set_file_select_entry)
         self.file_select_button.grid(row=self.current_row, column=0, padx=10, pady=10)
 
-        entry = tk.Entry(self.window, width=100)
-        entry.grid(row=self.current_row, column=1, padx=10, pady=10)
-        self.entries.append(entry)
+        self.file_select_entry = tk.Entry(self.window, width=100)
+        self.file_select_entry.grid(row=self.current_row, column=1, padx=10, pady=10)
+        self.entries.append(self.file_select_entry)
 
         self.current_row += 1
     #end
