@@ -12,7 +12,7 @@ from layer import Layer
 from svg import Svg
 
 class Controller:
-    def run(self, mode, reading_file_path, linear_approximate_length, delete_ratio, broad_width, progress_bar=None, log_text=None):
+    def run(self, mode, reading_file_path, linear_approximate_length, delete_ratio, broad_width, output_color, progress_bar=None, log_text=None):
         svg = Svg(0, mode, progress_bar, log_text)
         svg.read(reading_file_path)
 
@@ -23,7 +23,7 @@ class Controller:
         delete_edge = linearized.delete_edge(delete_ratio)
         broadened   = delete_edge.broaden(broad_width)
         smoothened  = broadened.smoothen()
-        smoothened.set_write_options(is_fill=True, color="#FF0000")
+        smoothened.set_write_options(is_fill=True, color=output_color)
 
         writing_file_path = reading_file_path.replace(".svg", "_BeauL.svg")
         smoothened.write(writing_file_path)

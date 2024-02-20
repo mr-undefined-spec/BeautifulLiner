@@ -195,7 +195,8 @@ class Svg:
     #end def
 
     def linearize(self, micro_segment_length):
-        new_svg = Svg(self.__global_calc_step+1, self.__mode, self.__progress_bar, self.__log_text)
+        self.__global_calc_step += 1
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_layer = layer.path_data.linearize(micro_segment_length, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
@@ -205,7 +206,8 @@ class Svg:
     #end
 
     def smoothen(self):
-        new_svg = Svg(self.__global_calc_step+1, self.__mode, self.__progress_bar, self.__log_text)
+        self.__global_calc_step += 1
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_svg.append("S_" + layer.name, layer.path_data.smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
@@ -214,7 +216,8 @@ class Svg:
     #end
 
     def delete_edge(self, ratio):
-        new_svg = Svg(self.__global_calc_step+1, self.__mode, self.__progress_bar, self.__log_text)
+        self.__global_calc_step += 1
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         bbox = self.get_bbox()
         for layer in self.__layers:
@@ -225,7 +228,8 @@ class Svg:
     #end
 
     def broaden(self, broaden_width):
-        new_svg = Svg(self.__global_calc_step+2, self.__mode, self.__progress_bar, self.__log_text)
+        self.__global_calc_step += 2
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         # delete edge process has 2 global_calc_step, so increment 2
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:

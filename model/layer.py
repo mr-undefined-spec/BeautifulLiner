@@ -56,12 +56,13 @@ class Layer:
     def __print_step(self, mode, global_calc_step, local_calc_step, step_name, progress_bar, log_text):
         curve_num = len(self.__curve_set)
         total_step_num = 7*curve_num
+        __gl_step = global_calc_step - 1
         if mode == "CUI":
-            print("{} {} / {}".format(step_name, local_calc_step + curve_num*global_calc_step + 1, total_step_num))
+            print("{} {} / {}".format(step_name, local_calc_step + curve_num*__gl_step + 1, total_step_num))
         elif mode == "GUI":
-            progress_bar.configure(  value=int( 100*(local_calc_step + curve_num*global_calc_step)/total_step_num )  )
+            progress_bar.configure(  value=int( 100*(local_calc_step + curve_num*__gl_step)/total_step_num )  )
             progress_bar.update()
-            log_text.insert( tk.END, "{} {} / {}\n".format(step_name, local_calc_step + curve_num*global_calc_step + 1, total_step_num) )
+            log_text.insert( tk.END, "{} {} / {}\n".format(step_name, local_calc_step + curve_num*__gl_step + 1, total_step_num) )
             log_text.see(tk.END)
             log_text.update()
         #end

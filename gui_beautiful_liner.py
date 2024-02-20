@@ -23,7 +23,10 @@ class GuiBeautifulLiner:
     LINEALIZE_PARAM    = ["linearize param",   "線形化近似の細かさ"]
     DELETE_EDGE_RATIO  = ["delete edge ratio", "端部除去率"]
     BROAD_WIDTH        = ["broaden width",     "線の幅"]
+    OUTPUT_LINE_COLOR  = ["output color",      "線の色"]
     EXECUTE_BUTTON     = ["execute",           "実行"]
+        
+    ITEMS = ["black", "red", "blue", "green"]
 
     def __create_main_window(self):
         self.window = tk.Tk()
@@ -43,6 +46,7 @@ class GuiBeautifulLiner:
         self.__add_scale(label_text="linearize param", scale_from=0.01, scale_to=1.0, scale_resolution=0.01, scale_default=0.1)
         self.__add_scale(label_text="delete edge ratio",           scale_from=0.0,  scale_to=0.5, scale_resolution=0.01, scale_default=0.25)
         self.__add_scale(label_text="broad witdh", scale_from=0.1,  scale_to=5.0, scale_resolution=0.1,  scale_default=1.0)
+        self.__add_output_color()
         self.__add_execute_button(button_text="exece")
         self.__add_progress_bar()
         self.__add_menu_bar()
@@ -86,10 +90,11 @@ class GuiBeautifulLiner:
 
     def __update_language(self, index):
 #        self.menu_bar["label"]       = self.MENU_BAR_LABEL[index]j
-        self.scale_labels[0].config(text=self.LINEALIZE_PARAM[index])
         self.file_select_button.config(text=self.FILE_SELECT_BUTTON[index])
+        self.scale_labels[0].config(text=self.LINEALIZE_PARAM[index])
         self.scale_labels[1].config(text=self.DELETE_EDGE_RATIO[index])
         self.scale_labels[2].config(text=self.BROAD_WIDTH[index])
+        self.output_color_label.config(text=self.OUTPUT_LINE_COLOR[index])
         self.execute_button.config(text=self.EXECUTE_BUTTON[index])
     #end
 
@@ -102,11 +107,11 @@ class GuiBeautifulLiner:
 
     def __add_scale(self, label_text, scale_from, scale_to, scale_resolution, scale_default):
         label = tk.Label(self.window, text=label_text)
-        label.grid(row=self.current_row, column=0, padx=10, pady=10)
+        label.grid(row=self.current_row, column=0, padx=10, pady=5)
         self.scale_labels.append(label)
 
         scale = tk.Scale(self.window, from_=scale_from, to=scale_to, resolution=scale_resolution, orient=tk.HORIZONTAL, length=400)
-        scale.grid(row=self.current_row, column=1, padx=10, pady=10)
+        scale.grid(row=self.current_row, column=1, padx=10, pady=5)
         scale.set(scale_default)
         self.entries.append(scale)
 
@@ -127,10 +132,10 @@ class GuiBeautifulLiner:
 
     def __add_file_select_button(self):
         self.file_select_button = tk.Button(self.window, text="Choose svg file", command=self.__set_file_select_entry)
-        self.file_select_button.grid(row=self.current_row, column=0, padx=10, pady=10)
+        self.file_select_button.grid(row=self.current_row, column=0, padx=10, pady=5)
 
-        self.file_select_entry = tk.Entry(self.window, width=100)
-        self.file_select_entry.grid(row=self.current_row, column=1, padx=10, pady=10)
+        self.file_select_entry = tk.Entry(self.window, width=80)
+        self.file_select_entry.grid(row=self.current_row, column=1, padx=10, pady=5)
         self.entries.append(self.file_select_entry)
 
         self.current_row += 1
@@ -142,6 +147,7 @@ class GuiBeautifulLiner:
         linear_approximate_length = float( self.entries[1].get() )
         delete_ratio              = float( self.entries[2].get() )
         broad_width               = float( self.entries[3].get() )
+        output_color              = str( self.output_color_var.get() )
 
         if not os.path.exists(reading_file_path):
             self.log_text.insert(tk.END, f"File not found\n")
@@ -151,7 +157,7 @@ class GuiBeautifulLiner:
 
             self.execute_button.config(state=tk.DISABLED)
             #self.do_something(self.progress_bar)
-            self.controller.run("GUI", reading_file_path, linear_approximate_length, delete_ratio, broad_width, self.progress_bar, self.log_text)
+            self.controller.run("GUI", reading_file_path, linear_approximate_length, delete_ratio, broad_width, output_color, self.progress_bar, self.log_text)
             self.execute_button.config(state=tk.NORMAL)
 
             self.progress_bar["value"] = 0
@@ -162,18 +168,30 @@ class GuiBeautifulLiner:
         #end
     #end
 
+    def __add_output_color(self):
+        self.output_color_label = tk.Label(self.window, text="")
+        self.output_color_label.grid(row=self.current_row, column=0, padx=10, pady=5)
+
+        self.output_color_var = tk.StringVar(value="black")
+        self.output_color_menu = tk.OptionMenu(self.window, self.output_color_var, *self.ITEMS)
+        self.output_color_menu.config(width=50)
+        self.output_color_menu.grid(row=self.current_row, column=1, padx=10, pady=5)
+
+        self.current_row += 1
+    #end
+
     def __add_execute_button(self, button_text):
         self.execute_button = tk.Button(self.window, text=button_text, command=lambda: self.__execute())
-        self.execute_button.grid(row=self.current_row, column=0, columnspan=2, padx=10, pady=10)
+        self.execute_button.grid(row=self.current_row, column=0, columnspan=2, padx=10, pady=5)
         self.current_row += 1
     #end
 
     def __add_progress_bar(self):
         self.progress_bar = ttk.Progressbar(self.window, length=200, mode="determinate", maximum=100)
-        self.progress_bar.grid(row=self.current_row, column=0, padx=10, pady=10)
+        self.progress_bar.grid(row=self.current_row, column=0, padx=10, pady=5)
 
         self.log_text = tk.Text(self.window, height=10)
-        self.log_text.grid(row=self.current_row, column=1, padx=10, pady=10)
+        self.log_text.grid(row=self.current_row, column=1, padx=10, pady=5)
         self.current_row += 1
     #end
 

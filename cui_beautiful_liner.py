@@ -31,13 +31,15 @@ def main():
                             dest='broad_width',
                             default=1.0,
                             help='Width size when broadening the curve')
-    argparser.add_argument('-n', '--no_broad',
-                            action='store_false',
-                            help='Donot broaden path')
+    argparser.add_argument('-c', '--color',
+                            type=str,
+                            dest='output_color',
+                            default="red",
+                            help='Output line color')
     args = argparser.parse_args()
 
     controller = Controller()
-    controller.run("CUI", args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width)
+    controller.run("CUI", args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width, args.output_color)
     print("Create " + args.reading_file_path.replace(".svg", "_BeauL.svg") )
     print("END OF JOB")
 #end
