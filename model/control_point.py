@@ -122,27 +122,27 @@ class LinearApproximateCurveControlPoint(ControlPoint):
         return min(self.__start.y, self.__end.y)
     #end
 
-    def dot3(self, o, a, b):
+    def __dot(self, o, a, b):
         return (a.x - o.x) * (b.x - o.x) + (a.y - o.y) * (b.y - o.y)
     #end
-    def cross3(self, o, a, b):
+    def __cross(self, o, a, b):
         return (a.x - o.x) * (b.y - o.y) - (b.x - o.x) * (a.y - o.y)
-    #end
-    def dist2(self, a, b):
-        return (a.x - b.x) ** 2 + (a.y - b.y) ** 2
     #end
 
     def is_intersection(self, other_segment):
-        c0 = self.cross3(self.__start, self.__end, other_segment.s)
-        c1 = self.cross3(self.__start, self.__end, other_segment.e)
-        d0 = self.cross3(other_segment.s, other_segment.e, self.__start)
-        d1 = self.cross3(other_segment.s, other_segment.e, self.__end)
+        c0 = self.__cross(self.__start, self.__end, other_segment.s)
+        c1 = self.__cross(self.__start, self.__end, other_segment.e)
+        d0 = self.__cross(other_segment.s, other_segment.e, self.__start)
+        d1 = self.__cross(other_segment.s, other_segment.e, self.__end)
         if c0 == d1 == 0:
-            e0 = self.dot3(self.__start, self.__end, other_segment.s)
-            e1 = self.dot3(self.__start, self.__end, other_segment.e)
+            e0 = self.__dot(self.__start, self.__end, other_segment.s)
+            e1 = self.__dot(self.__start, self.__end, other_segment.e)
             if not e0 < e1:
                 e0, e1 = e1, e0
-            return e0 <= self.dist2(self.__start, self.__end) and 0 <= e1
+            #end
+            dist = self.__start.distance(self.__end)
+            return e0 <= dist*dist and 0 <= e1
+        #end
         return c0 * c1 <= 0 and d0 * d1 <= 0
     #end
 

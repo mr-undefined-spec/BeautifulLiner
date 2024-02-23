@@ -19,7 +19,7 @@ import unittest
 
 class TestSvgData(unittest.TestCase):
     def test_read(self):
-        svg_from_file = Svg("TEST")
+        svg_from_file = Svg(0, "TEST")
         svg_from_file.read("data/test.svg")
 
         xs = []
@@ -44,7 +44,7 @@ class TestSvgData(unittest.TestCase):
     #end
 
     def test_raise_error_with_set_file_name_as_int(self):
-        raise_error_svg = Svg("TEST")
+        raise_error_svg = Svg(0, "TEST")
 
         with self.assertRaises(ValueError) as e:
             error = raise_error_svg.read(1)
@@ -53,14 +53,14 @@ class TestSvgData(unittest.TestCase):
     #end
 
     def test_write(self):
-        svg_from_file = Svg("TEST")
+        svg_from_file = Svg(0, "TEST")
         # just read
         svg_from_file.read("data/test.svg")
 
         # just write
         svg_from_file.write("data/write_test.svg")
 
-        reread_svg = Svg("TEST")
+        reread_svg = Svg(0, "TEST")
         reread_svg.read("data/write_test.svg")
         xs = []
         ys = []

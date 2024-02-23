@@ -49,10 +49,10 @@ class TestTotal(unittest.TestCase):
 
         bbox = (0.0, 0.0, 180.0, 180.0)
 
-        new_layer = layer.delete_edge(bbox, 0.5, "TEST")
+        new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
-        broad_linear_layer = new_layer.broaden(1.0)
-        broad_smooth_layer = broad_linear_layer.smoothen()
+        broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
+        broad_smooth_layer = broad_linear_layer.smoothen(0, "TEST")
 
 #        print( broad_smooth_layer.to_svg() )
     #end
@@ -108,10 +108,10 @@ class TestTotal(unittest.TestCase):
         layer.append(lin_curve4)
 
         bbox = (0.0, 0.0, 180.0, 180.0)
-        new_layer = layer.delete_edge(bbox, 0.5, "TEST")
+        new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
-        broad_linear_layer = new_layer.broaden(1.0)
-        broad_smooth_layer = broad_linear_layer.smoothen()
+        broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
+        broad_smooth_layer = broad_linear_layer.smoothen(0, "TEST")
 
 #        print( broad_smooth_layer.to_svg(False) )
     #end

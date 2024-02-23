@@ -19,7 +19,7 @@ class TestPoint(unittest.TestCase):
         with self.assertRaises(TypeError) as e:
             error = Point(None, None)
         #end with
-        self.assertEqual(e.exception.args[0], 'float() argument must be a string or a number, not \'NoneType\'')
+        self.assertEqual(e.exception.args[0], 'float() argument must be a string or a real number, not \'NoneType\'')
     #end
 
 #end
