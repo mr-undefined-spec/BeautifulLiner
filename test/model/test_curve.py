@@ -43,6 +43,30 @@ class TestCurve(unittest.TestCase):
 
     #end
 
+    def test_create_intersect_judge_rectangle(self):
+        # linear_curve
+        self.linear_curve.create_intersect_judge_rectangle()
+        self.assertEqual( self.linear_curve.rect.q.x, 0.0 )
+        self.assertEqual( self.linear_curve.rect.q.y, 0.0 )
+        self.assertEqual( self.linear_curve.rect.z.x, 0.0 )
+        self.assertEqual( self.linear_curve.rect.z.y, 1.0 )
+        self.assertEqual( self.linear_curve.rect.p.x, 2.0 )
+        self.assertEqual( self.linear_curve.rect.p.y, 0.0 )
+        self.assertEqual( self.linear_curve.rect.m.x, 2.0 )
+        self.assertEqual( self.linear_curve.rect.m.y, 1.0 )
+
+        #bezier_curve
+        self.bezier_curve.create_intersect_judge_rectangle()
+        self.assertEqual( self.bezier_curve.rect.q.x, 0.0 )
+        self.assertEqual( self.bezier_curve.rect.q.y, 0.0 )
+        self.assertEqual( self.bezier_curve.rect.z.x, 0.0 )
+        self.assertEqual( self.bezier_curve.rect.z.y, 200.0 )
+        self.assertEqual( self.bezier_curve.rect.p.x, 100.0 )
+        self.assertEqual( self.bezier_curve.rect.p.y, 0.0 )
+        self.assertEqual( self.bezier_curve.rect.m.x, 100.0 )
+        self.assertEqual( self.bezier_curve.rect.m.y, 200.0 )
+    #end
+
     def test_init_segment_set(self):
         self.assertEqual(self.linear_curve[0].s.x, 0.0)
         self.assertEqual(self.linear_curve[0].s.y, 0.0)

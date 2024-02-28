@@ -19,7 +19,7 @@ class Curve:
         self._end_index   = -1
     #end
 
-    def get_the_end(self):
+    def _get_the_end(self):
         # if self._end_index is initial state, then ...
         if (self._end_index == -1):
             return len(self._going_ctrl_p_set) 
@@ -366,7 +366,7 @@ class LinearApproximateCurve(Curve):
 
     def to_svg(self):
         s = ""
-        the_end = self.get_the_end()
+        the_end = self._get_the_end()
         for i in range( self._start_index, the_end ):
             ctrl_p = self._going_ctrl_p_set[i]
             s += ctrl_p.to_svg(i==self._start_index)
@@ -435,7 +435,7 @@ class LinearApproximateCurve(Curve):
         """ In LinearApproximateCurve class, public smoothen method calls only one protected _smoothen method
         On the other hand, in BroadLinearApproximateCurve class, public smoothen method calls two protected _smoothen methods(going & returning)"""
         cubic_bezier_curve = CubicBezierCurve()
-        the_end = self.get_the_end()
+        the_end = self._get_the_end()
         cubic_bezier_curve.append( self._smoothen(self._going_ctrl_p_set, self._start_index, the_end) )
         return cubic_bezier_curve
     #end
@@ -466,7 +466,7 @@ class LinearApproximateCurve(Curve):
         #end
 
         the_start_of_end_side_index = int( len(self._going_ctrl_p_set)*(1.0-ratio) )
-        the_end = self.get_the_end()
+        the_end = self._get_the_end()
         for i in range( the_start_of_end_side_index, the_end ):
             the_segment = self._going_ctrl_p_set[i]
             the_rect_tuple = the_segment.get_rect_tuple()
@@ -670,7 +670,7 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
     def smoothen(self):
         """ In LinearApproximateCurve, public smoothen method calls only one protected _smoothen method
         On the other hand, in BroadLinearApproximateCurve, public smoothen method calls two protected _smoothen methods(going & returning)"""
-        the_end = self.get_the_end()
+        the_end = self._get_the_end()
         going_smooth_ctrl_p = self._smoothen(self._going_ctrl_p_set, self._start_index, the_end)
 
         returning_start = len(self._returning_ctrl_p_set) - the_end 
@@ -684,7 +684,7 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
 
     def to_svg(self):
         s = ""
-        the_end = self.get_the_end()
+        the_end = self._get_the_end()
         for i in range( self._start_index, the_end ):
             ctrl_p = self._going_ctrl_p_set[i]
             s += ctrl_p.to_svg(i==self._start_index)
