@@ -28,3 +28,5 @@ BeautifulLiner中段の各種パラメータを変更してください（通常
 ## 修正
 一発で綺麗な線画が出来ればよいのですが、残念ながら本ツールではそうはいきません。  
 変換後の線画ファイルは再度Linearity Curveで開き、適宜修正してください。  
+# For Linearity Curve Developers
+I love Linearity Curve. This application and algorithm is publicly available. Please add this application to Linearity Curve. The consideration is ok with a perpetual license to Linearity Curve (just kidding of course)
