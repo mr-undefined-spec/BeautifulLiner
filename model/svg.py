@@ -240,13 +240,24 @@ class Svg:
     #end
 
     def combine(self, other_svg):
-        new_svg = Svg(self.__mode, self.__progress_bar, self.__log_text)
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_svg.append(layer.name, layer.path_data)
         #end
         for other_layer in other_svg:
             new_svg.append(other_layer.name, other_layer.path_data)
+        #end
+        return new_svg
+    #end
+
+    def get_single_layer_svg(self, target_layer_name):
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_svg.set_view_box( self.__view_box )
+        for layer in self.__layers:
+            if( layer.name == target_layer_name ):
+                new_svg.append("L_" + layer.name, layer.path_data)
+            #end
         #end
         return new_svg
     #end
