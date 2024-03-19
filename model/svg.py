@@ -23,7 +23,7 @@ class Svg:
     def __split_to_xy(self, point_str):
         s2 = point_str.replace("-", " -")
         tmp_items = re.split(r'\s+', s2)
-        return tmp_items
+        return list( filter(None, tmp_items) )
     #end def
     
     # IN  nodeValue of d in path of svg as string
@@ -256,7 +256,7 @@ class Svg:
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             if( layer.name == target_layer_name ):
-                new_svg.append("L_" + layer.name, layer.path_data)
+                new_svg.append(layer.name, layer.path_data)
             #end
         #end
         return new_svg
