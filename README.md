@@ -40,7 +40,3 @@ BeautifulLiner上段のファイル選択より先ほどのSVGファイルを選
 曲率の大きな曲線は綺麗に変換されません。  
 以下図を参考に曲率の小さい曲線を描くようにしてみてください。  
 ![Test Image 1](images/Curvature.png)  
-
-# For Linearity Curve Developers
-I love Linearity Curve. This application and algorithm is open (MIT License). So, please add this application to Linearity Curve.  
-As a reward, a perpetual license to Linearity Curve would suffice for me (just kidding, of course).
