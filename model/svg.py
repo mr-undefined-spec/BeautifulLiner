@@ -22,7 +22,7 @@ class Svg:
     #
     def __split_to_xy(self, point_str):
         s2 = point_str.replace("-", " -")
-        tmp_items = re.split(r'\s+', s2)
+        tmp_items = re.split(r'\s+|\+', s2)
         return list( filter(None, tmp_items) )
     #end def
     
