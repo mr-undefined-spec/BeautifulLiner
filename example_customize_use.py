@@ -17,28 +17,45 @@ from curve import LinearApproximateCurve
 from layer import Layer
 
 from svg import Svg
-def custom_run(mode, reading_file_path, linear_approximate_length, delete_ratio, broad_width, output_color, progress_bar=None, log_text=None):
-    svg = Svg(0, mode, progress_bar, log_text)
-    svg.read(reading_file_path)
 
-    kage_svg = svg.get_single_layer_svg("Kage")
-    kage_once_linearized = kage_svg.linearize(linear_approximate_length)
-    kage_once_smoothened = kage_once_linearized.smoothen()
-    kage_once_smoothened.set_write_options(is_fill=False, color="#0000ff")
-
-    senga_svg = svg.get_single_layer_svg("Senga")
-    once_linearized = senga_svg.linearize(linear_approximate_length)
+def get_special_smoothened_for_hair(single_layer_svg, linear_approximate_length, delete_ratio, broad_width, color):
+    once_linearized = single_layer_svg.linearize(linear_approximate_length)
     once_smoothened = once_linearized.smoothen()
-    once_smoothened.set_write_options(is_fill=False, color="#00ff00")
+    
+    linearized  = once_smoothened.linearize(linear_approximate_length)
+    delete_edge = linearized.delete_edge(delete_ratio)
+    broadened   = delete_edge.broaden(broad_width)
+    smoothened  = broadened.special_smoothen_for_hair()
+    smoothened.set_write_options(is_fill=True, color=color)
+
+    return smoothened
+#end
+
+def get_smoothened(single_layer_svg, linear_approximate_length, delete_ratio, broad_width, color):
+    once_linearized = single_layer_svg.linearize(linear_approximate_length)
+    once_smoothened = once_linearized.smoothen()
     
     linearized  = once_smoothened.linearize(linear_approximate_length)
     delete_edge = linearized.delete_edge(delete_ratio)
     broadened   = delete_edge.broaden(broad_width)
     smoothened  = broadened.smoothen()
-    smoothened.set_write_options(is_fill=True, color="#ff0000")
+    smoothened.set_write_options(is_fill=True, color=color)
+
+    return smoothened
+#end
+
+
+def custom_run(mode, reading_file_path, linear_approximate_length, delete_ratio, broad_width, output_color, progress_bar=None, log_text=None):
+    svg = Svg(0, mode, progress_bar, log_text)
+    svg.read(reading_file_path)
+
+    hair_smoothened = get_smoothened( svg.get_single_layer_svg("Hair"), linear_approximate_length, delete_ratio, broad_width, "#ff0000" )
+    body_smoothened = get_smoothened( svg.get_single_layer_svg("Body"), linear_approximate_length, delete_ratio, broad_width, "#00ff00" )
+    cloth_smoothened = get_smoothened( svg.get_single_layer_svg("Cloth"), linear_approximate_length, delete_ratio, broad_width, "#0000ff" )
+#    detail_smoothened = get_smoothenend( svg.get_single_layer_svg("Detail"), linear_approximate_length, broad_width )
 
     writing_file_path = reading_file_path.replace(".svg", "_BeauL.svg")
-    final = svg.combine(smoothened).combine(kage_once_smoothened).combine(once_smoothened)
+    final = hair_smoothened.combine(body_smoothened).combine(cloth_smoothened)#.combine(detail_smoothened).combine(kage_once_smoothened)
     final.write(writing_file_path)
 #end
 

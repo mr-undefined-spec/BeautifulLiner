@@ -222,6 +222,16 @@ class Svg:
         return new_svg
     #end
 
+    def special_smoothen_for_hair(self):
+        self.__global_calc_step += 1
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_svg.set_view_box( self.__view_box )
+        for layer in self.__layers:
+            new_svg.append("S_" + layer.name, layer.path_data.special_smoothen_for_hair(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+        #end
+        return new_svg
+    #end
+
     def delete_edge(self, ratio):
         self.__global_calc_step += 1
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)

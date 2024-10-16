@@ -81,7 +81,7 @@ class Layer:
             self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
             linear_approximate_curve = curve.linearize(micro_segment_length)
 
-            # If the target curve is too whort and the linearize results are less than 4 points,
+            # If the target curve is too short and the linearize results are less than 4 points,
             # smoothen method will not work.
             # So ignore the target curve
             if len(linear_approximate_curve) > 4:
@@ -103,6 +103,22 @@ class Layer:
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
             new_layer.append( curve.smoothen() )
+        #end
+        return new_layer
+    #end
+
+    def special_smoothen_for_hair(self, global_calc_step, mode, progress_bar=None, log_text=None):
+        new_layer = Layer()
+
+        step_name = ""
+        if global_calc_step == 1:
+            step_name = "smoothen 1st"
+        else:
+            step_name = "smoothen 2nd"
+        #end
+        for i, curve in enumerate(self.__curve_set):
+            self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
+            new_layer.append( curve.special_smoothen_for_hair() )
         #end
         return new_layer
     #end
