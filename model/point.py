@@ -23,6 +23,11 @@ class Point:
         return s
     #end 
 
+    def __eq__(self, other):
+        return (self.__x == other.x) and (self.__y == other.y)
+    #end
+
+
     def distance(self, other_point):
         delta_x = self.__x - other_point.x
         delta_y = self.__y - other_point.y

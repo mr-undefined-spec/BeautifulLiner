@@ -72,6 +72,17 @@ class CubicBezierCurveControlPoint(ControlPoint):
         return s
     #end
 
+    def __eq__(self, other):
+        if(self.__p0 == other.p0
+            and self.__p1 == other.p1
+            and self.__p2 == other.p2
+            and self.__p3 == other.p3):
+            return True
+        else:
+            return False
+        #end
+    #end
+
     def to_svg(self, is_going_first, is_returning_first=False):
         s = ""
         if is_going_first:

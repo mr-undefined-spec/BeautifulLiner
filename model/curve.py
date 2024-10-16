@@ -679,6 +679,7 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
 
         broad_cubic_bezier_curve = BroadCubicBezierCurve()
         broad_cubic_bezier_curve.set_ctrl_p(going_smooth_ctrl_p, returning_smooth_ctrl_p)
+        
         return broad_cubic_bezier_curve
     #end
 
@@ -716,12 +717,18 @@ class BroadCubicBezierCurve(CubicBezierCurve):
         """ Curve has many control points, but BroadCubicBezierCurve has ONLY ONE control point in each going & returning."""
         self._going_ctrl_p_set     = [going_ctrl_p]
         self._returning_ctrl_p_set = [returning_ctrl_p]
+
+#        print( self._going_ctrl_p_set[0].to_svg(True), self._returning_ctrl_p_set[0].to_svg(False, True) )
     #end
 
     def to_svg(self):
         s = ""
         s += self._going_ctrl_p_set[0].to_svg(True)
-        s += self._returning_ctrl_p_set[0].to_svg(False, True)
+        if(self._going_ctrl_p_set[0].p3 == self._returning_ctrl_p_set[0].p0 ):
+            s += self._returning_ctrl_p_set[0].to_svg(False, False)
+        else:
+            s += self._returning_ctrl_p_set[0].to_svg(False, True)
+        #end
         s += "Z"
         return s
     #end

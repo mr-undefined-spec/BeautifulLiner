@@ -138,7 +138,7 @@ class Svg:
     #end
 
     def get_bbox(self):
-        arr = self.__view_box.split(" ")
+        arr = self.__view_box.split(",")
         return ( float(arr[0]), float(arr[1]), float(arr[2]), float(arr[3]) )
     #end
 
@@ -177,14 +177,21 @@ class Svg:
     #end
 
     def write(self, path):
+        bbox = self.get_bbox()
         s = ""
-        s += '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
+        s += '<?xml version="1.0" encoding="UTF-8"?>\n'
         s += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
-        s += '<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink"'
+        s += '<!-- Created with Inkpad (http://www.taptrix.com/) -->\n'
+        s += '<svg xmlns:inkpad="http://taptrix.com/inkpad/svg_extensions" '
+        s += 'height="' + str(bbox[3]) + 'pt" '
+        s += 'xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" '
+        s += 'width="' + str(bbox[2]) + 'pt" version="1.1" '
         s += ' viewBox="' + self.__view_box + '" '
         s += '>\n'
+
         for layer in self.__layers:
-            s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
+            #s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
+            s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
             s += layer.path_data.to_svg()
             s += '</g>\n'
         #end
