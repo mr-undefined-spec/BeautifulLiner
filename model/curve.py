@@ -4,8 +4,8 @@ from scipy.special import comb
 
 import math
 from point import Point
-from control_point import CubicBezierCurveControlPoint
-from control_point import LinearApproximateCurveControlPoint
+from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
+from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
 from rectangular import Rectangular
 

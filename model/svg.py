@@ -2,7 +2,7 @@
 from xml.dom import minidom
 
 from point import Point
-from control_point import CubicBezierCurveControlPoint
+from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from curve import CubicBezierCurve
 from layer import Layer
 

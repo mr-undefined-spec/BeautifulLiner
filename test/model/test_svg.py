@@ -5,10 +5,9 @@ import sys
 import pprint
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/primitive'))
 
 from point import Point
-from control_point import CubicBezierCurveControlPoint
-from control_point import LinearApproximateCurveControlPoint
 from curve import CubicBezierCurve
 from curve import LinearApproximateCurve
 from layer import Layer

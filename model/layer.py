@@ -2,7 +2,6 @@
 import copy
 
 from point import Point
-from control_point import LinearApproximateCurveControlPoint
 
 from curve import Curve
 import tkinter as tk

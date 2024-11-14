@@ -49,13 +49,14 @@ def custom_run(mode, reading_file_path, linear_approximate_length, delete_ratio,
     svg = Svg(0, mode, progress_bar, log_text)
     svg.read(reading_file_path)
 
-    hair_smoothened = get_smoothened( svg.get_single_layer_svg("Hair"), linear_approximate_length, delete_ratio, broad_width, "#ff0000" )
+    hair_smoothened = get_special_smoothened_for_hair( svg.get_single_layer_svg("Hair"), linear_approximate_length, delete_ratio, broad_width, "#ff0000" )
     body_smoothened = get_smoothened( svg.get_single_layer_svg("Body"), linear_approximate_length, delete_ratio, broad_width, "#00ff00" )
     cloth_smoothened = get_smoothened( svg.get_single_layer_svg("Cloth"), linear_approximate_length, delete_ratio, broad_width, "#0000ff" )
+    others_smoothened = get_smoothened( svg.get_single_layer_svg("Hand"), linear_approximate_length, delete_ratio, broad_width, "#0000ff" )
 #    detail_smoothened = get_smoothenend( svg.get_single_layer_svg("Detail"), linear_approximate_length, broad_width )
 
     writing_file_path = reading_file_path.replace(".svg", "_BeauL.svg")
-    final = hair_smoothened.combine(body_smoothened).combine(cloth_smoothened)#.combine(detail_smoothened).combine(kage_once_smoothened)
+    final = hair_smoothened.combine(body_smoothened).combine(cloth_smoothened).combine(others_smoothened)
     final.write(writing_file_path)
 #end
 
