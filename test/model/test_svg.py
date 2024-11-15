@@ -6,10 +6,11 @@ import pprint
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/primitive'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 
 from point import Point
-from curve import CubicBezierCurve
-from curve import LinearApproximateCurve
+from cubic_bezier_curve import CubicBezierCurve
+from linear_approximate_curve import LinearApproximateCurve
 from layer import Layer
 
 from svg import Svg

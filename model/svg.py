@@ -3,7 +3,7 @@ from xml.dom import minidom
 
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from curve import CubicBezierCurve
+from cubic_bezier_curve import CubicBezierCurve
 from layer import Layer
 
 import tkinter as tk
