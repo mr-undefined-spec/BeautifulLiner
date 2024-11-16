@@ -3,9 +3,10 @@ import os
 import sys
 import math
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/curve'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/compose'))
 
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint

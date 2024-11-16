@@ -28,5 +28,8 @@ os.chdir(cwd)
 doTestIn(r".\model\curve")
 os.chdir(cwd)
 
+doTestIn(r".\model\compose")
+os.chdir(cwd)
+
 doTestIn(r".\model")
 os.chdir(cwd)
