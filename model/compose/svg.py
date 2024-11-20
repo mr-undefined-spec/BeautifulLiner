@@ -207,7 +207,7 @@ class Svg:
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_layer = layer.path_data.linearize(micro_segment_length, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_svg.append("L_" + layer.name, new_layer)
+            new_svg.append(layer.name, new_layer)
         #end
         return new_svg
     #end
@@ -217,7 +217,7 @@ class Svg:
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append("S_" + layer.name, layer.path_data.smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+            new_svg.append(layer.name, layer.path_data.smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
         return new_svg
     #end
@@ -227,9 +227,35 @@ class Svg:
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append("S_" + layer.name, layer.path_data.special_smoothen_for_hair(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+            new_svg.append(layer.name, layer.path_data.special_smoothen_for_hair(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
         return new_svg
+    #end
+
+    def create_intersect_judge_rectangle(self):
+        self.__global_calc_step += 1
+        bbox = self.get_bbox()
+        for layer in self.__layers:
+            layer.path_data.create_intersect_judge_rectangle(bbox)
+        #end
+    #end
+
+    def create_edge_segments(self):
+        self.__global_calc_step += 1
+        for layer in self.__layers:
+            layer.path_data.create_edge_segments()
+        #end
+    #end
+
+    def create_continuous_curve_index_group(self, distance_threshold):
+        
+        self.__global_calc_step += 1
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_svg.set_view_box( self.__view_box )
+        bbox = self.get_bbox()
+        for layer in self.__layers:
+            layer.path_data.create_continuous_curve_index_group( distance_threshold, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        #end
     #end
 
     def delete_edge(self, ratio):
@@ -239,7 +265,7 @@ class Svg:
         bbox = self.get_bbox()
         for layer in self.__layers:
             new_layer = layer.path_data.delete_edge(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_svg.append("D_" + layer.name, new_layer)
+            new_svg.append(layer.name, new_layer)
         #end
         return new_svg
     #end

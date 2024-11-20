@@ -101,5 +101,8 @@ class LinearApproximateCurveControlPoint(ControlPoint):
         s += "L " + str(self.__end) + " "
         return s
     #end
+
+    def __minus__(self, other):
+        return LinearApproximateCurveControlPoint(self.__start - other, self.__end - other) 
 #end
 

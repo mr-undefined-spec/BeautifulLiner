@@ -122,6 +122,102 @@ class Layer:
         return new_layer
     #end
 
+    def create_intersect_judge_rectangle(self, bbox):
+        for i, curve in enumerate(self.__curve_set):
+            curve.create_intersect_judge_rectangle()
+            curve.create_qtree_ctrl_p_set(bbox)
+        #end
+    #end
+
+    def create_edge_segments(self):
+        for i, curve in enumerate(self.__curve_set):
+            curve.create_edge_segments()
+        #end
+    #end
+
+
+    def __get_continuous_curve_index_group(self, target_curve_index, target_curve, distance_threshold):
+
+        ret_curve_index_group = [target_curve_index]
+
+        candidate_curve_index_set = []
+        total_curve_num = len(self.__curve_set)
+#        for i in range(target_curve_index+1, total_curve_num):
+        for i in range(total_curve_num):
+            if i == target_curve_index:
+                continue
+            #end
+            curve = self.__curve_set[i]
+            if target_curve.rect.test_collision(curve.rect):
+                candidate_curve_index_set.append(i)
+            #end
+        #end
+
+        potential_continuous_curve_num = len(candidate_curve_index_set)
+
+        for candidate_curve_index in candidate_curve_index_set:
+            candidate_curve = self.__curve_set[candidate_curve_index]
+            if target_curve.is_continuaous_with(candidate_curve, distance_threshold):
+                ret_curve_index_group.append(candidate_curve_index)
+            #end
+        #end
+
+        return ret_curve_index_group
+    #end
+
+    def create_continuous_curve_index_group(self, distance_threshold, global_calc_step, mode, progress_bar=None, log_text=None):
+
+        self.continuous_curve_index_group = []
+
+        flatten_curve_index_group = []
+        curve_num = len(self.__curve_set)
+        for i, curve in enumerate(self.__curve_set):
+            self.__print_step(mode, global_calc_step+1, i, "create continuous curve group", progress_bar, log_text)
+            self.continuous_curve_index_group.append( self.__get_continuous_curve_index_group(i, curve, distance_threshold) )
+
+        #end
+
+        self.continuous_curve_index_group = self.merge_common_elements(self.continuous_curve_index_group)
+
+        #print(self.continuous_curve_index_group)
+    #end
+
+    from typing import List
+
+    def merge_common_elements(self, arrays: List[List[int]]) -> List[List[int]]:
+        def find_group(value, groups):
+            """Find the group containing the value, or return None."""
+            for group in groups:
+                if value in group:
+                    return group
+            return None
+
+        groups = []
+
+        for array in arrays:
+            # Find all groups that have an intersection with the current array
+            intersecting_groups = []
+            for value in array:
+                group = find_group(value, groups)
+                if group and group not in intersecting_groups:
+                    intersecting_groups.append(group)
+
+            if intersecting_groups:
+                # Merge all intersecting groups with the current array
+                merged_group = set(array)
+                for group in intersecting_groups:
+                    merged_group.update(group)
+                    groups.remove(group)
+                groups.append(merged_group)
+            else:
+                # No intersection, add the array as a new group
+                groups.append(set(array))
+
+        # Convert sets back to sorted lists for the final output
+        return [sorted(list(group)) for group in groups]
+
+
+
     def __get_edge_deleted_curve(self, target_curve, ratio):
         new_curve = copy.deepcopy(target_curve)
 

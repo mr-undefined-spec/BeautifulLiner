@@ -4,6 +4,7 @@ from scipy.special import comb
 
 import math
 from point import Point
+from vector import Vector
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
@@ -17,6 +18,8 @@ class LinearApproximateCurve(Curve):
     def __init__(self):
         super().__init__()
         self.qtree_ctrl_p_set = None
+        self.start_side_edge_segment = None
+        self.end_side_edge_segment   = None
     #end
 
     def append(self, linear_ctrl_p):
@@ -116,6 +119,290 @@ class LinearApproximateCurve(Curve):
         return self.qtree_ctrl_p_set.intersect(target_rect_tuple)
     #end
 
+
+    def __min_distance_segment_to_segment(self, seg1_start, seg1_end, seg2_start, seg2_end):
+        distance_seg1_s = self.__distance_point_to_line(seg1_start.x, seg1_start.y, seg1_end.x, seg1_end.y, seg2_start.x, seg2_start.y)
+        distance_seg1_e = self.__distance_point_to_line(seg1_start.x, seg1_start.y, seg1_end.x, seg1_end.y, seg2_end.x, seg2_end.y)
+        distance_seg2_s = self.__distance_point_to_line(seg2_start.x, seg2_start.y, seg2_end.x, seg2_end.y, seg1_start.x, seg1_start.y)
+        distance_seg2_e = self.__distance_point_to_line(seg2_start.x, seg2_start.y, seg2_end.x, seg2_end.y, seg1_end.x, seg1_end.y)
+
+        return min(distance_seg1_s, distance_seg1_e, distance_seg2_s, distance_seg2_e)
+    #end
+    def __distance_point_to_line(self,x1, y1, x2, y2, px, py):
+        """
+        2点 (x1, y1), (x2, y2) を通る直線と点 (px, py) との距離を求める。
+
+        Args:
+            x1, y1: 1つ目の点の座標
+            x2, y2: 2つ目の点の座標
+            px, py: 線上にない点の座標
+
+        Returns:
+            距離 (float) またはエラーメッセージ (str)
+        """
+        # 2点が同じ場合は直線が定義できない
+        if x1 == x2 and y1 == y2:
+            return "2点が同じ座標です。直線が定義できません。"
+
+        # 2点を通る直線の方程式: Ax + By + C = 0 の係数を計算
+        A = y2 - y1
+        B = x1 - x2
+        C = x2 * y1 - x1 * y2
+
+        denominator = math.sqrt(A**2 + B**2)
+
+        # 点と直線の距離の公式を適用
+        distance = abs(A * px + B * py + C) / denominator
+        return distance
+
+
+
+    def __calculate_distance(self, point, line_start, line_end):
+        """点と直線の距離を計算する"""
+        line_vec = ((line_end.x - line_start.x), (line_end.y - line_start.y))#, line_end - line_start
+        point_vec = ((point.e.x - line_start.x), (point.e.y - line_start.y))
+        line_length = np.linalg.norm(line_vec)
+        if line_length == 0:
+            return np.linalg.norm(point_vec)
+        print(line_vec, point_vec, line_length)
+        projection = np.dot(point_vec, line_vec) / line_length
+        if projection < 0:
+            return np.linalg.norm(point_vec)
+        elif projection > line_length:
+            return np.linalg.norm(point - line_end)
+        else:
+            projection_point = line_start + projection * line_vec / line_length
+            return np.linalg.norm(point - projection_point)
+
+    def __is_approximated_with_segment(self, start_index, end_index, threshold):
+        """
+        微小線分の集合に対し、端部から一定区間を直線で近似できる範囲を求める
+        
+        :param segments: 微小線分集合 [(x1, y1), (x2, y2), ...]
+        :param segment_count: 端部からの区間に含める微小線分の個数
+        :param threshold: 距離の平均値の閾値
+        :return: 直線近似が可能な端部の範囲（始点インデックス, 終点インデックス）
+        """
+        segments = np.array(self._going_ctrl_p_set[start_index:end_index])
+        segment_count = end_index - start_index
+        n = len(segments)
+        if n < segment_count:
+            raise ValueError("微小線分が指定された個数より少ないです。")
+        
+        # 始点からの計算
+        start_point = segments[0].s
+        end_point = segments[segment_count - 1].e
+        distances = [
+#            self.__calculate_distance(segments[i], start_point, end_point)
+            self.__distance_point_to_line(start_point.x, start_point.y, end_point.x, end_point.y, segments[i].s.x, segments[i].s.y)
+            for i in range(segment_count)
+        ]
+        avg_distance = np.mean(distances)
+        
+        if avg_distance <= threshold:
+            return True 
+        else:
+            return False
+        #end
+    #end
+
+    def prepare_edge_segments(self):
+        start_side_start_index = 0
+        start_side_end_index = 1 #FIXME
+        end_side_start_index = len(self._going_ctrl_p_set) - 2
+        end_side_end_index = len(self._going_ctrl_p_set) - 1
+
+        num_of_going_ctrl_p_set = len(self._going_ctrl_p_set)
+        the_25_percent_index_of_this_curve = int(num_of_going_ctrl_p_set*0.25)
+        the_75_percent_index_of_this_curve = int(num_of_going_ctrl_p_set*0.75)
+
+        for i in range(1, the_25_percent_index_of_this_curve):
+            if not self.__is_approximated_with_segment(start_side_start_index, i, 0.1):
+                start_side_end_index = i+1
+                break
+            #end
+        #end
+
+        for i in reversed( range(the_75_percent_index_of_this_curve, num_of_going_ctrl_p_set-2) ):
+            if not self.__is_approximated_with_segment(i, end_side_end_index, 0.1):
+                end_side_start_index = i
+                break
+            #end
+        #end
+        
+        self.start_side_edge_segment = LinearApproximateCurveControlPoint(self._going_ctrl_p_set[start_side_start_index].s, self._going_ctrl_p_set[start_side_end_index].e)
+        self.end_side_edge_segment = LinearApproximateCurveControlPoint(self._going_ctrl_p_set[end_side_start_index].s, self._going_ctrl_p_set[end_side_end_index].e)
+
+    #end
+
+
+
+    def __is_continuous_with(self, target_control_point, reference_control_points, distance_threshold):
+        s = ""
+        target_vec = Vector(target_control_point.s, target_control_point.e)
+
+        for ref_cp in reference_control_points:
+            distance_s_s = target_control_point.s.distance(ref_cp.s)
+            distance_e_e = target_control_point.e.distance(ref_cp.e)
+            distance_s_e = target_control_point.s.distance(ref_cp.e)
+            distance_e_s = target_control_point.e.distance(ref_cp.s)
+
+            distance_check = False
+            if distance_s_s < distance_threshold and distance_e_e < distance_threshold:
+                distance_check = True
+            elif distance_s_e < distance_threshold and distance_e_s < distance_threshold:
+                distance_check = True
+            #end
+
+
+
+
+            s = ""
+            s += "target_control_point: {}, {}\n".format(str(target_control_point.s), str(target_control_point.e))
+            s += "target_vec: ({}, {})\n".format(target_vec.x, target_vec.y)
+            s += "ref_cp: {}, {}\n".format(str(ref_cp.s), str(ref_cp.e))
+            ref_vec = Vector(ref_cp.s, ref_cp.e)
+            s += "ref_vec: ({}, {})\n".format(ref_vec.x, ref_vec.y)
+
+            angle_check = False
+            angle = target_vec.calc_angle(ref_vec)
+            if angle < 10.0*math.pi/180.0:
+                angle_check = True
+            elif angle > 170.0*math.pi/180.0:
+                angle_check = True
+            #end
+
+            s += "angle: {}\n".format(angle*180.0/math.pi)
+
+            print(s)
+
+
+            print(angle*180.0/math.pi, angle_check)
+
+            if distance_check and angle_check:
+                return True
+            #end
+        #end
+        print(s)
+        return False
+    #end
+
+    def is_continuaous_with(self, other_curve, distance_threshold):
+        this_start_side_edge_segment = self.start_side_edge_segment
+        this_end_side_edge_segment = self.end_side_edge_segment
+        other_start_side_edge_segment = other_curve.start_side_edge_segment
+        other_end_side_edge_segment = other_curve.end_side_edge_segment
+
+        target_edge_segment_of_this = None
+        target_edge_segment_of_other = None
+
+        start_point_of_this = this_start_side_edge_segment.s
+        end_point_of_this = this_end_side_edge_segment.e
+        start_point_of_other = other_start_side_edge_segment.s
+        end_point_of_other = other_end_side_edge_segment.e
+
+        distance_s_s = start_point_of_this.distance(start_point_of_other)
+        distance_e_e = end_point_of_this.distance(end_point_of_other)
+        distance_s_e = start_point_of_this.distance(end_point_of_other)
+        distance_e_s = end_point_of_this.distance(start_point_of_other)
+        min_distance_of_four = min(distance_s_s, distance_e_e, distance_s_e, distance_e_s)
+
+        if min_distance_of_four == distance_s_s:
+            target_edge_segment_of_this = this_start_side_edge_segment
+            target_edge_segment_of_other = other_start_side_edge_segment
+        elif min_distance_of_four == distance_e_e:
+            target_edge_segment_of_this = this_end_side_edge_segment
+            target_edge_segment_of_other = other_end_side_edge_segment
+        elif min_distance_of_four == distance_s_e:
+            target_edge_segment_of_this = this_start_side_edge_segment
+            target_edge_segment_of_other = other_end_side_edge_segment
+        else:
+            target_edge_segment_of_this = this_end_side_edge_segment
+            target_edge_segment_of_other = other_start_side_edge_segment
+        #end
+
+        min_distance = self.__min_distance_segment_to_segment(target_edge_segment_of_this.s, target_edge_segment_of_this.e, target_edge_segment_of_other.s, target_edge_segment_of_other.e)
+        #print(this_start_side_edge_segment.to_svg(True), this_end_side_edge_segment.to_svg(True))
+        #print(other_start_side_edge_segment.to_svg(True), other_end_side_edge_segment.to_svg(True))
+        #print(target_edge_segment_of_this.to_svg(True), target_edge_segment_of_other.to_svg(True))
+        #print(min_distance)
+
+        distance_check = min_distance < distance_threshold
+
+        vec_this = Vector(target_edge_segment_of_this.s, target_edge_segment_of_this.e)
+        vec_other = Vector(target_edge_segment_of_other.s, target_edge_segment_of_other.e)
+
+        angle = vec_this.calc_angle(vec_other)
+        angle_check = angle < 30.0*math.pi/180.0 or angle > 150.0*math.pi/180.0
+        
+        #print(angle*180.0/math.pi, angle_check)
+
+        return distance_check and angle_check
+
+    #end
+
+
+    def tottoku(self, other_curve, distance_threshold):
+        num_of_going_ctrl_p_set = len(self._going_ctrl_p_set)
+        num_of_other_going_ctrl_p_set = len(other_curve._going_ctrl_p_set)
+
+        the_10_percent_index_of_this_curve = int(num_of_going_ctrl_p_set*0.1)
+        the_90_percent_index_of_this_curve = int(num_of_going_ctrl_p_set*0.9)
+        the_10_percent_index_of_other_curve = int(num_of_other_going_ctrl_p_set*0.1)
+        the_90_percent_index_of_other_curve = int(num_of_other_going_ctrl_p_set*0.9)
+
+        """
+        the_first_point_of_this_curve = self._going_ctrl_p_set[0].s
+        the_point_at_10_percent_of_this_curve = self._going_ctrl_p_set[the_10_percent_index].e
+        the_point_at_90_percent_of_this_curve = self._going_ctrl_p_set[the_90_percent_index].s
+        the_last_point_of_this_curve = self._going_ctrl_p_set[-1].e
+        vec_first_to_10_percent_of_this_curve = Vector(the_first_point_of_this_curve, the_point_at_10_percent_of_this_curve)
+        vec_90_percent_to_last_of_this_curve = Vector(the_point_at_90_percent_of_this_curve, the_last_point_of_this_curve)
+
+        the_first_point_of_other_curve = other_curve._going_ctrl_p_set[0].s
+        the_point_at_10_percent_of_other_curve = other_curve._going_ctrl_p_set[the_10_percent_index].e
+        the_point_at_90_percent_of_other_curve = other_curve._going_ctrl_p_set[the_90_percent_index].s
+        the_last_point_of_other_curve = other_curve._going_ctrl_p_set[-1].e
+        vec_first_to_10_percent_of_other_curve = Vector(the_first_point_of_other_curve, the_point_at_10_percent_of_other_curve)
+        vec_90_percent_to_last_of_other_curve = Vector(the_point_at_90_percent_of_other_curve, the_last_point_of_other_curve)
+
+        the_first_control_point_of_this_curve = self._going_ctrl_p_set[the_10_percent_index_of_this_curve]
+        the_last_control_point_of_this_curve = self._going_ctrl_p_set[the_90_percent_index_of_this_curve]
+
+        the_first_control_point_of_other_curve = other_curve._going_ctrl_p_set[the_10_percent_index_of_other_curve]
+        the_last_control_point_of_other_curve = other_curve._going_ctrl_p_set[the_90_percent_index_of_other_curve]
+        """
+
+        the_first_control_point_of_this_curve = self._going_ctrl_p_set[10]
+        the_last_control_point_of_this_curve = self._going_ctrl_p_set[-10]
+
+        the_first_control_point_of_other_curve = other_curve._going_ctrl_p_set[10]
+        the_last_control_point_of_other_curve = other_curve._going_ctrl_p_set[-10]
+
+
+        if self.__is_continuous_with(the_first_control_point_of_this_curve, other_curve._going_ctrl_p_set, distance_threshold):
+            print("the_first_control_point_of_this_curve")
+            if self.__is_continuous_with(the_first_control_point_of_other_curve, self._going_ctrl_p_set, distance_threshold):
+                print("the_first_control_point_of_other_curve")
+                return True
+            elif self.__is_continuous_with(the_last_control_point_of_other_curve, self._going_ctrl_p_set, distance_threshold):
+                print("the_last_control_point_of_other_curve")
+                return True
+            #end
+        elif self.__is_continuous_with(the_last_control_point_of_this_curve, other_curve._going_ctrl_p_set, distance_threshold):
+            print("the_last_control_point_of_this_curve")
+            if self.__is_continuous_with(the_first_control_point_of_other_curve, self._going_ctrl_p_set, distance_threshold):
+                print("the_first_control_point_of_other_curve")
+                return True
+            elif self.__is_continuous_with(the_last_control_point_of_other_curve, self._going_ctrl_p_set, distance_threshold):
+                print("the_last_control_point_of_other_curve")
+                return True
+            #end
+        #end
+
+        return False
+    #end 
+
     def update_start_end_index_with_intersection(self, other_curve, ratio):
         the_end_of_start_side_index = int( len(self._going_ctrl_p_set)*ratio )
         for i in range( self._start_index, the_end_of_start_side_index ):
@@ -139,11 +426,10 @@ class LinearApproximateCurve(Curve):
                 #end
             #end
         #end
-
     #end 
 
     # 
-    # The Algorithm
+    # The broaden algorithm
     #                                                                                                                                        
     # 0. Prerequisite
     #
