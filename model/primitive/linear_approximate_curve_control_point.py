@@ -1,4 +1,6 @@
 
+import numpy as np
+
 from point import Point
 from control_point import ControlPoint
 
@@ -84,8 +86,45 @@ class LinearApproximateCurveControlPoint(ControlPoint):
 
         return (min_x, min_y, max_x, max_y)
     #end
-        
 
+    def get_distance_to_point(self, point):
+        this_vec = ((self.__end.x - self.__start.x), (self.__end.y - self.__start.y))#, line_end - self.__start
+        point_vec = ((point.x - self.__start.x), (point.y - self.__start.y))
+        line_length = np.linalg.norm(this_vec)
+        if line_length == 0:
+            return np.linalg.norm(point_vec)
+        #end
+        projection = np.dot(point_vec, this_vec) / line_length
+        if projection < 0:
+            return np.linalg.norm(point_vec)
+        elif projection > line_length:
+            point_vec_from_end = ((point.x - self.__end.x), (point.y - self.__end.y))
+            return np.linalg.norm(point_vec_from_end)
+        else:
+            projection_point_x = self.__start.x + projection * this_vec[0] / line_length
+            projection_point_y = self.__start.y + projection * this_vec[1] / line_length
+            projection_point_vec_from_point = ((projection_point_x - point.x), (projection_point_y - point.y))
+            return np.linalg.norm(projection_point_vec_from_point)
+        #end
+    #end
+
+    def get_min_distance_to_segment(self, other_segment):
+        distanse_this_seg_to_other_start = self.get_distance_to_point(other_segment.s)
+        distanse_this_seg_to_other_end   = self.get_distance_to_point(other_segment.e)
+        distance_other_seg_to_this_start = other_segment.get_distance_to_point(self.__start)
+        distance_other_seg_to_this_end   = other_segment.get_distance_to_point(self.__end)
+
+        return min(distanse_this_seg_to_other_start, distanse_this_seg_to_other_end, distance_other_seg_to_this_start, distance_other_seg_to_this_end)
+    #end
+
+    def get_average_distance_to_segment(self, other_segment):
+        distanse_this_seg_to_other_start = self.get_distance_to_point(other_segment.s)
+        distanse_this_seg_to_other_end   = self.get_distance_to_point(other_segment.e)
+        distance_other_seg_to_this_start = other_segment.get_distance_to_point(self.__start)
+        distance_other_seg_to_this_end   = other_segment.get_distance_to_point(self.__end)
+
+        return (distanse_this_seg_to_other_start + distanse_this_seg_to_other_end + distance_other_seg_to_this_start + distance_other_seg_to_this_end) / 4.0
+    #end
 
     def __str__(self):
         s = ""

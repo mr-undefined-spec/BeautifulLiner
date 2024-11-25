@@ -2,6 +2,8 @@
 import os
 import sys
 
+import math
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
@@ -26,6 +28,7 @@ class TestControlPoint(unittest.TestCase):
         self.linear_ctrl_p_0_1 = LinearApproximateCurveControlPoint(lin_p0, lin_p1)
         self.linear_ctrl_p_2_3 = LinearApproximateCurveControlPoint(lin_p2, lin_p3)
         self.linear_ctrl_p_2_4 = LinearApproximateCurveControlPoint(lin_p2, lin_p4)
+        self.linear_ctrl_p_2_1 = LinearApproximateCurveControlPoint(lin_p2, lin_p1)
     #end
 
     def test_init(self):
@@ -123,6 +126,36 @@ class TestControlPoint(unittest.TestCase):
         self.assertEqual(e.exception.args[0], 'p3 must be Point')
     #end
 
+    def test_get_distance_to_point(self):
+        the_distance = self.linear_ctrl_p_0_1.get_distance_to_point(Point(1.0, 0.0))
+        self.assertAlmostEqual(the_distance, math.sqrt(2.0)/2.0)
+    #end
+
+    def test_get_min_distance_to_segment(self):
+        the_distance = self.linear_ctrl_p_0_1.get_min_distance_to_segment(self.linear_ctrl_p_2_4)
+        self.assertAlmostEqual(the_distance, math.sqrt(2.0)/2.0)
+    #end
+
+    def test_get_average_distance_to_segment(self):
+        the_distance = self.linear_ctrl_p_0_1.get_average_distance_to_segment(self.linear_ctrl_p_2_1)
+        self.assertAlmostEqual(the_distance, (math.sqrt(2.0)+2.0)/8.0)
+        # 
+        #       p1
+        #       *
+        #      /|
+        #     / |
+        #    /  |
+        #   /   |
+        #  *    *
+        # p0    p2
+        #
+        # the distance between p0 and segment_p2_p1 is 1.0
+        # the distance between p1 and segment_p2_p1 is 0.0
+        # the distance between p2 and segment_p0_p1 is sqrt(2)/2.0
+        # the distance between p1 and segment_p0_p1 is 0.0
+        # the average distance is (sqrt(2)+2.0)/8.0
+        # 
+    #end
 #end
 
 if __name__ == '__main__':
