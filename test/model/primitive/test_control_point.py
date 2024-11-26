@@ -156,7 +156,28 @@ class TestControlPoint(unittest.TestCase):
         # the average distance is (sqrt(2)+2.0)/8.0
         # 
     #end
+
+    def test_get_perpendicular_intersection_point_from_point(self):
+        #        (1, 1)
+        #       p1
+        #       *
+        #      /
+        #     +  <-- perpendicular intersection point
+        #    / \  (0.5, 0.5)
+        #   /   \ 
+        #  *     *
+        # p0     p2
+        # (0, 0) (1, 0)
+        # 
+        #
+        the_point = self.linear_ctrl_p_0_1.get_perpendicular_intersection_point_from_point(Point(1.0, 0.0))
+        self.assertAlmostEqual(the_point.x, 0.5)
+        self.assertAlmostEqual(the_point.y, 0.5)
+    #end
+
+
 #end
+
 
 if __name__ == '__main__':
     unittest.main()

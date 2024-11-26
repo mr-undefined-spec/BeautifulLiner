@@ -126,6 +126,25 @@ class LinearApproximateCurveControlPoint(ControlPoint):
         return (distanse_this_seg_to_other_start + distanse_this_seg_to_other_end + distance_other_seg_to_this_start + distance_other_seg_to_this_end) / 4.0
     #end
 
+    def get_perpendicular_intersection_point_from_point(self, point):
+        # Calculate the differences
+        dx = self.__end.x - self.__start.x
+        dy = self.__end.y - self.__start.y
+        
+        # If the segment is a point, return the point itself
+        if dx == 0 and dy == 0:
+            return Point(self.__start.x, self.__start.y)
+        
+        # Calculate the parameter t for the projection
+        t = ((point.x - self.__start.x) * dx + (point.y - self.__start.y) * dy) / (dx * dx + dy * dy)
+        
+        # Compute the intersection point
+        intersection_x = self.__start.x + t * dx
+        intersection_y = self.__start.y + t * dy
+        
+        return Point(intersection_x, intersection_y)
+    #end
+
     def __str__(self):
         s = ""
         s += str(self.__start) + "\n"
