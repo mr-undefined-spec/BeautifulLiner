@@ -39,19 +39,6 @@ class Layer:
         self.color   = color
     #end
 
-    def to_svg(self):
-        s = ''
-        for curve in self.__curve_set:
-            s += '<path d="'
-            s += curve.to_svg()
-            if self.is_fill:
-                s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
-            else:
-                s += '" fill="none" opacity="1" stroke="' + self.color + '" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
-        #end
-        return s
-    #end
-
     def __print_step(self, mode, global_calc_step, local_calc_step, step_name, progress_bar, log_text):
         curve_num = len(self.__curve_set)
         total_step_num = 7*curve_num
@@ -162,6 +149,12 @@ class Layer:
         #print(self.curve_connection_info)
     #end
 
+    def create_sequential_points_and_edge_sequential_points(self, ratio):
+        for i, curve in enumerate(self.__curve_set):
+            curve.create_sequential_points()
+            curve.create_edge_sequential_points(ratio)
+        #end
+    #end
 
     def create_continuous_curve_index_group(self, distance_threshold):
         curve_connection_info = []
@@ -193,6 +186,10 @@ class Layer:
         #end
     #end
 
+    def set_continuous_curve_index_group(self, continuous_curve_index_group):
+        self.continuous_curve_index_group = continuous_curve_index_group
+    #end
+
     def __get_edge_deleted_curve(self, target_curve, ratio):
         new_curve = copy.deepcopy(target_curve)
 
@@ -217,11 +214,6 @@ class Layer:
 
     def delete_edge(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
-        for i, curve in enumerate(self.__curve_set):
-            self.__print_step(mode, global_calc_step, i, "prepare delete edge", progress_bar, log_text)
-            curve.create_intersect_judge_rectangle()
-            curve.create_qtree_ctrl_p_set(bbox)
-        #end
         curve_num = len(self.__curve_set)
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step+1, i, "delete edge", progress_bar, log_text)
@@ -249,5 +241,20 @@ class Layer:
         #end
         return new_layer
     #end
+
+    def to_svg(self):
+        s = ''
+        for curve in self.__curve_set:
+            s += '<path d="'
+            s += curve.to_svg()
+            if self.is_fill:
+                s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+            else:
+                s += '" fill="none" opacity="1" stroke="' + self.color + '" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+        #end
+        return s
+    #end
+
+
 #end
 
