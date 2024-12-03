@@ -83,6 +83,32 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(self.linear_curve[1].e.y, 1.0)
     #end
 
+    def test_create_sequential_points(self):
+        self.linear_curve.create_sequential_points()
+        self.assertAlmostEqual(self.linear_curve.sequential_points[0].x, 0.0)
+        self.assertAlmostEqual(self.linear_curve.sequential_points[0].y, 0.0)
+        self.assertAlmostEqual(self.linear_curve.sequential_points[1].x, 1.0)
+        self.assertAlmostEqual(self.linear_curve.sequential_points[1].y, 0.0)
+        self.assertAlmostEqual(self.linear_curve.sequential_points[2].x, 1.0)
+        self.assertAlmostEqual(self.linear_curve.sequential_points[2].y, 0.0)
+        self.assertAlmostEqual(self.linear_curve.sequential_points[3].x, 2.0)
+        self.assertAlmostEqual(self.linear_curve.sequential_points[3].y, 1.0)
+    #end
+
+    def test_create_edge_sequential_points(self):
+        self.linear_curve.create_sequential_points()
+        self.linear_curve.create_edge_sequential_points(0.5)
+        self.assertAlmostEqual(self.linear_curve.start_side_sequential_points[0].x, 0.0)
+        self.assertAlmostEqual(self.linear_curve.start_side_sequential_points[0].y, 0.0)
+        self.assertAlmostEqual(self.linear_curve.start_side_sequential_points[1].x, 1.0)
+        self.assertAlmostEqual(self.linear_curve.start_side_sequential_points[1].y, 0.0)
+
+        self.assertAlmostEqual(self.linear_curve.end_side_sequential_points[0].x, 2.0)
+        self.assertAlmostEqual(self.linear_curve.end_side_sequential_points[0].y, 1.0)
+        self.assertAlmostEqual(self.linear_curve.end_side_sequential_points[1].x, 1.0)
+        self.assertAlmostEqual(self.linear_curve.end_side_sequential_points[1].y, 0.0)
+    #end
+
     def test_init_cubic_bezier_curve_set(self):
         self.assertEqual(self.bezier_curve[0].p0.x, 0.0)
         self.assertEqual(self.bezier_curve[0].p0.y, 0.0)
@@ -161,7 +187,7 @@ class TestCurve(unittest.TestCase):
         #end
     #end
 
-    def test_smoothen(self):
+    def test_thin_smoothen(self):
         num_angle_divisions = 100
         # LinearApproximateCurve of 90degree arc (radius=100)
         radius = 100.0
@@ -174,7 +200,7 @@ class TestCurve(unittest.TestCase):
             linear_approximate_curve.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
         #end
 
-        smooth_curve = linear_approximate_curve.smoothen()
+        smooth_curve = linear_approximate_curve.thin_smoothen()
         ctrl_p = smooth_curve[0]
 
         self.assertAlmostEqual(round(ctrl_p.p0.x, 3), 100.000)

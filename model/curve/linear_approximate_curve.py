@@ -96,7 +96,7 @@ class LinearApproximateCurve(Curve):
         return CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point)
     #end
 
-    def smoothen(self):
+    def thin_smoothen(self):
         from cubic_bezier_curve import CubicBezierCurve
         """ In LinearApproximateCurve class, public smoothen method calls only one protected _smoothen method
         On the other hand, in BroadLinearApproximateCurve class, public smoothen method calls two protected _smoothen methods(going & returning)"""
@@ -119,6 +119,44 @@ class LinearApproximateCurve(Curve):
         return self.qtree_ctrl_p_set.intersect(target_rect_tuple)
     #end
 
+    def create_sequential_points(self):
+        self._sequential_points = []
+        
+        for ctrl_p in self._going_ctrl_p_set:
+            self._sequential_points.append(ctrl_p.s)
+        #end
+        self._sequential_points.append(self._going_ctrl_p_set[-1].e)
+    #end
+
+
+    @property
+    def sequential_points(self):
+        return self._sequential_points
+    #end
+
+    def create_edge_sequential_points(self, ratio):
+        self._start_side_sequential_points = []
+        self._end_side_sequential_points = []
+
+        num_of_sequential_points = len(self._sequential_points)
+        num_of_edge_points = int(ratio*num_of_sequential_points)
+
+        for i in range(num_of_edge_points):
+            self._start_side_sequential_points.append(self._sequential_points[i])
+            end_side_index = num_of_sequential_points - i - 1
+            self._end_side_sequential_points.append(self._sequential_points[end_side_index])
+        #end
+    #end
+
+    @property
+    def start_side_sequential_points(self):
+        return self._start_side_sequential_points
+    #end
+
+    @property
+    def end_side_sequential_points(self):
+        return self._end_side_sequential_points
+    #end
 
     def __min_distance_segment_to_segment(self, seg1_start, seg1_end, seg2_start, seg2_end):
         distance_seg1_s = self.__distance_point_to_line(seg1_start.x, seg1_start.y, seg1_end.x, seg1_end.y, seg2_start.x, seg2_start.y)
