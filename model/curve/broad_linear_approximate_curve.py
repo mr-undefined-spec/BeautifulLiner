@@ -28,7 +28,7 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
         self._end_index            = end_index
     #end
 
-    def smoothen(self):
+    def broad_smoothen(self):
         from broad_cubic_bezier_curve import BroadCubicBezierCurve
         """ In LinearApproximateCurve, public smoothen method calls only one protected _smoothen method
         On the other hand, in BroadLinearApproximateCurve, public smoothen method calls two protected _smoothen methods(going & returning)"""
