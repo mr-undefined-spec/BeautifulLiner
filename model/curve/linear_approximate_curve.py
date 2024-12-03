@@ -120,48 +120,32 @@ class LinearApproximateCurve(Curve):
     #end
 
     def create_sequential_points(self):
-        self._sequential_points = []
+        self.sequential_points = []
         
         for ctrl_p in self._going_ctrl_p_set:
-            self._sequential_points.append(ctrl_p.s)
+            self.sequential_points.append(ctrl_p.s)
         #end
-        self._sequential_points.append(self._going_ctrl_p_set[-1].e)
-    #end
-
-
-    @property
-    def sequential_points(self):
-        return self._sequential_points
+        self.sequential_points.append(self._going_ctrl_p_set[-1].e)
     #end
 
     def create_edge_sequential_points(self, ratio):
-        self._start_side_sequential_points = []
-        self._end_side_sequential_points = []
+        self.start_side_sequential_points = []
+        self.end_side_sequential_points = []
 
-        num_of_sequential_points = len(self._sequential_points)
+        num_of_sequential_points = len(self.sequential_points)
         num_of_edge_points = int(ratio*num_of_sequential_points)
 
         for i in range(num_of_edge_points):
-            self._start_side_sequential_points.append(self._sequential_points[i])
+            self.start_side_sequential_points.append(self.sequential_points[i])
             end_side_index = num_of_sequential_points - i - 1
-            self._end_side_sequential_points.append(self._sequential_points[end_side_index])
+            self.end_side_sequential_points.append(self.sequential_points[end_side_index])
         #end
-    #end
-
-    @property
-    def start_side_sequential_points(self):
-        return self._start_side_sequential_points
-    #end
-
-    @property
-    def end_side_sequential_points(self):
-        return self._end_side_sequential_points
     #end
 
     def is_continuaous_at_start_side(self, other_curve, distance_threshold):
         average_distance = 0.0
 #        min_distances = []
-        for point in self._start_side_sequential_points:
+        for point in self.start_side_sequential_points:
             min_distance = 999999
             for other_point in other_curve.sequential_points:
                 min_distance = min(min_distance, other_point.distance(point))
@@ -170,14 +154,14 @@ class LinearApproximateCurve(Curve):
             average_distance += min_distance
         #end
 
-        average_distance /= len(self._start_side_sequential_points)
+        average_distance /= len(self.start_side_sequential_points)
         return average_distance < distance_threshold
     #end
 
     def is_continuaous_at_end_side(self, other_curve, distance_threshold):
         average_distance = 0.0
 #        min_distances = []
-        for point in self._end_side_sequential_points:
+        for point in self.end_side_sequential_points:
             min_distance = 999999
             for other_point in other_curve.sequential_points:
                 min_distance = min(min_distance, other_point.distance(point))
@@ -186,7 +170,7 @@ class LinearApproximateCurve(Curve):
             average_distance += min_distance
         #end
 
-        average_distance /= len(self._end_side_sequential_points)
+        average_distance /= len(self.end_side_sequential_points)
         return average_distance < distance_threshold
     #end
 
