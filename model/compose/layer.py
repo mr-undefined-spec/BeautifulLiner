@@ -129,59 +129,6 @@ class Layer:
         #end
     #end
 
-    def create_edge_segments(self):
-        for i, curve in enumerate(self.__curve_set):
-            curve.create_edge_segments()
-        #end
-    #end
-
-
-    def __get_continuous_curve_index_group(self, target_curve_index, target_curve, distance_threshold):
-
-        ret_curve_index_group = [target_curve_index]
-
-        candidate_curve_index_set = []
-        total_curve_num = len(self.__curve_set)
-#        for i in range(target_curve_index+1, total_curve_num):
-        for i in range(total_curve_num):
-            if i == target_curve_index:
-                continue
-            #end
-            curve = self.__curve_set[i]
-            if target_curve.rect.test_collision(curve.rect):
-                candidate_curve_index_set.append(i)
-            #end
-        #end
-
-        potential_continuous_curve_num = len(candidate_curve_index_set)
-
-        for candidate_curve_index in candidate_curve_index_set:
-            candidate_curve = self.__curve_set[candidate_curve_index]
-            if target_curve.is_continuaous_with(candidate_curve, distance_threshold):
-                ret_curve_index_group.append(candidate_curve_index)
-            #end
-        #end
-
-        return ret_curve_index_group
-    #end
-
-    def create_continuous_curve_index_group(self, distance_threshold, global_calc_step, mode, progress_bar=None, log_text=None):
-
-        self.continuous_curve_index_group = []
-
-        flatten_curve_index_group = []
-        curve_num = len(self.__curve_set)
-        for i, curve in enumerate(self.__curve_set):
-            self.__print_step(mode, global_calc_step+1, i, "create continuous curve group", progress_bar, log_text)
-            self.continuous_curve_index_group.append( self.__get_continuous_curve_index_group(i, curve, distance_threshold) )
-
-        #end
-
-        self.continuous_curve_index_group = self.merge_common_elements(self.continuous_curve_index_group)
-
-        #print(self.continuous_curve_index_group)
-    #end
-
     def __get_curve_connection_info(self, target_curve_index, target_curve, distance_threshold):
         candidate_curve_index_set = []
         total_curve_num = len(self.__curve_set)
@@ -215,17 +162,35 @@ class Layer:
     #end
 
 
-    def create_curve_connection_info(self, distance_threshold):
-        self.curve_connection_info = []
+    def create_continuous_curve_index_group(self, distance_threshold):
+        curve_connection_info = []
 
         for i, curve in enumerate(self.__curve_set):
-            self.curve_connection_info.append( self.__get_curve_connection_info(i, curve, distance_threshold) )
+            curve_connection_info.append( self.__get_curve_connection_info(i, curve, distance_threshold) )
         #end
 
+        # make a list of start:"None"
+        start_none_list = []
+        for i, info in enumerate(curve_connection_info):
+            if info["start"] is None:
+                start_none_list.append(i)
+            #end
+        #end
+
+        self.continuous_curve_index_group = []
+
+        for i in start_none_list:
+            tmp_index_group = []
+            tmp_index_group.append(i)
+            c_info = curve_connection_info[i]
+            while c_info["end"] is not None:
+                tmp_index_group.append(c_info["end"])
+                c_info = curve_connection_info[c_info["end"]]
+            #end
+
+            self.continuous_curve_index_group.append(tmp_index_group)
+        #end
     #end
-
-
-
 
     def __get_edge_deleted_curve(self, target_curve, ratio):
         new_curve = copy.deepcopy(target_curve)
