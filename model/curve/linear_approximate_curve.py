@@ -659,4 +659,93 @@ class LinearApproximateCurve(Curve):
         return broad_curve
     #end
 
+    #
+    # In continuaous curve, the method broaden line as below
+    #
+    #
+    #  A ******************************************* B ****************** C
+    #
+    #                     |
+    #                     V
+    #
+    #                    ************************************       
+    #            ************************************************
+    #       *********************************************************
+    #  A ******************************************* B ****************** C
+    #       *********************************************************
+    #            ************************************************
+    #                    ************************************
+    #
+
+    def __get_slightly_away_control_point_set2(self, ctrl_p_set, broaden_width, is_going, position):
+        slightly_away_control_point_set = []
+
+
+        points = []
+        if is_going:
+            for ctrl_p in ctrl_p_set:
+                points.append(ctrl_p.s)
+            #end
+            points.append(ctrl_p_set[-1].e)
+        else: # is returning
+            reversed_ctrl_p_set = list( reversed(ctrl_p_set) )
+            for ctrl_p in reversed_ctrl_p_set:
+                points.append(ctrl_p.e)
+            #end
+            points.append(reversed_ctrl_p_set[-1].s)
+        #end
+    
+        half_length = len(points)/2.0 - 0.5 
+    
+        # first point is equal to original first point
+        last_slightly_away_point = points[0]
+    
+        # middle points are slightly away points
+        for i in range( len(points) - 2 ):
+            delta = 0
+            if position == "first":
+                if i < half_length:
+                    delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                else:
+                    delta = broaden_width
+                #end
+            elif position == "last":
+                if i < half_length:
+                    delta = broaden_width
+                else:
+                    delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                #end
+            elif position == "middle":
+                delta = broaden_width
+            #end
+            delta += 0.5
+            prev_point = points[i]
+            current_point = points[i+1]
+            slightly_away_point = self.__get_delta_point(prev_point, current_point, delta)
+            if slightly_away_point is not None:
+                the_ctrl_p = LinearApproximateCurveControlPoint(last_slightly_away_point, slightly_away_point)
+                slightly_away_control_point_set.append(the_ctrl_p)
+                last_slightly_away_point = slightly_away_point
+            #end
+        #end
+    
+        # last point is equal to original last point
+        the_ctrl_p = LinearApproximateCurveControlPoint(last_slightly_away_point, points[-1])
+        slightly_away_control_point_set.append( the_ctrl_p )
+    
+        return slightly_away_control_point_set
+    #end 
+
+    def broaden2(self, broaden_width, position):
+        from broad_linear_approximate_curve import BroadLinearApproximateCurve
+        broad_curve = BroadLinearApproximateCurve()
+
+        tmp_going_ctrl_p_set = self.__get_slightly_away_control_point_set2(self._going_ctrl_p_set, broaden_width, True, position)
+        tmp_returning_ctrl_p_set = self.__get_slightly_away_control_point_set2(self._going_ctrl_p_set, broaden_width, False, position)
+
+        broad_curve.set_ctrl_p_set(tmp_going_ctrl_p_set, tmp_returning_ctrl_p_set, self._start_index, self._end_index)
+
+        return broad_curve
+    #end
+
 #end
