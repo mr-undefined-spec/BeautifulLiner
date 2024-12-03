@@ -145,6 +145,79 @@ class TestLayer(unittest.TestCase):
 
         broad_layer = new_layer.broaden(1.0, 0, "TEST")
     #end
+
+    def test_create_curve_connection_info(self):
+
+        num_angle_divisions = 100
+        radius = 100.0
+
+        # LinearApproximateCurve of 0 ~ 90 degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve_0_90 = LinearApproximateCurve()
+        for i in range(num_angle_divisions):
+            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
+            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
+            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
+            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
+            linear_approximate_curve_0_90.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
+        #end
+        linear_approximate_curve_0_90.create_sequential_points()
+        linear_approximate_curve_0_90.create_edge_sequential_points(0.25)
+
+
+        # LinearApproximateCurve of 45 ~ 135 degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve_45_135 = LinearApproximateCurve()
+        for i in range(num_angle_divisions):
+            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 4.0
+            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 4.0
+            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
+            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
+            linear_approximate_curve_45_135.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
+        #end
+        linear_approximate_curve_45_135.create_sequential_points()
+        linear_approximate_curve_45_135.create_edge_sequential_points(0.25)
+
+        # LinearApproximateCurve of 90 ~ 180 degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve_90_180 = LinearApproximateCurve()
+        for i in range(num_angle_divisions):
+            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 2.0
+            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 2.0
+            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
+            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
+            linear_approximate_curve_90_180.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
+        #end
+        linear_approximate_curve_90_180.create_sequential_points()
+        linear_approximate_curve_90_180.create_edge_sequential_points(0.25)
+
+        # LinearApproximateCurve of 135 ~ 225 degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve_135_225 = LinearApproximateCurve()
+        for i in range(num_angle_divisions):
+            start_theta = math.pi / 2.0 * i / num_angle_divisions + 3 * math.pi / 4.0
+            end_theta = math.pi / 2.0 * (i + 1) / num_angle_divisions + 3 * math.pi / 4.0
+            start_p = Point(radius * math.cos(start_theta), radius * math.sin(start_theta))
+            end_p = Point(radius * math.cos(end_theta), radius * math.sin(end_theta))
+            linear_approximate_curve_135_225.append(LinearApproximateCurveControlPoint(start_p, end_p))
+        #end
+        linear_approximate_curve_135_225.create_sequential_points()
+        linear_approximate_curve_135_225.create_edge_sequential_points(0.25)
+
+        layer = Layer()
+        layer.append(linear_approximate_curve_0_90)
+        layer.append(linear_approximate_curve_45_135)
+        layer.append(linear_approximate_curve_90_180)
+        layer.append(linear_approximate_curve_135_225)
+
+        bbox = (0.0, 0.0, 180.0, 180.0)
+        layer.create_intersect_judge_rectangle(bbox)
+
+        layer.create_curve_connection_info(0.1)
+
+
+        #print(layer.curve_connection_info)
+        # [{'start': None, 'end': 1}, {'start': 0, 'end': 2}, {'start': 1, 'end': 3}, {'start': 2, 'end': None}]
+        self.assertEqual(layer.curve_connection_info, [{'start': None, 'end': 1}, {'start': 0, 'end': 2}, {'start': 1, 'end': 3}, {'start': 2, 'end': None}])
+
+
+
 #end
 
 if __name__ == '__main__':

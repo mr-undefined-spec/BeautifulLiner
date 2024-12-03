@@ -182,39 +182,48 @@ class Layer:
         #print(self.continuous_curve_index_group)
     #end
 
-    from typing import List
+    def __get_curve_connection_info(self, target_curve_index, target_curve, distance_threshold):
+        candidate_curve_index_set = []
+        total_curve_num = len(self.__curve_set)
+        for i in range(total_curve_num):
+            if i == target_curve_index:
+                continue
+            #end
+            curve = self.__curve_set[i]
+            if target_curve.rect.test_collision(curve.rect):
+                candidate_curve_index_set.append(i)
+            #end
+        #end
 
-    def merge_common_elements(self, arrays: List[List[int]]) -> List[List[int]]:
-        def find_group(value, groups):
-            """Find the group containing the value, or return None."""
-            for group in groups:
-                if value in group:
-                    return group
-            return None
+        ret_info = {"start": None, "end": None}
 
-        groups = []
+        for candidate_curve_index in candidate_curve_index_set:
+            candidate_curve = self.__curve_set[candidate_curve_index]
+            if target_curve.is_continuaous_at_start_side(candidate_curve, distance_threshold):
+                ret_info["start"] = candidate_curve_index
+                #self.curve_connection_info.append((target_curve_index, candidate_curve_index, "start"))
+            #end
+            if target_curve.is_continuaous_at_end_side(candidate_curve, distance_threshold):
+                ret_info["end"] = candidate_curve_index
+                #self.curve_connection_info.append((target_curve_index, candidate_curve_index, "end"))
+            #end
+        #end
 
-        for array in arrays:
-            # Find all groups that have an intersection with the current array
-            intersecting_groups = []
-            for value in array:
-                group = find_group(value, groups)
-                if group and group not in intersecting_groups:
-                    intersecting_groups.append(group)
+        return ret_info
 
-            if intersecting_groups:
-                # Merge all intersecting groups with the current array
-                merged_group = set(array)
-                for group in intersecting_groups:
-                    merged_group.update(group)
-                    groups.remove(group)
-                groups.append(merged_group)
-            else:
-                # No intersection, add the array as a new group
-                groups.append(set(array))
+        #print(self.curve_connection_info)
+    #end
 
-        # Convert sets back to sorted lists for the final output
-        return [sorted(list(group)) for group in groups]
+
+    def create_curve_connection_info(self, distance_threshold):
+        self.curve_connection_info = []
+
+        for i, curve in enumerate(self.__curve_set):
+            self.curve_connection_info.append( self.__get_curve_connection_info(i, curve, distance_threshold) )
+        #end
+
+    #end
+
 
 
 
