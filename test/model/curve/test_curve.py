@@ -237,7 +237,40 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(broad_curve_svg_text, the_answer)
     #end
 
-        
+    def test_is_continuaous(self):
+        num_angle_divisions = 100
+        # LinearApproximateCurve of 0 ~ 90 degree arc (radius=100)
+        radius = 100.0
+        linear_approximate_curve_0_90 = LinearApproximateCurve()
+        for i in range(num_angle_divisions):
+            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
+            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
+            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
+            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
+            linear_approximate_curve_0_90.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
+        #end
+
+        # LinearApproximateCurve of 45 ~ 135 degree arc (radius=100)
+        linear_approximate_curve_45_135 = LinearApproximateCurve()
+        for i in range(num_angle_divisions):
+            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 4.0
+            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 4.0
+            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
+            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
+            linear_approximate_curve_45_135.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
+        #end
+
+        linear_approximate_curve_0_90.create_sequential_points()
+        linear_approximate_curve_0_90.create_edge_sequential_points(0.25)
+
+        linear_approximate_curve_45_135.create_sequential_points()
+        linear_approximate_curve_45_135.create_edge_sequential_points(0.25)
+
+        self.assertEqual( linear_approximate_curve_0_90.is_continuaous_at_end_side(linear_approximate_curve_45_135, 0.1), True)
+
+        self.assertEqual( linear_approximate_curve_0_90.is_continuaous_at_start_side(linear_approximate_curve_45_135, 0.1), False)
+
+    #end
 
 
 

@@ -158,6 +158,41 @@ class LinearApproximateCurve(Curve):
         return self._end_side_sequential_points
     #end
 
+    def is_continuaous_at_start_side(self, other_curve, distance_threshold):
+        average_distance = 0.0
+#        min_distances = []
+        for point in self._start_side_sequential_points:
+            min_distance = 999999
+            for other_point in other_curve.sequential_points:
+                min_distance = min(min_distance, other_point.distance(point))
+            #end
+#            min_distances.append(min_distance)
+            average_distance += min_distance
+        #end
+
+        average_distance /= len(self._start_side_sequential_points)
+        return average_distance < distance_threshold
+    #end
+
+    def is_continuaous_at_end_side(self, other_curve, distance_threshold):
+        average_distance = 0.0
+#        min_distances = []
+        for point in self._end_side_sequential_points:
+            min_distance = 999999
+            for other_point in other_curve.sequential_points:
+                min_distance = min(min_distance, other_point.distance(point))
+            #end
+#            min_distances.append(min_distance)
+            average_distance += min_distance
+        #end
+
+        average_distance /= len(self._end_side_sequential_points)
+        return average_distance < distance_threshold
+    #end
+
+
+
+
     def __min_distance_segment_to_segment(self, seg1_start, seg1_end, seg2_start, seg2_end):
         distance_seg1_s = self.__distance_point_to_line(seg1_start.x, seg1_start.y, seg1_end.x, seg1_end.y, seg2_start.x, seg2_start.y)
         distance_seg1_e = self.__distance_point_to_line(seg1_start.x, seg1_start.y, seg1_end.x, seg1_end.y, seg2_end.x, seg2_end.y)
