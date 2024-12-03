@@ -90,7 +90,7 @@ class Layer:
         return linear_approximate_layer
     #end
 
-    def smoothen(self, global_calc_step, mode, progress_bar=None, log_text=None):
+    def thin_smoothen(self, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
 
         step_name = ""
@@ -101,10 +101,11 @@ class Layer:
         #end
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
-            new_layer.append( curve.smoothen() )
+            new_layer.append( curve.thin_smoothen() )
         #end
         return new_layer
     #end
+
 
     def special_smoothen_for_hair(self, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
@@ -235,6 +236,16 @@ class Layer:
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step, i, "broaden", progress_bar, log_text)
             new_layer.append( curve.broaden(broaden_width) )
+        #end
+        return new_layer
+    #end
+
+    def broad_smoothen(self, global_calc_step, mode, progress_bar=None, log_text=None):
+        new_layer = Layer()
+
+        for i, curve in enumerate(self.__curve_set):
+            self.__print_step(mode, global_calc_step, i, "broad_smoothen", progress_bar, log_text)
+            new_layer.append( curve.broad_smoothen() )
         #end
         return new_layer
     #end

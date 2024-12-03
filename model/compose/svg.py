@@ -212,12 +212,12 @@ class Svg:
         return new_svg
     #end
 
-    def smoothen(self):
+    def thin_smoothen(self):
         self.__global_calc_step += 1
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append(layer.name, layer.path_data.smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+            new_svg.append(layer.name, layer.path_data.thin_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
         return new_svg
     #end
@@ -237,13 +237,6 @@ class Svg:
         bbox = self.get_bbox()
         for layer in self.__layers:
             layer.path_data.create_intersect_judge_rectangle(bbox)
-        #end
-    #end
-
-    def create_edge_segments(self):
-        self.__global_calc_step += 1
-        for layer in self.__layers:
-            layer.path_data.create_edge_segments()
         #end
     #end
 
@@ -278,6 +271,16 @@ class Svg:
         for layer in self.__layers:
             new_layer = layer.path_data.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_svg.append("B_" + layer.name, new_layer)
+        #end
+        return new_svg
+    #end
+
+    def broad_smoothen(self):
+        self.__global_calc_step += 1
+        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_svg.set_view_box( self.__view_box )
+        for layer in self.__layers:
+            new_svg.append(layer.name, layer.path_data.broad_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
         return new_svg
     #end

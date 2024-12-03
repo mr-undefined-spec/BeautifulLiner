@@ -220,7 +220,7 @@ class TestCurve(unittest.TestCase):
         #end
 
         broad_linear_curve = linear_approximate_curve.broaden(1.0)
-        broad_smooth_curve = broad_linear_curve.smoothen()
+        broad_smooth_curve = broad_linear_curve.broad_smoothen()
         the_answer = "M 0.000 10.000 C 33.333 11.658 66.667 11.658 100.000 10.000 C 66.667 8.342 33.333 8.342 0.000 10.000 Z"
         self.assertEqual(broad_smooth_curve.to_svg(), the_answer)
     #end

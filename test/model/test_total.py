@@ -55,7 +55,7 @@ class TestTotal(unittest.TestCase):
         new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
         broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
-        broad_smooth_layer = broad_linear_layer.smoothen(0, "TEST")
+        broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
 
 #        print( broad_smooth_layer.to_svg() )
     #end
@@ -114,7 +114,7 @@ class TestTotal(unittest.TestCase):
         new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
         broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
-        broad_smooth_layer = broad_linear_layer.smoothen(0, "TEST")
+        broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
 
 #        print( broad_smooth_layer.to_svg(False) )
     #end
