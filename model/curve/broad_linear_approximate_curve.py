@@ -27,10 +27,6 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
         self._start_index          = start_index
         self._end_index            = end_index
     #end
-    @property
-    def returning_ctrl_p_set(self):
-        return self._returning_ctrl_p_set
-    #end
 
     def broad_smoothen(self):
         from broad_cubic_bezier_curve import BroadCubicBezierCurve

@@ -51,6 +51,7 @@ class TestTotal(unittest.TestCase):
         layer.append(lin_curve2)
 
         bbox = (0.0, 0.0, 180.0, 180.0)
+        layer.create_intersect_judge_rectangle(bbox)
 
         new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
@@ -111,6 +112,7 @@ class TestTotal(unittest.TestCase):
         layer.append(lin_curve4)
 
         bbox = (0.0, 0.0, 180.0, 180.0)
+        layer.create_intersect_judge_rectangle(bbox)
         new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
         broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
