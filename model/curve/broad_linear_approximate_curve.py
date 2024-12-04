@@ -27,6 +27,10 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
         self._start_index          = start_index
         self._end_index            = end_index
     #end
+    @property
+    def returning_ctrl_p_set(self):
+        return self._returning_ctrl_p_set
+    #end
 
     def broad_smoothen(self):
         from broad_cubic_bezier_curve import BroadCubicBezierCurve
@@ -89,7 +93,7 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
         return broad_cubic_bezier_curve
     #end
 
-    def to_svg(self):
+    def _to_svg_none(self):
         s = ""
         the_end = self._get_the_end()
         for i in range( self._start_index, the_end ):
@@ -109,6 +113,38 @@ class BroadLinearApproximateCurve(LinearApproximateCurve):
         #end
         s += "Z"
         return s
+    #end
+
+    def _to_svg_first(self):
+        s = ""
+        the_end = self._get_the_end()
+        for i in range( self._start_index, the_end ):
+            ctrl_p = self._going_ctrl_p_set[i]
+            s += ctrl_p.to_svg(i==self._start_index)
+        #end
+
+        returning_start = len(self._returning_ctrl_p_set) - the_end 
+        returning_end   = len(self._returning_ctrl_p_set) - self._start_index 
+
+        #print( self._start_index, self._end_index, returning_start, returning_end )
+        for i in range( returning_start, returning_end):
+            if i == len(self._returning_ctrl_p_set)-1:
+                break
+            ctrl_p = self._returning_ctrl_p_set[i]
+            s += ctrl_p.to_svg(False)
+        #end
+        s += "Z"
+        return s
+    #end
+
+    def to_svg(self, position=None):
+        if position is None:
+            return self._to_svg_none()
+        #end
+        if position == "First":
+            return self._to_svg_first()
+        else:
+            return self._to_svg(position)
     #end
 #end
 

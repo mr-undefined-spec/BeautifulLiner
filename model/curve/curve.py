@@ -69,7 +69,12 @@ class Curve:
         return self.__intersect_judge_rectangular
     #end
 
-    def to_svg(self):
+    @property
+    def going_ctrl_p_set(self):
+        return self._going_ctrl_p_set
+    #end
+
+    def to_svg(self, position=None):
         s = ""
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
             s += ctrl_p.to_svg(i==0)

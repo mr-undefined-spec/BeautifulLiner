@@ -20,6 +20,11 @@ class BroadCubicBezierCurve(CubicBezierCurve):
         self._returning_ctrl_p_set = []
     #end
 
+    @property
+    def returning_ctrl_p_set(self):
+        return self._returning_ctrl_p_set
+    #end
+
     def set_ctrl_p(self, going_ctrl_p, returning_ctrl_p):
         """ Curve has many control points, but BroadCubicBezierCurve has ONLY ONE control point in each going & returning."""
         self._going_ctrl_p_set     = [going_ctrl_p]

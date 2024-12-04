@@ -81,8 +81,6 @@ class LinearApproximateCurve(Curve):
             y_array.append( ctrl_p_set[i].e.y )
         #end
 
-        print(x_array)
-
         x_data = np.array(x_array)
         y_data = np.array(y_array)
 
@@ -250,6 +248,7 @@ class LinearApproximateCurve(Curve):
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
             if ctrl_p.get_distance_to_point(point) < min_distance:
                 the_index = i
+                min_distance = ctrl_p.get_distance_to_point(point)
             #end
         #end
         return the_index
@@ -262,6 +261,8 @@ class LinearApproximateCurve(Curve):
         if midpoint_end is not None:
             self._end_index = self.get_nearest_ctrl_p_index_to_point(midpoint_end)
         #end
+
+        #print(self._start_index, self._end_index, len(self._going_ctrl_p_set))
     #end 
 
     # 

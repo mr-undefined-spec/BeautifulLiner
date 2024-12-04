@@ -192,7 +192,8 @@ class Svg:
         for layer in self.__layers:
             #s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
             s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
-            s += layer.path_data.to_svg()
+            s += layer.path_data.to_svg2()
+#            s += layer.path_data.to_svg()
             s += '</g>\n'
         #end
         s += '</svg>'

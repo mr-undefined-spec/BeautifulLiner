@@ -291,10 +291,10 @@ class Layer:
 
     def delete_edge2(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
-        i = 0
+        delete_edge2_step = 0
         for curve_index_group in self.continuous_curve_index_group:
-            for curve_index in curve_index_group:
-                self.__print_step(mode, global_calc_step+1, i, "delete edge 2", progress_bar, log_text)
+            for i, curve_index in enumerate(curve_index_group):
+                self.__print_step(mode, global_calc_step+1, delete_edge2_step, "delete edge 2", progress_bar, log_text)
 
                 pre_index  = None if i == 0 else curve_index - 1
                 next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
@@ -312,7 +312,7 @@ class Layer:
 
                 new_layer.append( self.__get_edge_deleted_curve2(curve, ratio, pre_connection_point, next_connection_point) )
 
-                i += 1
+                delete_edge2_step += 1
 
             #end
         #end
@@ -371,7 +371,6 @@ class Layer:
     def to_svg(self):
         s = ''
 
-        """
         for curve in self.__curve_set:
             s += '<path d="'
             s += curve.to_svg()
@@ -381,11 +380,82 @@ class Layer:
                 s += '" fill="none" opacity="1" stroke="' + self.color + '" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
             #end
         #end
-        """
+        return s
+    #end
+
+
+    def get_position_of_continuous_curve(self, pre_index, next_index):
+        if pre_index is None and next_index is None:
+            return "first_last"
+        elif pre_index is None:
+            return "first"
+        elif next_index is None:
+            return "last"
+        else:
+            return "middle"
+        #end
+    #end
+
+    def to_svg2(self):
+        s = ''
+
         for curve_index_group in self.continuous_curve_index_group:
             s += '<path d="'
-            for curve_index in curve_index_group:
+
+            if len(curve_index_group) == 1:
+                position = "first_last"
+                curve_index = curve_index_group[0]
                 s += self.__curve_set[curve_index].to_svg()
+            else:
+                # going
+                for i, curve_index in enumerate(curve_index_group):
+                    pre_index  = None if i == 0 else curve_index - 1
+                    next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
+                    position = self.get_position_of_continuous_curve(pre_index, next_index)
+
+                    if position == "first":
+                        s += "M "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p0 ) + " "
+                        s += "C "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
+                    elif position == "middle":
+                        s += "C "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
+                    elif position == "last":
+                        s += "C "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
+                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
+                    #end
+                #end
+
+                # returning
+                for i, curve_index in enumerate( list( reversed(curve_index_group) )):
+                    pre_index  = None if i == 0 else curve_index - 1
+                    next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
+                    position = self.get_position_of_continuous_curve(pre_index, next_index)
+
+                    if position == "first":
+                        s += "C "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
+                    elif position == "middle":
+                        s += "C "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
+                    elif position == "last":
+                        s += "C "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
+                        s += "Z "
+                    #end
             #end
             s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
         #end
