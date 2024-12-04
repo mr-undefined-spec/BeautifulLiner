@@ -132,6 +132,7 @@ class Layer:
 
         ret_info = {"start": None, "end": None}
 
+
         for candidate_curve_index in candidate_curve_index_set:
             candidate_curve = self.__curve_set[candidate_curve_index]
             if target_curve.is_continuaous_at_start_side(candidate_curve, distance_threshold):
@@ -162,6 +163,7 @@ class Layer:
         for i, curve in enumerate(self.__curve_set):
             curve_connection_info.append( self.__get_curve_connection_info(i, curve, distance_threshold) )
         #end
+        #print(curve_connection_info)
 
         # make a list of start:"None"
         start_none_list = []
@@ -232,6 +234,36 @@ class Layer:
         return new_layer
     #end
 
+    def broaden2(self, broaden_width, global_calc_step, mode, progress_bar=None, log_text=None):
+        new_layer = Layer()
+        curve_num = len(self.__curve_set)
+        for curve_index_group in self.continuous_curve_index_group:
+            if len(curve_index_group) == 1:
+                position = "first_last"
+                curve_index = curve_index_group[0]
+                curve = self.__curve_set[curve_index]
+                print(curve_index, position)
+                new_layer.append( curve.broaden2(broaden_width, position) )
+            else:
+                for curve_index in curve_index_group:
+                    position = ""
+                    if curve_index == 0:
+                        position = "first"
+                    elif curve_index == len(curve_index_group)-1:
+                        position = "last"
+                    else:
+                        position = "middle"
+                    #end
+
+                    print(curve_index, position)
+                    curve = self.__curve_set[curve_index]
+                    new_layer.append( curve.broaden2(broaden_width, position) )
+                #end
+            #end
+        #end
+        return new_layer
+    #end
+
     def broad_smoothen(self, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
 
@@ -244,6 +276,8 @@ class Layer:
 
     def to_svg(self):
         s = ''
+
+        """
         for curve in self.__curve_set:
             s += '<path d="'
             s += curve.to_svg()
@@ -251,6 +285,15 @@ class Layer:
                 s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
             else:
                 s += '" fill="none" opacity="1" stroke="' + self.color + '" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+            #end
+        #end
+        """
+        for curve_index_group in self.continuous_curve_index_group:
+            s += '<path d="'
+            for curve_index in curve_index_group:
+                s += self.__curve_set[curve_index].to_svg()
+            #end
+            s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
         #end
         return s
     #end

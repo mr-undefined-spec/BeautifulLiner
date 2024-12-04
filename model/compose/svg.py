@@ -277,8 +277,10 @@ class Svg:
         # delete edge process has 2 global_calc_step, so increment 2
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_layer = layer.path_data.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+#            new_layer = layer.path_data.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer = layer.path_data.broaden2(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer.set_continuous_curve_index_group(layer.path_data.continuous_curve_index_group)
+            #print(new_layer.continuous_curve_index_group)
             new_svg.append("B_" + layer.name, new_layer)
         #end
         return new_svg

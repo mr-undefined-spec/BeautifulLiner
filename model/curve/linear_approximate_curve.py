@@ -155,6 +155,7 @@ class LinearApproximateCurve(Curve):
         #end
 
         average_distance /= len(self.start_side_sequential_points)
+        #print(average_distance)
         return average_distance < distance_threshold
     #end
 
@@ -704,19 +705,37 @@ class LinearApproximateCurve(Curve):
         for i in range( len(points) - 2 ):
             delta = 0
             if position == "first":
-                if i < half_length:
-                    delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                if is_going:
+                    if i < half_length:
+                        delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                    else:
+                        delta = broaden_width
+                    #end
                 else:
-                    delta = broaden_width
+                    if i < half_length:
+                        delta = broaden_width
+                    else:
+                        delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                    #end
                 #end
             elif position == "last":
-                if i < half_length:
-                    delta = broaden_width
+                if is_going:
+                    if i < half_length:
+                        delta = broaden_width
+                    else:
+                        delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                    #end
                 else:
-                    delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                    if i < half_length:
+                        delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
+                    else:
+                        delta = broaden_width
+                    #end
                 #end
             elif position == "middle":
                 delta = broaden_width
+            elif position == "first_last":
+                delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
             #end
             delta += 0.5
             prev_point = points[i]
