@@ -81,6 +81,8 @@ class LinearApproximateCurve(Curve):
             y_array.append( ctrl_p_set[i].e.y )
         #end
 
+        print(x_array)
+
         x_data = np.array(x_array)
         y_data = np.array(y_array)
 
@@ -207,13 +209,13 @@ class LinearApproximateCurve(Curve):
     def create_connection_point_at_start_point(self, other_curve):
         start_point = self.sequential_points[0]
         self.start_connection_point = other_curve.get_perpendicular_intersection_point_from_point(start_point)
-        print(self.start_connection_point)
+        #print(self.start_connection_point)
     #end
 
     def create_connection_point_at_end_point(self, other_curve):
         end_point = self.sequential_points[-1]
         self.end_connection_point = other_curve.get_perpendicular_intersection_point_from_point(end_point)
-        print(self.end_connection_point)
+        #print(self.end_connection_point)
     #end
 
 
