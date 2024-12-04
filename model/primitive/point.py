@@ -33,6 +33,10 @@ class Point:
         delta_y = self.__y - other_point.y
         return math.sqrt( delta_x*delta_x + delta_y*delta_y )
     #end 
+
+    def get_midpoint(self, other_point):
+        return Point( (self.__x + other_point.x) / 2.0, (self.__y + other_point.y) / 2.0 )
+    #end
         
 #end
 

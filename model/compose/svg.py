@@ -249,14 +249,17 @@ class Svg:
 
     def create_continuous_curve_index_group(self, distance_threshold):
         
-        self.__global_calc_step += 1
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
-        bbox = self.get_bbox()
         for layer in self.__layers:
             layer.path_data.create_continuous_curve_index_group( distance_threshold)
         #end
     #end
+
+    def create_connection_point(self):
+        for layer in self.__layers:
+            layer.path_data.create_connection_point()
+        #end
+    #end
+
 
     def delete_edge(self, ratio):
         self.__global_calc_step += 1
@@ -264,7 +267,8 @@ class Svg:
         new_svg.set_view_box( self.__view_box )
         bbox = self.get_bbox()
         for layer in self.__layers:
-            new_layer = layer.path_data.delete_edge(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+#            new_layer = layer.path_data.delete_edge(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer = layer.path_data.delete_edge2(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer.set_continuous_curve_index_group(layer.path_data.continuous_curve_index_group)
             new_svg.append(layer.name, new_layer)
         #end

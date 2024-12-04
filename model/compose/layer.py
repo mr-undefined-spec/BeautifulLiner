@@ -192,6 +192,24 @@ class Layer:
         self.continuous_curve_index_group = continuous_curve_index_group
     #end
 
+    def create_connection_point(self):
+        for curve_index_group in self.continuous_curve_index_group:
+            for i, curve_index in enumerate(curve_index_group):
+                pre_index  = None if i == 0 else curve_index - 1
+                next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
+
+                curve = self.__curve_set[curve_index]
+                if pre_index is not None:
+                    curve.create_connection_point_at_start_point(self.__curve_set[pre_index])
+                #end
+
+                if next_index is not None:
+                    curve.create_connection_point_at_end_point(self.__curve_set[next_index])
+                #end
+            #end
+        #end
+    #end
+
     def __get_edge_deleted_curve(self, target_curve, ratio):
         new_curve = copy.deepcopy(target_curve)
 
@@ -216,10 +234,87 @@ class Layer:
 
     def delete_edge(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
-        curve_num = len(self.__curve_set)
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step+1, i, "delete edge", progress_bar, log_text)
             new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
+        #end
+        return new_layer
+    #end
+
+    def __get_edge_deleted_curve2(self, target_curve, ratio, pre_connection_point, next_connection_point):
+        new_curve = copy.deepcopy(target_curve)
+
+        intersected_curve_set = []
+        for curve in self.__curve_set:
+            if curve == target_curve:
+                continue
+            #end
+            if target_curve.rect.test_collision(curve.rect):
+                intersected_curve_set.append(curve)
+            #end
+        #end
+
+        inter_num = len(intersected_curve_set)
+
+        for i, intersected_curve in enumerate(intersected_curve_set):
+            new_curve.update_start_end_index_with_intersection(intersected_curve, ratio)
+        #end
+
+        if pre_connection_point is not None:
+            if next_connection_point is not None:
+                # position = "middle"
+                midpoint_start = pre_connection_point.get_midpoint(target_curve.start_connection_point)
+                midpoint_end   = next_connection_point.get_midpoint(target_curve.end_connection_point)
+                new_curve.overwrite_start_end_index_finding_nearest(midpoint_start, midpoint_end)
+            #end
+            else:
+                # position = "last"
+                midpoint_start = pre_connection_point.get_midpoint(target_curve.start_connection_point)
+                midpoint_end   = None
+                new_curve.overwrite_start_end_index_finding_nearest(midpoint_start, midpoint_end)
+            #end
+        else:
+            if next_connection_point is not None:
+                # position = "first"
+                midpoint_start = None
+                midpoint_end   = next_connection_point.get_midpoint(target_curve.end_connection_point)
+                new_curve.overwrite_start_end_index_finding_nearest(midpoint_start, midpoint_end)
+            else:
+                # position = "first and last"
+                pass # do nothing
+            #end
+        #end
+
+
+        return new_curve
+    #end
+
+    def delete_edge2(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
+        new_layer = Layer()
+        i = 0
+        for curve_index_group in self.continuous_curve_index_group:
+            for curve_index in curve_index_group:
+                self.__print_step(mode, global_calc_step+1, i, "delete edge 2", progress_bar, log_text)
+
+                pre_index  = None if i == 0 else curve_index - 1
+                next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
+
+                curve = self.__curve_set[curve_index]
+                pre_connection_point = None
+                if pre_index is not None:
+                    pre_connection_point = self.__curve_set[pre_index].end_connection_point
+                #end
+
+                next_connection_point = None
+                if next_index is not None:
+                    next_connection_point = self.__curve_set[next_index].start_connection_point
+                #end
+
+                new_layer.append( self.__get_edge_deleted_curve2(curve, ratio, pre_connection_point, next_connection_point) )
+
+                i += 1
+
+            #end
         #end
         return new_layer
     #end
@@ -242,7 +337,6 @@ class Layer:
                 position = "first_last"
                 curve_index = curve_index_group[0]
                 curve = self.__curve_set[curve_index]
-                print(curve_index, position)
                 new_layer.append( curve.broaden2(broaden_width, position) )
             else:
                 for curve_index in curve_index_group:
