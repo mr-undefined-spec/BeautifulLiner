@@ -172,6 +172,7 @@ class LinearApproximateCurve(Curve):
         #end
 
         average_distance /= len(self.end_side_sequential_points)
+        #print(average_distance)
         return average_distance < distance_threshold
     #end
 

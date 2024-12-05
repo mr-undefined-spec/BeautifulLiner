@@ -189,6 +189,7 @@ class Svg:
         s += ' viewBox="' + self.__view_box + '" '
         s += '>\n'
 
+
         for layer in self.__layers:
             #s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
             s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
