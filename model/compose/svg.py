@@ -327,5 +327,12 @@ class Svg:
         return new_svg
     #end
 
+    def printCurve(self):
+        for layer in self.__layers:
+            layer.path_data.printCurve()
+
+        #end
+    #end
+
 #end
 

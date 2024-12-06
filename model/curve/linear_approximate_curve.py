@@ -176,24 +176,24 @@ class LinearApproximateCurve(Curve):
         return average_distance < distance_threshold
     #end
 
-    def get_min_distance_and_ctrl_p_index_to_point(self, point):
-        return_tuple = []
+    def get_min_distance_to_point(self, point):
         min_distance = 999999
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
             if ctrl_p.get_distance_to_point(point) < min_distance:
-                return_tuple = [ctrl_p.get_distance_to_point(point), i]
+                min_distance = ctrl_p.get_distance_to_point(point)
             #end
         #end
 
-        return return_tuple
+        return min_distance
     #end
 
-    def get_min_distance_ctrl_p_index_to_point(self, point):
+    def get_ctrl_p_index_at_min_distance_to_point(self, point):
         the_index = None
         min_distance = 999999
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
             if ctrl_p.get_distance_to_point(point) < min_distance:
                 the_index = i
+                min_distance = ctrl_p.get_distance_to_point(point)
             #end
         #end
 
@@ -201,8 +201,42 @@ class LinearApproximateCurve(Curve):
     #end
 
     def get_perpendicular_intersection_point_from_point(self, point):
-        the_index = self.get_min_distance_ctrl_p_index_to_point(point)
+        the_index = self.get_ctrl_p_index_at_min_distance_to_point(point)
         return self._going_ctrl_p_set[the_index].get_perpendicular_intersection_point_from_point(point)
+    #end
+
+    def is_continuaous_at_start_side2(self, other_curve, distance_threshold):
+        other_end_point = other_curve.sequential_points[-1]
+
+        the_index_nearest_other_end_point = self.get_ctrl_p_index_at_min_distance_to_point(other_end_point)
+
+        if the_index_nearest_other_end_point == 0:
+            return False
+        #end
+
+        average_distance = 0.0
+        for i in range(0, the_index_nearest_other_end_point):
+            point = self.sequential_points[i]
+            average_distance += other_curve.get_min_distance_to_point(point)
+
+        average_distance /= the_index_nearest_other_end_point
+        #print(average_distance)
+        return average_distance < distance_threshold
+    #end
+
+    def is_continuaous_at_end_side2(self, other_curve, distance_threshold):
+        other_start_point = other_curve.sequential_points[0]
+
+        the_index_nearest_other_start_point = self.get_ctrl_p_index_at_min_distance_to_point(other_start_point)
+
+        average_distance = 0.0
+        for i in range(the_index_nearest_other_start_point, len(self.sequential_points)):
+            point = self.sequential_points[i]
+            average_distance += other_curve.get_min_distance_to_point(point)
+
+        average_distance /= len(self.sequential_points) - the_index_nearest_other_start_point
+        #print(average_distance)
+        return average_distance < distance_threshold
     #end
 
     def create_connection_point_at_start_point(self, other_curve):

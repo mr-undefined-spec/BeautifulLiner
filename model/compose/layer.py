@@ -134,19 +134,19 @@ class Layer:
 
         for candidate_curve_index in candidate_curve_index_set:
             candidate_curve = self.__curve_set[candidate_curve_index]
-            if target_curve.is_continuaous_at_start_side(candidate_curve, distance_threshold):
+            if target_curve.is_continuaous_at_start_side2(candidate_curve, distance_threshold):
                 ret_info["start"] = candidate_curve_index
                 #self.curve_connection_info.append((target_curve_index, candidate_curve_index, "start"))
             #end
-            if target_curve.is_continuaous_at_end_side(candidate_curve, distance_threshold):
+            if target_curve.is_continuaous_at_end_side2(candidate_curve, distance_threshold):
                 ret_info["end"] = candidate_curve_index
                 #self.curve_connection_info.append((target_curve_index, candidate_curve_index, "end"))
             #end
         #end
 
+        #print(self.curve_connection_info)
         return ret_info
 
-        #print(self.curve_connection_info)
     #end
 
     def create_sequential_points_and_edge_sequential_points(self, ratio):
@@ -298,7 +298,13 @@ class Layer:
     def delete_edge2(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer()
         delete_edge2_step = 0
+
+        new_continuous_curve_index_group = []
+        new_curve_index = 0
+
         for curve_index_group in self.continuous_curve_index_group:
+            tmp_new_continuous_curve_index_group = []
+
             for i, curve_index in enumerate(curve_index_group):
                 self.__print_step(mode, global_calc_step+1, delete_edge2_step, "delete edge 2", progress_bar, log_text)
 
@@ -320,10 +326,17 @@ class Layer:
 
                 new_layer.append( self.__get_edge_deleted_curve2(curve, ratio, position, pre_connection_point, next_connection_point) )
 
+                tmp_new_continuous_curve_index_group.append(new_curve_index)
+                new_curve_index += 1
+
                 delete_edge2_step += 1
 
             #end
+
+            new_continuous_curve_index_group.append(tmp_new_continuous_curve_index_group)
         #end
+
+        self.continuous_curve_index_group = new_continuous_curve_index_group
         return new_layer
     #end
 
@@ -363,7 +376,9 @@ class Layer:
                     new_layer.append( curve.broaden2(broaden_width, position) )
                 #end
             #end
+
         #end
+
         return new_layer
     #end
 
@@ -405,10 +420,17 @@ class Layer:
         #end
     #end
 
+    def printCurve(self):
+        for i, curve in enumerate(self.__curve_set):
+            print(i, str( curve.going_ctrl_p_set[0].s) )
+
+
     def to_svg2(self):
         s = ''
 
+
         for curve_index_group in self.continuous_curve_index_group:
+            #print(curve_index_group)
             s += '<path d="'
 
             if len(curve_index_group) == 1:
@@ -418,9 +440,11 @@ class Layer:
             else:
                 # going
                 for i, curve_index in enumerate(curve_index_group):
-                    pre_index  = None if i == 0 else curve_index - 1
-                    next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
+                    pre_index  = None if i == 0 else curve_index_group[i-1]
+                    next_index = None if i == len(curve_index_group) - 1 else curve_index_group[i+1]
                     position = self.get_position_of_continuous_curve(pre_index, next_index)
+
+                    #print(curve_index, pre_index, next_index, position, str( self.__curve_set[curve_index].going_ctrl_p_set[0].p0 ))
 
                     if position == "first":
                         s += "M "
@@ -443,10 +467,14 @@ class Layer:
                 #end
 
                 # returning
-                for i, curve_index in enumerate( list( reversed(curve_index_group) )):
-                    pre_index  = None if i == 0 else curve_index - 1
-                    next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
+                reversed_curve_index_group = list( reversed(curve_index_group) )
+                #print(reversed_curve_index_group)
+                for i, curve_index in enumerate( reversed_curve_index_group ):
+                    pre_index  = None if i == 0 else reversed_curve_index_group[i-1]
+                    next_index = None if i == len(reversed_curve_index_group) - 1 else reversed_curve_index_group[i+1]
                     position = self.get_position_of_continuous_curve(pre_index, next_index)
+
+                    #print(curve_index, pre_index, next_index, position)
 
                     if position == "first":
                         s += "C "
