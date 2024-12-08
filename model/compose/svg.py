@@ -242,10 +242,10 @@ class Svg:
         #end
     #end
 
-    def create_sequential_points_and_edge_sequential_points(self, ratio):
+    def create_sequential_points_and_edge_sequential_points(self):
         self.__global_calc_step += 1
         for layer in self.__layers:
-            layer.path_data.create_sequential_points_and_edge_sequential_points(ratio)
+            layer.path_data.create_sequential_points_and_edge_sequential_points()
         #end
     #end
 

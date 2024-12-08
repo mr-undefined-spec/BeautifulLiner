@@ -5,27 +5,35 @@ global calc_step
 calc_step = 0
 global total_calc_step
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'model'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'model/primitive'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'model/curve'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'model/compose'))
 
 from argparse import ArgumentParser
 
 from point import Point
-from control_point import CubicBezierCurveControlPoint
-from control_point import LinearApproximateCurveControlPoint
-from curve import CubicBezierCurve
-from curve import LinearApproximateCurve
+from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
+from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
+from cubic_bezier_curve import CubicBezierCurve
+from linear_approximate_curve import LinearApproximateCurve
 from layer import Layer
 
 from svg import Svg
 
 def get_special_smoothened_for_hair(single_layer_svg, linear_approximate_length, delete_ratio, broad_width, color):
     once_linearized = single_layer_svg.linearize(linear_approximate_length)
-    once_smoothened = once_linearized.smoothen()
+    once_smoothened = once_linearized.thin_smoothen()
     
     linearized  = once_smoothened.linearize(linear_approximate_length)
+
+    linearized.create_intersect_judge_rectangle()
+    linearized.create_sequential_points_and_edge_sequential_points()
+    linearized.create_continuous_curve_index_group(1.0)
+    linearized.create_connection_point()
+
     delete_edge = linearized.delete_edge(delete_ratio)
     broadened   = delete_edge.broaden(broad_width)
-    smoothened  = broadened.special_smoothen_for_hair()
+    smoothened  = broadened.broad_smoothen()
     smoothened.set_write_options(is_fill=True, color=color)
 
     return smoothened
@@ -33,12 +41,18 @@ def get_special_smoothened_for_hair(single_layer_svg, linear_approximate_length,
 
 def get_smoothened(single_layer_svg, linear_approximate_length, delete_ratio, broad_width, color):
     once_linearized = single_layer_svg.linearize(linear_approximate_length)
-    once_smoothened = once_linearized.smoothen()
+    once_smoothened = once_linearized.thin_smoothen()
     
     linearized  = once_smoothened.linearize(linear_approximate_length)
+
+    linearized.create_intersect_judge_rectangle()
+    linearized.create_sequential_points_and_edge_sequential_points()
+    linearized.create_continuous_curve_index_group(1.0)
+    linearized.create_connection_point()
+
     delete_edge = linearized.delete_edge(delete_ratio)
     broadened   = delete_edge.broaden(broad_width)
-    smoothened  = broadened.smoothen()
+    smoothened  = broadened.broad_smoothen()
     smoothened.set_write_options(is_fill=True, color=color)
 
     return smoothened
@@ -49,7 +63,7 @@ def custom_run(mode, reading_file_path, linear_approximate_length, delete_ratio,
     svg = Svg(0, mode, progress_bar, log_text)
     svg.read(reading_file_path)
 
-    hair_smoothened = get_special_smoothened_for_hair( svg.get_single_layer_svg("Hair"), linear_approximate_length, delete_ratio, broad_width, "#ff0000" )
+    hair_smoothened = get_smoothened( svg.get_single_layer_svg("Hair"), linear_approximate_length, delete_ratio, broad_width, "#ff0000" )
     body_smoothened = get_smoothened( svg.get_single_layer_svg("Body"), linear_approximate_length, delete_ratio, broad_width, "#00ff00" )
     cloth_smoothened = get_smoothened( svg.get_single_layer_svg("Cloth"), linear_approximate_length, delete_ratio, broad_width, "#0000ff" )
     others_smoothened = get_smoothened( svg.get_single_layer_svg("Hand"), linear_approximate_length, delete_ratio, broad_width, "#0000ff" )

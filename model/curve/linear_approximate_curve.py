@@ -210,14 +210,19 @@ class LinearApproximateCurve(Curve):
 
         the_index_nearest_other_end_point = self.get_ctrl_p_index_at_min_distance_to_point(other_end_point)
 
+        half_index = int(the_index_nearest_other_end_point/2)
+        quarter_index = int(the_index_nearest_other_end_point/4)
+        third_quarter_index = int(the_index_nearest_other_end_point/4*3)
+
         if the_index_nearest_other_end_point == 0:
             return False
         #end
 
         average_distance = 0.0
-        for i in range(0, the_index_nearest_other_end_point):
+        for i in [0, quarter_index, half_index, third_quarter_index, the_index_nearest_other_end_point]:
             point = self.sequential_points[i]
             average_distance += other_curve.get_min_distance_to_point(point)
+        #end
 
         average_distance /= the_index_nearest_other_end_point
         #print(average_distance)
@@ -229,10 +234,17 @@ class LinearApproximateCurve(Curve):
 
         the_index_nearest_other_start_point = self.get_ctrl_p_index_at_min_distance_to_point(other_start_point)
 
+        delta_index = len(self.sequential_points) - the_index_nearest_other_start_point
+
+        half_index = int(the_index_nearest_other_start_point + delta_index/2)
+        quarter_index = int(the_index_nearest_other_start_point + delta_index/4)
+        third_quarter_index = int(the_index_nearest_other_start_point + delta_index/4*3)
+
         average_distance = 0.0
-        for i in range(the_index_nearest_other_start_point, len(self.sequential_points)):
+        for i in [0, quarter_index, half_index, third_quarter_index, the_index_nearest_other_start_point]:
             point = self.sequential_points[i]
             average_distance += other_curve.get_min_distance_to_point(point)
+        #end
 
         average_distance /= len(self.sequential_points) - the_index_nearest_other_start_point
         #print(average_distance)

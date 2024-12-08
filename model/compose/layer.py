@@ -130,6 +130,8 @@ class Layer:
             #end
         #end
 
+        #print(candidate_curve_index_set)
+
         ret_info = {"start": None, "end": None}
 
         for candidate_curve_index in candidate_curve_index_set:
@@ -149,14 +151,15 @@ class Layer:
 
     #end
 
-    def create_sequential_points_and_edge_sequential_points(self, ratio):
+    def create_sequential_points_and_edge_sequential_points(self):
         for i, curve in enumerate(self.__curve_set):
             curve.create_sequential_points()
-            curve.create_edge_sequential_points(ratio)
+            #curve.create_edge_sequential_points()
         #end
     #end
 
     def create_continuous_curve_index_group(self, distance_threshold):
+        
         curve_connection_info = []
 
         for i, curve in enumerate(self.__curve_set):
@@ -182,6 +185,14 @@ class Layer:
             while c_info["end"] is not None:
                 tmp_index_group.append(c_info["end"])
                 c_info = curve_connection_info[c_info["end"]]
+
+                if c_info["end"] in start_none_list:
+                    break
+                #end
+                if c_info["end"] in tmp_index_group:
+                    break
+                #end
+                
             #end
 
             self.continuous_curve_index_group.append(tmp_index_group)
