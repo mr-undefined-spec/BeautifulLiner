@@ -218,18 +218,27 @@ class LinearApproximateCurve(Curve):
             return False
         #end
 
+        #print( [0, quarter_index, half_index, third_quarter_index, the_index_nearest_other_end_point])
+
+
         average_distance = 0.0
         for i in [0, quarter_index, half_index, third_quarter_index, the_index_nearest_other_end_point]:
             point = self.sequential_points[i]
             average_distance += other_curve.get_min_distance_to_point(point)
         #end
 
-        average_distance /= the_index_nearest_other_end_point
+        average_distance /= 5.0
         #print(average_distance)
         return average_distance < distance_threshold
     #end
 
     def is_continuaous_at_end_side2(self, other_curve, distance_threshold):
+
+        # check once
+        if other_curve.get_min_distance_to_point(self.sequential_points[-1]) > distance_threshold:
+            return False
+        #end
+
         other_start_point = other_curve.sequential_points[0]
 
         the_index_nearest_other_start_point = self.get_ctrl_p_index_at_min_distance_to_point(other_start_point)
@@ -240,13 +249,15 @@ class LinearApproximateCurve(Curve):
         quarter_index = int(the_index_nearest_other_start_point + delta_index/4)
         third_quarter_index = int(the_index_nearest_other_start_point + delta_index/4*3)
 
+        #print([the_index_nearest_other_start_point, quarter_index, half_index, third_quarter_index, len(self.sequential_points)-1])
+
         average_distance = 0.0
-        for i in [0, quarter_index, half_index, third_quarter_index, the_index_nearest_other_start_point]:
+        for i in [the_index_nearest_other_start_point, quarter_index, half_index, third_quarter_index, len(self.sequential_points)-1]:
             point = self.sequential_points[i]
             average_distance += other_curve.get_min_distance_to_point(point)
         #end
 
-        average_distance /= len(self.sequential_points) - the_index_nearest_other_start_point
+        average_distance /= 5.0
         #print(average_distance)
         return average_distance < distance_threshold
     #end
