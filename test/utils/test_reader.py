@@ -23,7 +23,7 @@ import unittest
 
 class TestSvgData(unittest.TestCase):
     def test_create_svg_from_file(self):
-        svg_from_file = reader.create_svg_from_file("data/test.svg")
+        svg_from_file = reader.create_svg_from_file("data/test.svg", 0, "TEST")
 
         xs = []
         ys = []

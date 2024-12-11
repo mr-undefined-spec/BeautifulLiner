@@ -95,8 +95,8 @@ def _get_group_paths_tuple(doc):
     return tuple(return_tuple)
 #end
 
-def create_svg_from_file(file_name):
-    svg = Svg(0, "TEST")
+def create_svg_from_file(file_name, global_calc_step, mode, progress_bar=None, log_text=None):
+    svg = Svg(global_calc_step, mode, progress_bar, log_text)
 
     if not type(file_name) is str:
         raise ValueError("file_name must be str")

@@ -33,3 +33,6 @@ os.chdir(cwd)
 
 doTestIn(r".\model")
 os.chdir(cwd)
+
+doTestIn(r".\utils")
+os.chdir(cwd)
