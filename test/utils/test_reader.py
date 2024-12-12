@@ -29,7 +29,7 @@ class TestSvgData(unittest.TestCase):
         ys = []
 
         for layer in svg_from_file:
-            for curve_set in layer.path_data:
+            for curve_set in layer:
                 for curve in curve_set:
                     for ctrl_p in curve:
                         xs.append( ctrl_p.x )
