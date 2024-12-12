@@ -18,6 +18,9 @@ from layer import Layer
 
 import unittest
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
+import test_helpers
+
 class TestLayer(unittest.TestCase):
     def setUp(self):
         p0 = Point(0.0, 0.0)
@@ -81,26 +84,14 @@ class TestLayer(unittest.TestCase):
     def test_delete_edge(self):
 
         num_angle_divisions = 100
-        # LinearApproximateCurve of 0 ~ 90degree arc ( radius=100, center=(0.0,0.0) )
         radius = 100.0
-        linear_approximate_curve = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
+        center = Point(0.0, 0.0)
+        # LinearApproximateCurve of 0 ~ 90degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve = test_helpers.create_arc(radius, center, 0.0, 90.0, num_angle_divisions)
 
+        center2 = Point(100.0, 0.0)
         # LinearApproximateCurve of 90 ~ 180 degree arc ( radius=100, center=(100.0,0.0) )
-        lin_curve2 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 2.0
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 2.0
-            start_p = Point( radius*math.cos(start_theta) + 100.0, radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta)   + 100.0, radius*math.sin(end_theta) )
-            lin_curve2.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
+        lin_curve2 = test_helpers.create_arc(radius, center2, 90.0, 180.0, num_angle_divisions)
 
         layer = Layer()
         layer.append(linear_approximate_curve)
@@ -117,26 +108,14 @@ class TestLayer(unittest.TestCase):
     def test_delete_edge(self):
 
         num_angle_divisions = 100
-        # LinearApproximateCurve of 0 ~ 90degree arc ( radius=100, center=(0.0,0.0) )
         radius = 100.0
-        linear_approximate_curve = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
+        center = Point(0.0, 0.0)
+        # LinearApproximateCurve of 0 ~ 90degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve = test_helpers.create_arc(radius, center, 0.0, 90.0, num_angle_divisions)
 
+        center2 = Point(100.0, 0.0)
         # LinearApproximateCurve of 90 ~ 180 degree arc ( radius=100, center=(100.0,0.0) )
-        lin_curve2 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 2.0
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 2.0
-            start_p = Point( radius*math.cos(start_theta) + 100.0, radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta)   + 100.0, radius*math.sin(end_theta) )
-            lin_curve2.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
+        lin_curve2 = test_helpers.create_arc(radius, center2, 90.0, 180.0, num_angle_divisions)
 
         layer = Layer()
         layer.append(linear_approximate_curve)
@@ -153,55 +132,19 @@ class TestLayer(unittest.TestCase):
 
         num_angle_divisions = 100
         radius = 100.0
+        center = Point(0.0, 0.0)
 
         # LinearApproximateCurve of 0 ~ 90 degree arc ( radius=100, center=(0.0,0.0) )
-        linear_approximate_curve_0_90 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve_0_90.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
-        linear_approximate_curve_0_90.create_sequential_points()
-        linear_approximate_curve_0_90.create_edge_sequential_points(0.25)
-
+        linear_approximate_curve_0_90 = test_helpers.create_arc(radius, center, 0.0, 90.0, num_angle_divisions)
 
         # LinearApproximateCurve of 45 ~ 135 degree arc ( radius=100, center=(0.0,0.0) )
-        linear_approximate_curve_45_135 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 4.0
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 4.0
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve_45_135.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
-        linear_approximate_curve_45_135.create_sequential_points()
-        linear_approximate_curve_45_135.create_edge_sequential_points(0.25)
+        linear_approximate_curve_45_135 = test_helpers.create_arc(radius, center, 45.0, 135.0, num_angle_divisions)
 
         # LinearApproximateCurve of 90 ~ 180 degree arc ( radius=100, center=(0.0,0.0) )
-        linear_approximate_curve_90_180 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 2.0
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 2.0
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve_90_180.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
-        linear_approximate_curve_90_180.create_sequential_points()
-        linear_approximate_curve_90_180.create_edge_sequential_points(0.25)
+        linear_approximate_curve_90_180 = test_helpers.create_arc(radius, center, 90.0, 180.0, num_angle_divisions)
 
         # LinearApproximateCurve of 135 ~ 225 degree arc ( radius=100, center=(0.0,0.0) )
-        linear_approximate_curve_135_225 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 * i / num_angle_divisions + 3 * math.pi / 4.0
-            end_theta = math.pi / 2.0 * (i + 1) / num_angle_divisions + 3 * math.pi / 4.0
-            start_p = Point(radius * math.cos(start_theta), radius * math.sin(start_theta))
-            end_p = Point(radius * math.cos(end_theta), radius * math.sin(end_theta))
-            linear_approximate_curve_135_225.append(LinearApproximateCurveControlPoint(start_p, end_p))
-        #end
-        linear_approximate_curve_135_225.create_sequential_points()
-        linear_approximate_curve_135_225.create_edge_sequential_points(0.25)
+        linear_approximate_curve_135_225 = test_helpers.create_arc(radius, center, 135.0, 225.0, num_angle_divisions)
 
         bbox = (0.0, 0.0, 180.0, 180.0)
 
@@ -212,7 +155,7 @@ class TestLayer(unittest.TestCase):
         layer.append(linear_approximate_curve_135_225)
 
         layer.create_intersect_judge_rectangle(bbox)
-        layer.create_continuous_curve_index_group(0.1)
+        layer.create_continuous_curve_index_group(1.0)
 
         #print(layer.continuous_curve_index_group)
         # [[0, 1, 2, 3]]
@@ -225,7 +168,7 @@ class TestLayer(unittest.TestCase):
         layer2.append(linear_approximate_curve_90_180)
 
         layer2.create_intersect_judge_rectangle(bbox)
-        layer2.create_continuous_curve_index_group(0.1)
+        layer2.create_continuous_curve_index_group(1.0)
         #print(layer2.continuous_curve_index_group)
         # [[0, 1, 3, 2]]
         self.assertEqual(layer2.continuous_curve_index_group, [[0, 1, 3, 2]])
@@ -237,46 +180,21 @@ class TestLayer(unittest.TestCase):
         layer3.append(linear_approximate_curve_45_135)
 
         layer3.create_intersect_judge_rectangle(bbox)
-        layer3.create_continuous_curve_index_group(0.1)
+        layer3.create_continuous_curve_index_group(1.0)
         #print(layer3.continuous_curve_index_group)
         # [[1, 3, 2, 0]]
         self.assertEqual(layer3.continuous_curve_index_group, [[1, 3, 2, 0]])
 
+        center2 = Point(100.0, 0.0)
+
         # LinearApproximateCurve of 90 ~ 180 degree arc ( radius=100, center=(100.0,0.0) )
-        lin_curve2_90_180 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 2.0
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 2.0
-            start_p = Point( radius*math.cos(start_theta) + 100.0, radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta)   + 100.0, radius*math.sin(end_theta) )
-            lin_curve2_90_180.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
-        lin_curve2_90_180.create_sequential_points()
-        lin_curve2_90_180.create_edge_sequential_points(0.25)
+        lin_curve2_90_180 = test_helpers.create_arc(radius, center2, 90.0, 180.0, num_angle_divisions)
 
         # LinearApproximateCurve of 135 ~ 225 degree arc ( radius=100, center=(100.0,0.0) )
-        lin_curve2_135_225 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 * i / num_angle_divisions + 3 * math.pi / 4.0
-            end_theta = math.pi / 2.0 * (i + 1) / num_angle_divisions + 3 * math.pi / 4.0
-            start_p = Point(radius * math.cos(start_theta) + 100.0, radius * math.sin(start_theta) + 100.0)
-            end_p = Point(radius * math.cos(end_theta)   + 100.0, radius * math.sin(end_theta)   + 100.0)
-            lin_curve2_135_225.append(LinearApproximateCurveControlPoint(start_p, end_p))
-        #end
-        lin_curve2_135_225.create_sequential_points()
-        lin_curve2_135_225.create_edge_sequential_points(0.25)
+        lin_curve2_135_225 = test_helpers.create_arc(radius, center2, 135.0, 225.0, num_angle_divisions)
 
         # LinearApproximateCurve of 180 ~ 270 degree arc ( radius=100, center=(100.0,0.0) )
-        lin_curve2_180_270 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 * i / num_angle_divisions + math.pi
-            end_theta = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi
-            start_p = Point(radius * math.cos(start_theta) + 100.0, radius * math.sin(start_theta) + 100.0)
-            end_p = Point(radius * math.cos(end_theta)   + 100.0, radius * math.sin(end_theta)   + 100.0)
-            lin_curve2_180_270.append(LinearApproximateCurveControlPoint(start_p, end_p))
-        #end
-        lin_curve2_180_270.create_sequential_points()
-        lin_curve2_180_270.create_edge_sequential_points(0.25)
+        lin_curve2_180_270 = test_helpers.create_arc(radius, center2, 180.0, 270.0, num_angle_divisions)
 
         layer4 = Layer()
         layer4.append(linear_approximate_curve_135_225)
@@ -288,10 +206,10 @@ class TestLayer(unittest.TestCase):
         layer4.append(lin_curve2_135_225)
 
         layer4.create_intersect_judge_rectangle(bbox)
-        layer4.create_continuous_curve_index_group(0.1)
+        layer4.create_continuous_curve_index_group(1.0)
         #print(layer4.continuous_curve_index_group)
-        # [[1, 3, 2, 0], [4], [6, 5]]
-        self.assertEqual(layer4.continuous_curve_index_group, [[1, 3, 2, 0], [4], [6, 5]])
+        # [[1, 3, 2, 0], [4, 6, 5]]
+        self.assertEqual(layer4.continuous_curve_index_group, [[1, 3, 2, 0], [4, 6, 5]])
     #end
 
 #end

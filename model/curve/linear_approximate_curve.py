@@ -235,6 +235,7 @@ class LinearApproximateCurve(Curve):
     def is_continuaous_at_end_side2(self, other_curve, distance_threshold):
 
         # check once
+        
         if other_curve.get_min_distance_to_point(self.sequential_points[-1]) > distance_threshold:
             return False
         #end

@@ -15,7 +15,7 @@ import unittest
 class TestSvgData(unittest.TestCase):
     def test_write(self):
         #just read
-        svg_from_file = reader.create_svg_from_file("data/test.svg")
+        svg_from_file = reader.create_svg_from_file("data/test.svg", 0, "TEST")
         # and just write
         writer.write(svg_from_file, "data/write.svg")
 

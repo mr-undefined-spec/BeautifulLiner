@@ -14,6 +14,9 @@ from broad_cubic_bezier_curve import BroadCubicBezierCurve
 from broad_linear_approximate_curve import BroadLinearApproximateCurve
 import unittest
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
+import test_helpers
+
 import numpy as np
 import math
 
@@ -189,18 +192,13 @@ class TestCurve(unittest.TestCase):
 
     def test_thin_smoothen(self):
         num_angle_divisions = 100
-        # LinearApproximateCurve of 90degree arc (radius=100)
         radius = 100.0
-        linear_approximate_curve = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
+        center = Point(0.0, 0.0)
 
-        smooth_curve = linear_approximate_curve.thin_smoothen()
+        # LinearApproximateCurve of 0 ~ 90 degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve_0_90 = test_helpers.create_arc(radius, center, 0.0, 90.0, num_angle_divisions)
+
+        smooth_curve = linear_approximate_curve_0_90.thin_smoothen()
         ctrl_p = smooth_curve[0]
 
         self.assertAlmostEqual(round(ctrl_p.p0.x, 3), 100.000)
@@ -273,32 +271,14 @@ class TestCurve(unittest.TestCase):
 
     def test_is_continuaous(self):
         num_angle_divisions = 100
-        # LinearApproximateCurve of 0 ~ 90 degree arc (radius=100)
         radius = 100.0
-        linear_approximate_curve_0_90 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve_0_90.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
+        center = Point(0.0, 0.0)
 
-        # LinearApproximateCurve of 45 ~ 135 degree arc (radius=100)
-        linear_approximate_curve_45_135 = LinearApproximateCurve()
-        for i in range(num_angle_divisions):
-            start_theta = math.pi / 2.0 *  i      / num_angle_divisions + math.pi / 4.0
-            end_theta   = math.pi / 2.0 * (i + 1) / num_angle_divisions + math.pi / 4.0
-            start_p = Point( radius*math.cos(start_theta), radius*math.sin(start_theta) )
-            end_p   = Point( radius*math.cos(end_theta),   radius*math.sin(end_theta) )
-            linear_approximate_curve_45_135.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
-        #end
+        # LinearApproximateCurve of 0 ~ 90 degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve_0_90 = test_helpers.create_arc(radius, center, 0.0, 90.0, num_angle_divisions)
 
-        linear_approximate_curve_0_90.create_sequential_points()
-        linear_approximate_curve_0_90.create_edge_sequential_points(0.25)
-
-        linear_approximate_curve_45_135.create_sequential_points()
-        linear_approximate_curve_45_135.create_edge_sequential_points(0.25)
+        # LinearApproximateCurve of 45 ~ 135 degree arc ( radius=100, center=(0.0,0.0) )
+        linear_approximate_curve_45_135 = test_helpers.create_arc(radius, center, 45.0, 135.0, num_angle_divisions)
 
         self.assertEqual( linear_approximate_curve_0_90.is_continuaous_at_end_side(linear_approximate_curve_45_135, 0.1), True)
 

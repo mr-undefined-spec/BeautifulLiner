@@ -11,6 +11,7 @@ class Layer:
         self.__curve_set = []
         self.is_fill = False
         self.color   = "#000000"
+        self.continuous_curve_index_group = None
     #end
 
     def __getitem__(self, i):
@@ -437,6 +438,11 @@ class Layer:
 
 
     def to_svg2(self):
+
+        if self.continuous_curve_index_group is None:
+            return self.to_svg()
+        #end
+
         s = ''
 
 
