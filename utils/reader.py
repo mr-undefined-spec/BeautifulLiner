@@ -70,8 +70,8 @@ def _make_cubic_bezier_curve_set(d_str):
     return curve
 #end def
 
-def _make_layer(paths):
-    layer = Layer()
+def _make_layer(layer_name, paths):
+    layer = Layer(layer_name)
     for path in paths:
         layer.append(  _make_cubic_bezier_curve_set( path.getAttributeNode('d').nodeValue )  )
     #end for
@@ -110,7 +110,7 @@ def create_svg_from_file(file_name, global_calc_step, mode, progress_bar=None, l
         paths = group_paths_set[1]
         layer_name = group.getAttributeNode('id').nodeValue
 
-        svg.append(layer_name, _make_layer(paths) )
+        svg.append(_make_layer(layer_name, paths) )
     #end
     root = doc.getElementsByTagName("svg")
     svg.set_view_box( root[0].attributes["viewBox"].value )

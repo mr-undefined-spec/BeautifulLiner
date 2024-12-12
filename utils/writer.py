@@ -36,7 +36,7 @@ def write(svg, path):
     for layer in svg:
         #s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
         s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
-        s += layer.path_data.to_svg2()
+        s += layer.to_svg2()
 #            s += layer.path_data.to_svg()
         s += '</g>\n'
     #end

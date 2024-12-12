@@ -7,11 +7,22 @@ from curve import Curve
 import tkinter as tk
 
 class Layer:
-    def __init__(self):
+    def __init__(self, name):
+        if not type(name) is str:
+            raise TypeError("The 1st argument \"layer_name\" of the append method must be a str")
+        #end
+        self.__name = name
+
         self.__curve_set = []
+
         self.is_fill = False
         self.color   = "#000000"
         self.continuous_curve_index_group = None
+    #end
+
+    @property
+    def name(self):
+        return self.__name
     #end
 
     def __getitem__(self, i):
@@ -56,7 +67,7 @@ class Layer:
     #end
 
     def linearize(self, micro_segment_length, global_calc_step, mode, progress_bar=None, log_text=None):
-        linear_approximate_layer = Layer()
+        linear_approximate_layer = Layer(self.name + "L")
 
         step_name = ""
         if global_calc_step == 0:
@@ -79,7 +90,7 @@ class Layer:
     #end
 
     def thin_smoothen(self, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer()
+        new_layer = Layer(self.name + "S")
 
         step_name = ""
         if global_calc_step == 1:
@@ -96,7 +107,7 @@ class Layer:
 
 
     def special_smoothen_for_hair(self, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer()
+        new_layer = Layer(self.name + "H")
 
         step_name = ""
         if global_calc_step == 1:
@@ -249,7 +260,7 @@ class Layer:
     #end
 
     def delete_edge(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer()
+        new_layer = Layer(self.name + "B")
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step+1, i, "delete edge", progress_bar, log_text)
             new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
@@ -308,7 +319,7 @@ class Layer:
     #end
 
     def delete_edge2(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer()
+        new_layer = Layer(self.name + "D")
         delete_edge2_step = 0
 
         new_continuous_curve_index_group = []
@@ -353,7 +364,7 @@ class Layer:
     #end
 
     def broaden(self, broaden_width, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer()
+        new_layer = Layer(self.name + "B")
         curve_num = len(self.__curve_set)
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step, i, "broaden", progress_bar, log_text)
@@ -363,7 +374,7 @@ class Layer:
     #end
 
     def broaden2(self, broaden_width, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer()
+        new_layer = Layer(self.name + "B")
         curve_num = len(self.__curve_set)
 
         for curve_index_group in self.continuous_curve_index_group:
@@ -395,7 +406,7 @@ class Layer:
     #end
 
     def broad_smoothen(self, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer()
+        new_layer = Layer(self.name + "S")
 
         for i, curve in enumerate(self.__curve_set):
             self.__print_step(mode, global_calc_step, i, "broad_smoothen", progress_bar, log_text)

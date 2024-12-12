@@ -34,7 +34,7 @@ class TestLayer(unittest.TestCase):
         bezier_curve.append(bezier_ctrl_p)
         bezier_curve.append(bezier_ctrl_p)
 
-        self.bezier_layer = Layer()
+        self.bezier_layer = Layer("TEST")
         self.bezier_layer.append(bezier_curve)
         self.bezier_layer.append(bezier_curve)
 
@@ -53,7 +53,7 @@ class TestLayer(unittest.TestCase):
         linear_curve.append(linear_ctrl_p_2_3)
         linear_curve.append(linear_ctrl_p_2_4)
 
-        self.linear_layer = Layer()
+        self.linear_layer = Layer("TEST")
         self.linear_layer.append(linear_curve)
         self.linear_layer.append(linear_curve)
     #end
@@ -93,7 +93,7 @@ class TestLayer(unittest.TestCase):
         # LinearApproximateCurve of 90 ~ 180 degree arc ( radius=100, center=(100.0,0.0) )
         lin_curve2 = test_helpers.create_arc(radius, center2, 90.0, 180.0, num_angle_divisions)
 
-        layer = Layer()
+        layer = Layer("TEST")
         layer.append(linear_approximate_curve)
         layer.append(lin_curve2)
 
@@ -117,7 +117,7 @@ class TestLayer(unittest.TestCase):
         # LinearApproximateCurve of 90 ~ 180 degree arc ( radius=100, center=(100.0,0.0) )
         lin_curve2 = test_helpers.create_arc(radius, center2, 90.0, 180.0, num_angle_divisions)
 
-        layer = Layer()
+        layer = Layer("TEST")
         layer.append(linear_approximate_curve)
         layer.append(lin_curve2)
 
@@ -148,7 +148,7 @@ class TestLayer(unittest.TestCase):
 
         bbox = (0.0, 0.0, 180.0, 180.0)
 
-        layer = Layer()
+        layer = Layer("TEST")
         layer.append(linear_approximate_curve_0_90)
         layer.append(linear_approximate_curve_45_135)
         layer.append(linear_approximate_curve_90_180)
@@ -161,7 +161,7 @@ class TestLayer(unittest.TestCase):
         # [[0, 1, 2, 3]]
         self.assertEqual(layer.continuous_curve_index_group, [[0, 1, 2, 3]])
 
-        layer2 = Layer()
+        layer2 = Layer("TEST")
         layer2.append(linear_approximate_curve_0_90)
         layer2.append(linear_approximate_curve_45_135)
         layer2.append(linear_approximate_curve_135_225)
@@ -173,7 +173,7 @@ class TestLayer(unittest.TestCase):
         # [[0, 1, 3, 2]]
         self.assertEqual(layer2.continuous_curve_index_group, [[0, 1, 3, 2]])
 
-        layer3 = Layer()
+        layer3 = Layer("TEST")
         layer3.append(linear_approximate_curve_135_225)
         layer3.append(linear_approximate_curve_0_90)
         layer3.append(linear_approximate_curve_90_180)
@@ -196,7 +196,7 @@ class TestLayer(unittest.TestCase):
         # LinearApproximateCurve of 180 ~ 270 degree arc ( radius=100, center=(100.0,0.0) )
         lin_curve2_180_270 = test_helpers.create_arc(radius, center2, 180.0, 270.0, num_angle_divisions)
 
-        layer4 = Layer()
+        layer4 = Layer("TEST")
         layer4.append(linear_approximate_curve_135_225)
         layer4.append(linear_approximate_curve_0_90)
         layer4.append(linear_approximate_curve_90_180)

@@ -9,12 +9,15 @@ from layer import Layer
 import tkinter as tk
 
 import re
+
+"""
 class LayerData:
     def __init__(self, name, path_data):
         self.name = name
         self.path_data = path_data
     #end
 #end
+"""
 
 class Svg:
     #
@@ -63,13 +66,11 @@ class Svg:
     #end
 
 
-    def append(self, layer_name, layer):
-        if not type(layer_name) is str:
-            raise TypeError("The 1st argument \"layer_name\" of the append method must be a str")
+    def append(self, layer):
         if not isinstance(layer, Layer):
             raise TypeError("The argument of the append method must be a Layer")
         #end if
-        self.__layers.append( LayerData(layer_name, layer) )
+        self.__layers.append(layer)
     #end def
 
     def __getitem__(self, i):
@@ -97,7 +98,7 @@ class Svg:
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_layer = layer.path_data.linearize(micro_segment_length, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer = layer.linearize(micro_segment_length, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_svg.append(layer.name, new_layer)
         #end
         return new_svg

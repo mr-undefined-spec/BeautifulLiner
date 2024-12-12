@@ -46,7 +46,7 @@ class TestTotal(unittest.TestCase):
             lin_curve2.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
         #end
 
-        layer = Layer()
+        layer = Layer("TEST")
         layer.append(linear_approximate_curve)
         layer.append(lin_curve2)
 
@@ -105,7 +105,7 @@ class TestTotal(unittest.TestCase):
             lin_curve4.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
         #end
 
-        layer = Layer()
+        layer = Layer("TEST")
         layer.append(linear_approximate_curve)
         layer.append(lin_curve2)
         layer.append(lin_curve3)
