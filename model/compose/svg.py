@@ -89,7 +89,7 @@ class Svg:
 
     def set_write_options(self, is_fill, color):
         for layer in self.__layers:
-            layer.path_data.set_write_options(is_fill, color)
+            layer.set_write_options(is_fill, color)
         #end
     #end
 
@@ -99,7 +99,7 @@ class Svg:
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_layer = layer.linearize(micro_segment_length, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_svg.append(layer.name, new_layer)
+            new_svg.append(new_layer)
         #end
         return new_svg
     #end
@@ -109,7 +109,7 @@ class Svg:
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append(layer.name, layer.path_data.thin_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+            new_svg.append(layer.thin_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
         return new_svg
     #end
@@ -119,7 +119,7 @@ class Svg:
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append(layer.name, layer.path_data.special_smoothen_for_hair(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+            new_svg.append(layer.special_smoothen_for_hair(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
         return new_svg
     #end
@@ -128,27 +128,27 @@ class Svg:
         self.__global_calc_step += 1
         bbox = self.get_bbox()
         for layer in self.__layers:
-            layer.path_data.create_intersect_judge_rectangle(bbox)
+            layer.create_intersect_judge_rectangle(bbox)
         #end
     #end
 
     def create_sequential_points_and_edge_sequential_points(self):
         self.__global_calc_step += 1
         for layer in self.__layers:
-            layer.path_data.create_sequential_points_and_edge_sequential_points()
+            layer.create_sequential_points_and_edge_sequential_points()
         #end
     #end
 
     def create_continuous_curve_index_group(self, distance_threshold):
         
         for layer in self.__layers:
-            layer.path_data.create_continuous_curve_index_group( distance_threshold)
+            layer.create_continuous_curve_index_group( distance_threshold)
         #end
     #end
 
     def create_connection_point(self):
         for layer in self.__layers:
-            layer.path_data.create_connection_point()
+            layer.create_connection_point()
         #end
     #end
 
@@ -160,9 +160,9 @@ class Svg:
         bbox = self.get_bbox()
         for layer in self.__layers:
 #            new_layer = layer.path_data.delete_edge(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_layer = layer.path_data.delete_edge2(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_layer.set_continuous_curve_index_group(layer.path_data.continuous_curve_index_group)
-            new_svg.append(layer.name, new_layer)
+            new_layer = layer.delete_edge2(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
+            new_svg.append(new_layer)
         #end
         return new_svg
     #end
@@ -174,10 +174,10 @@ class Svg:
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
 #            new_layer = layer.path_data.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_layer = layer.path_data.broaden2(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_layer.set_continuous_curve_index_group(layer.path_data.continuous_curve_index_group)
+            new_layer = layer.broaden2(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
             #print(new_layer.continuous_curve_index_group)
-            new_svg.append("B_" + layer.name, new_layer)
+            new_svg.append(new_layer)
         #end
         return new_svg
     #end
@@ -187,9 +187,9 @@ class Svg:
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_layer = layer.path_data.broad_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_layer.set_continuous_curve_index_group(layer.path_data.continuous_curve_index_group)
-            new_svg.append(layer.name, new_layer)
+            new_layer = layer.broad_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
+            new_svg.append(new_layer)
         #end
         return new_svg
     #end
@@ -198,10 +198,10 @@ class Svg:
         new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append(layer.name, layer.path_data)
+            new_svg.append(layer)
         #end
         for other_layer in other_svg:
-            new_svg.append(other_layer.name, other_layer.path_data)
+            new_svg.append(other_layer)
         #end
         return new_svg
     #end
@@ -211,7 +211,7 @@ class Svg:
         new_svg.set_view_box( self.__view_box )
         for layer in self.__layers:
             if( layer.name == target_layer_name ):
-                new_svg.append(layer.name, layer.path_data)
+                new_svg.append(layer)
             #end
         #end
         return new_svg

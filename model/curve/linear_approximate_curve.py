@@ -107,6 +107,7 @@ class LinearApproximateCurve(Curve):
     #end
 
     def create_qtree_ctrl_p_set(self, bbox):
+        
         self.qtree_ctrl_p_set = Index(bbox=bbox)
 
         for ctrl_p in self._going_ctrl_p_set:
@@ -274,6 +275,10 @@ class LinearApproximateCurve(Curve):
         self.end_connection_point = other_curve.get_perpendicular_intersection_point_from_point(end_point)
         #print(self.end_connection_point)
     #end
+
+    @property
+    def start_index(self):
+        return self._start_index
 
 
     def update_start_end_index_with_intersection(self, other_curve, ratio):

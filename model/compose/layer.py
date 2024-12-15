@@ -195,15 +195,16 @@ class Layer:
             tmp_index_group.append(i)
             c_info = curve_connection_info[i]
             while c_info["end"] is not None:
-                tmp_index_group.append(c_info["end"])
-                c_info = curve_connection_info[c_info["end"]]
-
                 if c_info["end"] in start_none_list:
                     break
                 #end
                 if c_info["end"] in tmp_index_group:
                     break
                 #end
+
+                tmp_index_group.append(c_info["end"])
+                c_info = curve_connection_info[c_info["end"]]
+
                 
             #end
 
@@ -221,9 +222,12 @@ class Layer:
 
     def create_connection_point(self):
         for curve_index_group in self.continuous_curve_index_group:
+            #print(curve_index_group)
             for i, curve_index in enumerate(curve_index_group):
                 pre_index  = None if i == 0 else curve_index - 1
                 next_index = None if i == len(curve_index_group) - 1 else curve_index + 1
+
+                #print(i, curve_index, pre_index, next_index, len(curve_index_group))
 
                 curve = self.__curve_set[curve_index]
                 if pre_index is not None:
@@ -314,6 +318,7 @@ class Layer:
             #end
         #end
 
+        #print(new_curve.start_index)
 
         return new_curve
     #end
