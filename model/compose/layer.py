@@ -6,6 +6,13 @@ from point import Point
 from curve import Curve
 import tkinter as tk
 
+from enum import Enum
+
+class EndpointStyle(Enum):
+    BOTH_POINTED = "both_pointed"
+    BOTH_WIDE = "both_wide"
+#end
+
 class Layer:
     def __init__(self, name):
         if not type(name) is str:
@@ -17,6 +24,8 @@ class Layer:
 
         self.is_fill = False
         self.color   = "#000000"
+        self.endpoint_style   = EndpointStyle.BOTH_POINTED
+
         self.continuous_curve_index_group = None
     #end
 
@@ -46,9 +55,14 @@ class Layer:
         self.__curve_set.append(curve)
     #end
 
-    def set_write_options(self, is_fill, color):
+    def set_write_options(self, is_fill, color, endpoint_style):
         self.is_fill = is_fill
         self.color   = color
+
+        if not isinstance(endpoint_style, EndpointStyle):
+            raise TypeError("The argument \"endpoint_style\" of the set_write_options method must be an EndpointStyle")
+        #end
+        self.endpoint_style   = endpoint_style
     #end
 
     def __print_step(self, mode, global_calc_step, local_calc_step, step_name, progress_bar, log_text):
@@ -409,71 +423,92 @@ class Layer:
 
         s = ''
 
-
         for curve_index_group in self.continuous_curve_index_group:
             #print(curve_index_group)
             s += '<path d="'
 
-            if len(curve_index_group) == 1:
-                position = "first_last"
-                curve_index = curve_index_group[0]
-                s += self.__curve_set[curve_index].to_str()
-            else:
-                # going
-                for i, curve_index in enumerate(curve_index_group):
-                    pre_index  = None if i == 0 else curve_index_group[i-1]
-                    next_index = None if i == len(curve_index_group) - 1 else curve_index_group[i+1]
-                    position = self.get_position_of_continuous_curve(pre_index, next_index)
+            # going
+            for i, curve_index in enumerate(curve_index_group):
+                pre_index  = None if i == 0 else curve_index_group[i-1]
+                next_index = None if i == len(curve_index_group) - 1 else curve_index_group[i+1]
+                position = self.get_position_of_continuous_curve(pre_index, next_index)
 
-                    #print(curve_index, pre_index, next_index, position, str( self.__curve_set[curve_index].going_ctrl_p_set[0].p0 ))
+                #print(curve_index, pre_index, next_index, position, str( self.__curve_set[curve_index].going_ctrl_p_set[0].p0 ))
 
-                    if position == "first":
-                        s += "M "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p0 ) + " "
-                        s += "C "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
-                    else: #position == "middle" or position == "last":
-                        s += "C "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
+                if position == "first" or position == "first_last":
+
+                    the_first_point = self.__curve_set[curve_index].going_ctrl_p_set[0].p0
+                    if self.endpoint_style == EndpointStyle.BOTH_POINTED:
+                        the_first_point = self.__curve_set[curve_index].going_ctrl_p_set[0].p0.get_midpoint(self.__curve_set[curve_index].returning_ctrl_p_set[0].p3)
                     #end
+                    s += "M "
+                    s += str( the_first_point ) + " "
+                    
+                    s += "C "
+                    s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
+                    s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
+                    s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
+                else: #position == "middle" or position == "last":
+                    s += "C "
+                    s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
+                    s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
+                    s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
                 #end
+            #end
 
-                # returning
-                reversed_curve_index_group = list( reversed(curve_index_group) )
-                #print(reversed_curve_index_group)
-                for i, curve_index in enumerate( reversed_curve_index_group ):
-                    pre_index  = None if i == 0 else reversed_curve_index_group[i-1]
-                    next_index = None if i == len(reversed_curve_index_group) - 1 else reversed_curve_index_group[i+1]
-                    position = self.get_position_of_continuous_curve(pre_index, next_index)
+            # returning
+            reversed_curve_index_group = list( reversed(curve_index_group) )
+            #print(reversed_curve_index_group)
+            for i, curve_index in enumerate( reversed_curve_index_group ):
+                pre_index  = None if i == 0 else reversed_curve_index_group[i-1]
+                next_index = None if i == len(reversed_curve_index_group) - 1 else reversed_curve_index_group[i+1]
+                position = self.get_position_of_continuous_curve(pre_index, next_index)
 
-                    #print(curve_index, pre_index, next_index, position)
+                #print(curve_index, pre_index, next_index, position)
 
-                    if position == "first":
+                if position == "first":
+                    if self.endpoint_style == EndpointStyle.BOTH_WIDE:
                         s += "L "
                         s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p0 ) + " "
-                        s += "C "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
-                    elif position == "middle":
-                        s += "C "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
-                    elif position == "last":
-                        s += "C "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
-                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
-                        s += "Z "
                     #end
-                #end
+                    s += "C "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
+                elif position == "middle":
+                    s += "C "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
+                elif position == "last":
+                    s += "C "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
 
+                    the_last_point = self.__curve_set[curve_index].returning_ctrl_p_set[0].p3
+                    if self.endpoint_style == EndpointStyle.BOTH_POINTED:
+                        the_last_point = self.__curve_set[curve_index].returning_ctrl_p_set[0].p3.get_midpoint(self.__curve_set[curve_index].going_ctrl_p_set[0].p0)
+                    #end
+                    s += str( the_last_point ) + " "
+                    s += "Z "
+                elif position == "first_last":
+                    if self.endpoint_style == EndpointStyle.BOTH_WIDE:
+                        s += "L "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p0 ) + " "
+                    #end
+                    s += "C "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
+                    s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
+
+                    the_last_point = self.__curve_set[curve_index].returning_ctrl_p_set[0].p3
+                    if self.endpoint_style == EndpointStyle.BOTH_POINTED:
+                        the_last_point = self.__curve_set[curve_index].returning_ctrl_p_set[0].p3.get_midpoint(self.__curve_set[curve_index].going_ctrl_p_set[0].p0)
+                    #end
+                    s += str( the_last_point ) + " "
+                    s += "Z "
+                #end
             #end
+
             s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
         #end
         return s

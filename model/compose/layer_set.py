@@ -78,9 +78,9 @@ class LayerSet:
         return self.__layers[self.__index-1]
     #end def
 
-    def set_write_options(self, is_fill, color):
+    def set_write_options(self, is_fill, color, endpoint_style):
         for layer in self.__layers:
-            layer.set_write_options(is_fill, color)
+            layer.set_write_options(is_fill, color, endpoint_style)
         #end
     #end
 
