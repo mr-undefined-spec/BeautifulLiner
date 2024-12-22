@@ -146,7 +146,10 @@ class Layer:
 
         ret_info = {"start": None, "end": None}
 
+        #print("target", target_curve_index)
+
         for candidate_curve_index in candidate_curve_index_set:
+            #print("candidate", candidate_curve_index)
             candidate_curve = self.__curve_set[candidate_curve_index]
             if target_curve.is_continuaous_at_start_side2(candidate_curve, distance_threshold):
                 ret_info["start"] = candidate_curve_index
@@ -157,6 +160,8 @@ class Layer:
                 #self.curve_connection_info.append((target_curve_index, candidate_curve_index, "end"))
             #end
         #end
+
+        #print("\n")
 
         #print(self.curve_connection_info)
         return ret_info
@@ -486,12 +491,7 @@ class Layer:
                         s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
                         s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
                         s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
-                    elif position == "middle":
-                        s += "C "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
-                        s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p3 ) + " "
-                    elif position == "last":
+                    else: #position == "middle" or position == "last":
                         s += "C "
                         s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p1 ) + " "
                         s += str( self.__curve_set[curve_index].going_ctrl_p_set[0].p2 ) + " "
@@ -510,6 +510,8 @@ class Layer:
                     #print(curve_index, pre_index, next_index, position)
 
                     if position == "first":
+                        s += "L "
+                        s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p0 ) + " "
                         s += "C "
                         s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p1 ) + " "
                         s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p2 ) + " "
@@ -526,6 +528,8 @@ class Layer:
                         s += str( self.__curve_set[curve_index].returning_ctrl_p_set[0].p3 ) + " "
                         s += "Z "
                     #end
+                #end
+
             #end
             s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
         #end

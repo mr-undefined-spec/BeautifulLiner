@@ -229,7 +229,7 @@ class LinearApproximateCurve(Curve):
         #end
 
         average_distance /= 5.0
-        #print(average_distance)
+        #print("start", average_distance)
         return average_distance < distance_threshold
     #end
 
@@ -237,9 +237,6 @@ class LinearApproximateCurve(Curve):
 
         # check once
         
-        if other_curve.get_min_distance_to_point(self.sequential_points[-1]) > distance_threshold:
-            return False
-        #end
 
         other_start_point = other_curve.sequential_points[0]
 
@@ -260,7 +257,7 @@ class LinearApproximateCurve(Curve):
         #end
 
         average_distance /= 5.0
-        #print(average_distance)
+        #print("end", average_distance)
         return average_distance < distance_threshold
     #end
 
@@ -580,7 +577,7 @@ class LinearApproximateCurve(Curve):
             elif position == "first_last":
                 delta = broaden_width * ( half_length - abs(half_length - i - 1) ) / half_length
             #end
-            delta += 0.5
+            #delta += 0.5
             prev_point = points[i]
             current_point = points[i+1]
             slightly_away_point = self.__get_delta_point(prev_point, current_point, delta)
