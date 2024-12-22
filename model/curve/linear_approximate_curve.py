@@ -29,12 +29,12 @@ class LinearApproximateCurve(Curve):
         self._going_ctrl_p_set.append(linear_ctrl_p)
     #end
 
-    def to_svg(self):
+    def to_str(self):
         s = ""
         the_end = self._get_the_end()
         for i in range( self._start_index, the_end ):
             ctrl_p = self._going_ctrl_p_set[i]
-            s += ctrl_p.to_svg(i==self._start_index)
+            s += ctrl_p.to_str(i==self._start_index)
         #end
         return s
     #end

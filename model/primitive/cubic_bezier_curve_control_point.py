@@ -79,7 +79,7 @@ class CubicBezierCurveControlPoint(ControlPoint):
         #end
     #end
 
-    def to_svg(self, is_going_first, is_returning_first=False):
+    def to_str(self, is_going_first, is_returning_first=False):
         s = ""
         if is_going_first:
             s += "M " + str(self.__p0) + " "

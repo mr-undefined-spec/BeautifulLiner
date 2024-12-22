@@ -31,13 +31,13 @@ class BroadCubicBezierCurve(CubicBezierCurve):
         self._returning_ctrl_p_set = [returning_ctrl_p]
     #end
 
-    def to_svg(self):
+    def to_str(self):
         s = ""
-        s += self._going_ctrl_p_set[0].to_svg(True)
+        s += self._going_ctrl_p_set[0].to_str(True)
         if(self._going_ctrl_p_set[0].p3 == self._returning_ctrl_p_set[0].p0 ):
-            s += self._returning_ctrl_p_set[0].to_svg(False, False)
+            s += self._returning_ctrl_p_set[0].to_str(False, False)
         else:
-            s += self._returning_ctrl_p_set[0].to_svg(False, True)
+            s += self._returning_ctrl_p_set[0].to_str(False, True)
         #end
         s += "Z"
         return s

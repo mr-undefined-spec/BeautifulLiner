@@ -13,14 +13,14 @@ from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from cubic_bezier_curve import CubicBezierCurve
 from layer import Layer
 
-from svg import Svg
+from layer_set import LayerSet
 
 import tkinter as tk
 
 import re
 
-def write(svg, path):
-    bbox = svg.get_bbox()
+def write(layer_set, path):
+    bbox = layer_set.get_bbox()
     s = ""
     s += '<?xml version="1.0" encoding="UTF-8"?>\n'
     s += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
@@ -29,15 +29,15 @@ def write(svg, path):
     s += 'height="' + str(bbox[3]) + 'pt" '
     s += 'xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" '
     s += 'width="' + str(bbox[2]) + 'pt" version="1.1" '
-    s += ' viewBox="' + svg.view_box + '" '
+    s += ' viewBox="' + layer_set.view_box + '" '
     s += '>\n'
 
 
-    for layer in svg:
+    for layer in layer_set:
         #s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
         s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
-        s += layer.to_svg2()
-#            s += layer.path_data.to_svg()
+        s += layer.to_str2()
+#            s += layer.path_data.to_str()
         s += '</g>\n'
     #end
     s += '</svg>'

@@ -67,22 +67,22 @@ class TestControlPoint(unittest.TestCase):
         self.assertEqual( str(self.linear_ctrl_p_0_1), the_answer_2 )
     #end
 
-    def test_to_svg(self):
+    def test_to_str(self):
         is_going_first_true      = True
         is_going_first_false     = False
         is_returning_first_true  = True
         is_returning_first_false = False
 
-        self.assertEqual( self.bezier_ctrl_p.to_svg(is_going_first_true, is_returning_first_true), "M 0.000 0.000 L 0.000 0.000 C 1.000 2.000 10.000 20.000 100.000 200.000 " )
-        self.assertEqual( self.bezier_ctrl_p.to_svg(is_going_first_true, is_returning_first_false), "M 0.000 0.000 C 1.000 2.000 10.000 20.000 100.000 200.000 " )
-        self.assertEqual( self.bezier_ctrl_p.to_svg(is_going_first_false, is_returning_first_true), "L 0.000 0.000 C 1.000 2.000 10.000 20.000 100.000 200.000 " )
-        self.assertEqual( self.bezier_ctrl_p.to_svg(is_going_first_false, is_returning_first_false), "C 1.000 2.000 10.000 20.000 100.000 200.000 " )
+        self.assertEqual( self.bezier_ctrl_p.to_str(is_going_first_true, is_returning_first_true), "M 0.000 0.000 L 0.000 0.000 C 1.000 2.000 10.000 20.000 100.000 200.000 " )
+        self.assertEqual( self.bezier_ctrl_p.to_str(is_going_first_true, is_returning_first_false), "M 0.000 0.000 C 1.000 2.000 10.000 20.000 100.000 200.000 " )
+        self.assertEqual( self.bezier_ctrl_p.to_str(is_going_first_false, is_returning_first_true), "L 0.000 0.000 C 1.000 2.000 10.000 20.000 100.000 200.000 " )
+        self.assertEqual( self.bezier_ctrl_p.to_str(is_going_first_false, is_returning_first_false), "C 1.000 2.000 10.000 20.000 100.000 200.000 " )
 
         is_first_ctrl_p_true  = True
         is_first_ctrl_p_false = False
 
-        self.assertEqual( self.linear_ctrl_p_0_1.to_svg(is_first_ctrl_p_true), "M 0.000 0.000 L 1.000 1.000 " )
-        self.assertEqual( self.linear_ctrl_p_0_1.to_svg(is_first_ctrl_p_false), "L 1.000 1.000 " )
+        self.assertEqual( self.linear_ctrl_p_0_1.to_str(is_first_ctrl_p_true), "M 0.000 0.000 L 1.000 1.000 " )
+        self.assertEqual( self.linear_ctrl_p_0_1.to_str(is_first_ctrl_p_false), "L 1.000 1.000 " )
     #end
 
     def test_intersection(self):

@@ -14,11 +14,11 @@ from cubic_bezier_curve import CubicBezierCurve
 from linear_approximate_curve import LinearApproximateCurve
 from layer import Layer
 
-from svg import Svg
+from layer_set import LayerSet
 
 import unittest
 
-class TestSvgData(unittest.TestCase):
+class TestLayerSetData(unittest.TestCase):
     pass
 #end
 

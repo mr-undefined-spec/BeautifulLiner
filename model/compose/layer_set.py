@@ -10,16 +10,7 @@ import tkinter as tk
 
 import re
 
-"""
-class LayerData:
-    def __init__(self, name, path_data):
-        self.name = name
-        self.path_data = path_data
-    #end
-#end
-"""
-
-class Svg:
+class LayerSet:
     #
     # public
     #
@@ -95,33 +86,33 @@ class Svg:
 
     def linearize(self, micro_segment_length):
         self.__global_calc_step += 1
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_layer = layer.linearize(micro_segment_length, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_svg.append(new_layer)
+            new_layer_set.append(new_layer)
         #end
-        return new_svg
+        return new_layer_set
     #end
 
     def thin_smoothen(self):
         self.__global_calc_step += 1
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append(layer.thin_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+            new_layer_set.append(layer.thin_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
-        return new_svg
+        return new_layer_set
     #end
 
     def special_smoothen_for_hair(self):
         self.__global_calc_step += 1
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append(layer.special_smoothen_for_hair(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
+            new_layer_set.append(layer.special_smoothen_for_hair(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text) )
         #end
-        return new_svg
+        return new_layer_set
     #end
 
     def create_intersect_judge_rectangle(self):
@@ -155,66 +146,66 @@ class Svg:
 
     def delete_edge(self, ratio):
         self.__global_calc_step += 1
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set.set_view_box( self.__view_box )
         bbox = self.get_bbox()
         for layer in self.__layers:
 #            new_layer = layer.path_data.delete_edge(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer = layer.delete_edge2(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
-            new_svg.append(new_layer)
+            new_layer_set.append(new_layer)
         #end
-        return new_svg
+        return new_layer_set
     #end
 
     def broaden(self, broaden_width):
         self.__global_calc_step += 2
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         # delete edge process has 2 global_calc_step, so increment 2
-        new_svg.set_view_box( self.__view_box )
+        new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
 #            new_layer = layer.path_data.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer = layer.broaden2(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
             #print(new_layer.continuous_curve_index_group)
-            new_svg.append(new_layer)
+            new_layer_set.append(new_layer)
         #end
-        return new_svg
+        return new_layer_set
     #end
 
     def broad_smoothen(self):
         self.__global_calc_step += 1
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
             new_layer = layer.broad_smoothen(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
-            new_svg.append(new_layer)
+            new_layer_set.append(new_layer)
         #end
-        return new_svg
+        return new_layer_set
     #end
 
-    def combine(self, other_svg):
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
+    def combine(self, other_LayerSet):
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
-            new_svg.append(layer)
+            new_layer_set.append(layer)
         #end
-        for other_layer in other_svg:
-            new_svg.append(other_layer)
+        for other_layer in other_LayerSet:
+            new_layer_set.append(other_layer)
         #end
-        return new_svg
+        return new_layer_set
     #end
 
-    def get_single_layer_svg(self, target_layer_name):
-        new_svg = Svg(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-        new_svg.set_view_box( self.__view_box )
+    def get_single_layer_LayerSet(self, target_layer_name):
+        new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+        new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
             if( layer.name == target_layer_name ):
-                new_svg.append(layer)
+                new_layer_set.append(layer)
             #end
         #end
-        return new_svg
+        return new_layer_set
     #end
 
     def printCurve(self):

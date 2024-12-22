@@ -12,12 +12,12 @@ import writer
 
 import unittest
 
-class TestSvgData(unittest.TestCase):
+class TestLayerSetData(unittest.TestCase):
     def test_write(self):
         #just read
-        svg_from_file = reader.create_svg_from_file("data/test.svg", 0, "TEST")
+        layer_set_from_file = reader.create_layer_set_from_file("data/test.svg", 0, "TEST")
         # and just write
-        writer.write(svg_from_file, "data/write.svg")
+        writer.write(layer_set_from_file, "data/write.svg")
 
         the_answer = '''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">

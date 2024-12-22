@@ -425,12 +425,12 @@ class Layer:
         return new_layer
     #end
 
-    def to_svg(self):
+    def to_str(self):
         s = ''
 
         for curve in self.__curve_set:
             s += '<path d="'
-            s += curve.to_svg()
+            s += curve.to_str()
             if self.is_fill:
                 s += '" fill="' + self.color + '" opacity="1" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
             else:
@@ -458,10 +458,10 @@ class Layer:
             print(i, str( curve.going_ctrl_p_set[0].s) )
 
 
-    def to_svg2(self):
+    def to_str2(self):
 
         if self.continuous_curve_index_group is None:
-            return self.to_svg()
+            return self.to_str()
         #end
 
         s = ''
@@ -474,7 +474,7 @@ class Layer:
             if len(curve_index_group) == 1:
                 position = "first_last"
                 curve_index = curve_index_group[0]
-                s += self.__curve_set[curve_index].to_svg()
+                s += self.__curve_set[curve_index].to_str()
             else:
                 # going
                 for i, curve_index in enumerate(curve_index_group):

@@ -74,10 +74,10 @@ class Curve:
         return self._going_ctrl_p_set
     #end
 
-    def to_svg(self, position=None):
+    def to_str(self, position=None):
         s = ""
         for i, ctrl_p in enumerate(self._going_ctrl_p_set):
-            s += ctrl_p.to_svg(i==0)
+            s += ctrl_p.to_str(i==0)
         #end
         return s
     #end

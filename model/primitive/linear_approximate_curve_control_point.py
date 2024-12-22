@@ -151,7 +151,7 @@ class LinearApproximateCurveControlPoint(ControlPoint):
         s += str(self.__end) + "\n"
         return s
     #end 
-    def to_svg(self, is_first_ctrl_p):
+    def to_str(self, is_first_ctrl_p):
         s = ""
         if is_first_ctrl_p:
             s += "M " + str(self.__start) + " "

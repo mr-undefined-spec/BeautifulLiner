@@ -13,7 +13,7 @@ from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from cubic_bezier_curve import CubicBezierCurve
 from layer import Layer
 
-from svg import Svg
+from layer_set import LayerSet
 
 import tkinter as tk
 
@@ -25,7 +25,7 @@ def _split_to_xy(point_str):
     return list( filter(None, tmp_items) )
 #end def
 
-# IN  nodeValue of d in path of svg as string
+# IN  nodeValue of d in path of layer_set as string
 # OUT CubicBezierCurve
 def _make_cubic_bezier_curve_set(d_str):
     curve = CubicBezierCurve()
@@ -95,27 +95,27 @@ def _get_group_paths_tuple(doc):
     return tuple(return_tuple)
 #end
 
-def create_svg_from_file(file_name, global_calc_step, mode, progress_bar=None, log_text=None):
-    svg = Svg(global_calc_step, mode, progress_bar, log_text)
+def create_layer_set_from_file(file_name, global_calc_step, mode, progress_bar=None, log_text=None):
+    layer_set = LayerSet(global_calc_step, mode, progress_bar, log_text)
 
     if not type(file_name) is str:
         raise ValueError("file_name must be str")
     #end
 
     doc = minidom.parse(file_name)
-    svg.set_doc(doc)
+    layer_set.set_doc(doc)
 
     for group_paths_set in _get_group_paths_tuple(doc):
         group = group_paths_set[0]
         paths = group_paths_set[1]
         layer_name = group.getAttributeNode('id').nodeValue
 
-        svg.append(_make_layer(layer_name, paths) )
+        layer_set.append(_make_layer(layer_name, paths) )
     #end
     root = doc.getElementsByTagName("svg")
-    svg.set_view_box( root[0].attributes["viewBox"].value )
+    layer_set.set_view_box( root[0].attributes["viewBox"].value )
 
-    return svg
+    return layer_set
 #end
 
 

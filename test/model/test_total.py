@@ -17,7 +17,7 @@ from cubic_bezier_curve import CubicBezierCurve
 from linear_approximate_curve import LinearApproximateCurve
 from layer import Layer
 
-from svg import Svg
+from layer_set import LayerSet
 
 import unittest
 
@@ -58,7 +58,7 @@ class TestTotal(unittest.TestCase):
         broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
         broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
 
-#        print( broad_smooth_layer.to_svg() )
+#        print( broad_smooth_layer.to_LayerSet() )
     #end
 
     def test_4_arcs(self):
@@ -118,7 +118,7 @@ class TestTotal(unittest.TestCase):
         broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
         broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
 
-#        print( broad_smooth_layer.to_svg(False) )
+#        print( broad_smooth_layer.to_LayerSet(False) )
     #end
 #end
 

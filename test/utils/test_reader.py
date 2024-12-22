@@ -17,18 +17,18 @@ from cubic_bezier_curve import CubicBezierCurve
 from linear_approximate_curve import LinearApproximateCurve
 from layer import Layer
 
-from svg import Svg
+from layer_set import LayerSet
 
 import unittest
 
-class TestSvgData(unittest.TestCase):
-    def test_create_svg_from_file(self):
-        svg_from_file = reader.create_svg_from_file("data/test.svg", 0, "TEST")
+class TestLayerSetData(unittest.TestCase):
+    def test_create_layer_set_from_file(self):
+        layer_set_from_file = reader.create_layer_set_from_file("data/test.svg", 0, "TEST")
 
         xs = []
         ys = []
 
-        for layer in svg_from_file:
+        for layer in layer_set_from_file:
             for curve_set in layer:
                 for curve in curve_set:
                     for ctrl_p in curve:
