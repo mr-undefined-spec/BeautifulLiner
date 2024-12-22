@@ -26,6 +26,5 @@ def create_arc(radius, center_point, start_angle, end_angle, num_angle_divisions
         linear_approximate_curve.append(  LinearApproximateCurveControlPoint( start_p, end_p )  )
     #end
     linear_approximate_curve.create_sequential_points()
-    linear_approximate_curve.create_edge_sequential_points(0.25)
     return linear_approximate_curve
 #end

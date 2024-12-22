@@ -105,7 +105,7 @@ class Layer:
         return new_layer
     #end
 
-
+    """
     def special_smoothen_for_hair(self, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer(self.name + "H")
 
@@ -121,11 +121,18 @@ class Layer:
         #end
         return new_layer
     #end
+    """
 
     def create_intersect_judge_rectangle(self, bbox):
         for i, curve in enumerate(self.__curve_set):
             curve.create_intersect_judge_rectangle()
             curve.create_qtree_ctrl_p_set(bbox)
+        #end
+    #end
+
+    def create_sequential_points(self):
+        for i, curve in enumerate(self.__curve_set):
+            curve.create_sequential_points()
         #end
     #end
 
@@ -151,13 +158,11 @@ class Layer:
         for candidate_curve_index in candidate_curve_index_set:
             #print("candidate", candidate_curve_index)
             candidate_curve = self.__curve_set[candidate_curve_index]
-            if target_curve.is_continuaous_at_start_side2(candidate_curve, distance_threshold):
+            if target_curve.is_continuaous_at_start_side(candidate_curve, distance_threshold):
                 ret_info["start"] = candidate_curve_index
-                #self.curve_connection_info.append((target_curve_index, candidate_curve_index, "start"))
             #end
-            if target_curve.is_continuaous_at_end_side2(candidate_curve, distance_threshold):
+            if target_curve.is_continuaous_at_end_side(candidate_curve, distance_threshold):
                 ret_info["end"] = candidate_curve_index
-                #self.curve_connection_info.append((target_curve_index, candidate_curve_index, "end"))
             #end
         #end
 
@@ -166,13 +171,6 @@ class Layer:
         #print(self.curve_connection_info)
         return ret_info
 
-    #end
-
-    def create_sequential_points_and_edge_sequential_points(self):
-        for i, curve in enumerate(self.__curve_set):
-            curve.create_sequential_points()
-            #curve.create_edge_sequential_points()
-        #end
     #end
 
     def create_continuous_curve_index_group(self, distance_threshold):
@@ -246,38 +244,7 @@ class Layer:
         #end
     #end
 
-    def __get_edge_deleted_curve(self, target_curve, ratio):
-        new_curve = copy.deepcopy(target_curve)
-
-        intersected_curve_set = []
-        for curve in self.__curve_set:
-            if curve == target_curve:
-                continue
-            #end
-            if target_curve.rect.test_collision(curve.rect):
-                intersected_curve_set.append(curve)
-            #end
-        #end
-
-        inter_num = len(intersected_curve_set)
-
-        for i, intersected_curve in enumerate(intersected_curve_set):
-            new_curve.update_start_end_index_with_intersection(intersected_curve, ratio)
-        #end
-
-        return new_curve
-    #end
-
-    def delete_edge(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer(self.name + "B")
-        for i, curve in enumerate(self.__curve_set):
-            self.__print_step(mode, global_calc_step+1, i, "delete edge", progress_bar, log_text)
-            new_layer.append( self.__get_edge_deleted_curve(curve, ratio) )
-        #end
-        return new_layer
-    #end
-
-    def __get_edge_deleted_curve2(self, target_curve, ratio, position, pre_connection_point, next_connection_point):
+    def __get_edge_deleted_curve(self, target_curve, ratio, position, pre_connection_point, next_connection_point):
         new_curve = copy.deepcopy(target_curve)
 
         intersected_curve_set = []
@@ -328,7 +295,7 @@ class Layer:
         return new_curve
     #end
 
-    def delete_edge2(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
+    def delete_edge(self, bbox, ratio, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer(self.name + "D")
         delete_edge2_step = 0
 
@@ -357,7 +324,7 @@ class Layer:
                     next_connection_point = self.__curve_set[next_index].start_connection_point
                 #end
 
-                new_layer.append( self.__get_edge_deleted_curve2(curve, ratio, position, pre_connection_point, next_connection_point) )
+                new_layer.append( self.__get_edge_deleted_curve(curve, ratio, position, pre_connection_point, next_connection_point) )
 
                 tmp_new_continuous_curve_index_group.append(new_curve_index)
                 new_curve_index += 1
@@ -376,40 +343,16 @@ class Layer:
     def broaden(self, broaden_width, global_calc_step, mode, progress_bar=None, log_text=None):
         new_layer = Layer(self.name + "B")
         curve_num = len(self.__curve_set)
-        for i, curve in enumerate(self.__curve_set):
-            self.__print_step(mode, global_calc_step, i, "broaden", progress_bar, log_text)
-            new_layer.append( curve.broaden(broaden_width) )
-        #end
-        return new_layer
-    #end
-
-    def broaden2(self, broaden_width, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer(self.name + "B")
-        curve_num = len(self.__curve_set)
 
         for curve_index_group in self.continuous_curve_index_group:
-            
-            if len(curve_index_group) == 1:
-                position = "first_last"
-                curve_index = curve_index_group[0]
+            for i, curve_index in enumerate(curve_index_group):
+                pre_index  = None if i == 0 else curve_index_group[i-1]
+                next_index = None if i == len(curve_index_group) - 1 else curve_index_group[i+1]
+                position = self.get_position_of_continuous_curve(pre_index, next_index)
+
                 curve = self.__curve_set[curve_index]
-                new_layer.append( curve.broaden2(broaden_width, position) )
-            else:
-                for curve_index in curve_index_group:
-                    position = ""
-                    if curve_index == 0:
-                        position = "first"
-                    elif curve_index == len(curve_index_group)-1:
-                        position = "last"
-                    else:
-                        position = "middle"
-                    #end
-
-                    curve = self.__curve_set[curve_index]
-                    new_layer.append( curve.broaden2(broaden_width, position) )
-                #end
+                new_layer.append( curve.broaden(broaden_width, position) )
             #end
-
         #end
 
         return new_layer

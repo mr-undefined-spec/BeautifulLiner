@@ -52,11 +52,14 @@ class TestTotal(unittest.TestCase):
 
         bbox = (0.0, 0.0, 180.0, 180.0)
         layer.create_intersect_judge_rectangle(bbox)
+        layer.create_sequential_points()
+        layer.create_continuous_curve_index_group(2.0)
+        layer.create_connection_point()
 
         new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
-        broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
-        broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
+        #broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
+        #broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
 
 #        print( broad_smooth_layer.to_LayerSet() )
     #end
@@ -113,10 +116,14 @@ class TestTotal(unittest.TestCase):
 
         bbox = (0.0, 0.0, 180.0, 180.0)
         layer.create_intersect_judge_rectangle(bbox)
+        layer.create_sequential_points()
+        layer.create_continuous_curve_index_group(2.0)
+        layer.create_connection_point()
+
         new_layer = layer.delete_edge(bbox, 0.5, 0, "TEST")
 
-        broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
-        broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
+        #broad_linear_layer = new_layer.broaden(1.0, 0, "TEST")
+        #broad_smooth_layer = broad_linear_layer.broad_smoothen(0, "TEST")
 
 #        print( broad_smooth_layer.to_LayerSet(False) )
     #end

@@ -105,6 +105,8 @@ class LayerSet:
         return new_layer_set
     #end
 
+    """
+
     def special_smoothen_for_hair(self):
         self.__global_calc_step += 1
         new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
@@ -114,30 +116,22 @@ class LayerSet:
         #end
         return new_layer_set
     #end
+    """
 
-    def create_intersect_judge_rectangle(self):
-        self.__global_calc_step += 1
+    def create_continuous_curve_index_group(self, distance_threshold):
         bbox = self.get_bbox()
         for layer in self.__layers:
             layer.create_intersect_judge_rectangle(bbox)
         #end
-    #end
 
-    def create_sequential_points_and_edge_sequential_points(self):
-        self.__global_calc_step += 1
         for layer in self.__layers:
-            layer.create_sequential_points_and_edge_sequential_points()
+            layer.create_sequential_points()
         #end
-    #end
 
-    def create_continuous_curve_index_group(self, distance_threshold):
-        
         for layer in self.__layers:
             layer.create_continuous_curve_index_group( distance_threshold)
         #end
-    #end
 
-    def create_connection_point(self):
         for layer in self.__layers:
             layer.create_connection_point()
         #end
@@ -145,13 +139,16 @@ class LayerSet:
 
 
     def delete_edge(self, ratio):
+        # FIXME
+        # NOT WORK before calling continuous_curve_index_group
+        # FIXME
         self.__global_calc_step += 1
+
         new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_layer_set.set_view_box( self.__view_box )
         bbox = self.get_bbox()
         for layer in self.__layers:
-#            new_layer = layer.path_data.delete_edge(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_layer = layer.delete_edge2(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer = layer.delete_edge(bbox, ratio, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
             new_layer_set.append(new_layer)
         #end
@@ -164,8 +161,7 @@ class LayerSet:
         # delete edge process has 2 global_calc_step, so increment 2
         new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
-#            new_layer = layer.path_data.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
-            new_layer = layer.broaden2(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
+            new_layer = layer.broaden(broaden_width, self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
             new_layer.set_continuous_curve_index_group(layer.continuous_curve_index_group)
             #print(new_layer.continuous_curve_index_group)
             new_layer_set.append(new_layer)
@@ -197,7 +193,7 @@ class LayerSet:
         return new_layer_set
     #end
 
-    def get_single_layer_LayerSet(self, target_layer_name):
+    def get_single_layer_as_layer_set(self, target_layer_name):
         new_layer_set = LayerSet(self.__global_calc_step, self.__mode, self.__progress_bar, self.__log_text)
         new_layer_set.set_view_box( self.__view_box )
         for layer in self.__layers:
