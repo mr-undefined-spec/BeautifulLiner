@@ -122,7 +122,7 @@ class LinearApproximateCurve(Curve):
         for ctrl_p in self._going_ctrl_p_set:
             self.sequential_points.append(ctrl_p.s)
         #end
-        self.sequential_points.append(self._going_ctrl_p_set[-1].e)
+        #self.sequential_points.append(self._going_ctrl_p_set[-1].e)
     #end
 
     def get_min_distance_to_point(self, point):
@@ -149,24 +149,84 @@ class LinearApproximateCurve(Curve):
         return the_index
     #end
 
+    def approximate_line_through_points(points):
+        if len(points) < 2:
+            raise ValueError("At least two points are required to define a line.")
+
+        x_coords, y_coords = zip(*[(point.x, point.y) for point in points])
+        
+        A = np.vstack([x_coords, np.ones(len(x_coords))]).T
+        m, c = np.linalg.lstsq(A, y_coords, rcond=None)[0]
+        
+        return m, c
+    #end
+    def generate_approximate_lines_through_points(self, points):
+        lines = []
+        for i in range(len(points)-1):
+            x0, y0 = points[i].x, points[i].y
+            x1, y1 = points[i+1].x, points[i+1].y
+            m = (y1-y0)/(x1-x0)
+            c = y0 - m*x0
+            lines.append((m,c))
+        #end
+        return lines
+    #end
+    def calculate_angle_between_approximate_lines_through_points(self, points_a, points_b):
+        line_a = self.generate_approximate_lines_through_points(points_a)
+        line_b = self.generate_approximate_lines_through_points(points_b)
+
+        m1, c1 = line_a[-1]
+        m2, c2 = line_b[0]
+
+        angle = math.atan2(m2 - m1, 1 + m1 * m2)
+        return angle
+    #end
+
     def is_continuaous_at_start_side(self, other_curve, distance_threshold):
         other_end_point = other_curve.sequential_points[-1]
 
-        the_index_nearest_other_end_point = self.get_ctrl_p_index_at_min_distance_to_point(other_end_point)
+        this_index_nearest_other_end_point = self.get_ctrl_p_index_at_min_distance_to_point(other_end_point)
+        this_half_index = int(this_index_nearest_other_end_point/2)
+        this_quarter_index = int(this_index_nearest_other_end_point/4)
+        this_third_this_quarter_index = int(this_index_nearest_other_end_point/4*3)
+        if this_index_nearest_other_end_point < 4:
+            return False
+        #end
+        this_points = []
+        for i in [0, this_quarter_index, this_half_index, this_third_this_quarter_index, this_index_nearest_other_end_point]:
+            this_points.append(self.sequential_points[i])
+            #print(self.sequential_points[i])
+        #end
+        
+        #print( [0, this_quarter_index, this_half_index, this_third_this_quarter_index, this_index_nearest_other_end_point])
 
-        half_index = int(the_index_nearest_other_end_point/2)
-        quarter_index = int(the_index_nearest_other_end_point/4)
-        third_quarter_index = int(the_index_nearest_other_end_point/4*3)
+        other_index_nearest_this_start_point = other_curve.get_ctrl_p_index_at_min_distance_to_point(self.sequential_points[0])
+        delta_index = len(other_curve.sequential_points) - other_index_nearest_this_start_point - 1
+        if delta_index < 4:
+            return False
+        #end
+        other_quarter_index = int(other_index_nearest_this_start_point + delta_index/4)
+        other_half_index = int(other_index_nearest_this_start_point + delta_index/2)
+        other_third_other_quarter_index = int(other_index_nearest_this_start_point + delta_index/4*3)
+        #print([other_index_nearest_this_start_point, other_quarter_index, other_half_index, other_third_other_quarter_index, len(other_curve.sequential_points)])
 
-        if the_index_nearest_other_end_point == 0:
+        other_points = []
+        for i in [other_index_nearest_this_start_point, other_quarter_index, other_half_index, other_third_other_quarter_index, -1]:
+            other_points.append(other_curve.sequential_points[i])
+            #print(other_curve.sequential_points[i])
+        #end
+        #other_points.append(other_curve.sequential_points[-1])
+
+        angle = self.calculate_angle_between_approximate_lines_through_points(this_points, other_points)
+        #print(angle*180/math.pi)
+
+        if angle*180/math.pi > 30.0 or angle*180/math.pi < -30.0:
             return False
         #end
 
-        #print( [0, quarter_index, half_index, third_quarter_index, the_index_nearest_other_end_point])
-
 
         average_distance = 0.0
-        for i in [0, quarter_index, half_index, third_quarter_index, the_index_nearest_other_end_point]:
+        for i in [0, this_quarter_index, this_half_index, this_third_this_quarter_index, this_index_nearest_other_end_point]:
             point = self.sequential_points[i]
             average_distance += other_curve.get_min_distance_to_point(point)
         #end
@@ -177,24 +237,51 @@ class LinearApproximateCurve(Curve):
     #end
 
     def is_continuaous_at_end_side(self, other_curve, distance_threshold):
-
-        # check once
-        
-
         other_start_point = other_curve.sequential_points[0]
 
-        the_index_nearest_other_start_point = self.get_ctrl_p_index_at_min_distance_to_point(other_start_point)
+        this_index_nearest_other_start_point = self.get_ctrl_p_index_at_min_distance_to_point(other_start_point)
 
-        delta_index = len(self.sequential_points) - the_index_nearest_other_start_point
+        delta_index = len(self.sequential_points) - this_index_nearest_other_start_point - 1
+        if delta_index < 4:
+            return False
+        #end
+        #print(this_index_nearest_other_start_point, delta_index)
 
-        half_index = int(the_index_nearest_other_start_point + delta_index/2)
-        quarter_index = int(the_index_nearest_other_start_point + delta_index/4)
-        third_quarter_index = int(the_index_nearest_other_start_point + delta_index/4*3)
+        this_half_index = int(this_index_nearest_other_start_point + delta_index/2)
+        this_quarter_index = int(this_index_nearest_other_start_point + delta_index/4)
+        this_third_this_quarter_index = int(this_index_nearest_other_start_point + delta_index/4*3)
+        this_points = []
+        for i in [this_index_nearest_other_start_point, this_quarter_index, this_half_index, this_third_this_quarter_index, len(self.sequential_points)-1]:
+            this_points.append(self.sequential_points[i])
+            #print(self.sequential_points[i])
+        #end
 
-        #print([the_index_nearest_other_start_point, quarter_index, half_index, third_quarter_index, len(self.sequential_points)-1])
+        #print([this_index_nearest_other_start_point, this_quarter_index, this_half_index, this_third_this_quarter_index, len(self.sequential_points)-1])
+
+        other_index_nearest_this_end_point = other_curve.get_ctrl_p_index_at_min_distance_to_point(self.sequential_points[-1])
+        if other_index_nearest_this_end_point < 4:
+            return False
+        #end
+        other_quarter_index = int(other_index_nearest_this_end_point/4)
+        other_half_index = int(other_index_nearest_this_end_point/2)
+        other_third_other_quarter_index = int(other_index_nearest_this_end_point/4*3)
+        #print([other_index_nearest_this_start_point, other_quarter_index, other_half_index, other_third_other_quarter_index, len(other_curve.sequential_points)])
+
+        other_points = []
+        for i in [0, other_quarter_index, other_half_index, other_third_other_quarter_index, other_index_nearest_this_end_point]:
+            other_points.append(other_curve.sequential_points[i])
+            #print(other_curve.sequential_points[i])
+        #end
+
+        angle = self.calculate_angle_between_approximate_lines_through_points(this_points, other_points)
+        #print(angle*180/math.pi)
+
+        if angle*180/math.pi > 30.0 or angle*180/math.pi < -30.0:
+            return False
+        #end
 
         average_distance = 0.0
-        for i in [the_index_nearest_other_start_point, quarter_index, half_index, third_quarter_index, len(self.sequential_points)-1]:
+        for i in [this_index_nearest_other_start_point, this_quarter_index, this_half_index, this_third_this_quarter_index, len(self.sequential_points)-1]:
             point = self.sequential_points[i]
             average_distance += other_curve.get_min_distance_to_point(point)
         #end

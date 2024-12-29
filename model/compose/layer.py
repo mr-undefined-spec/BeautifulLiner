@@ -194,7 +194,6 @@ class Layer:
         for i, curve in enumerate(self.__curve_set):
             curve_connection_info.append( self.__get_curve_connection_info(i, curve, distance_threshold) )
         #end
-        #print(curve_connection_info)
 
         # make a list of start:"None"
         start_none_list = []
@@ -228,7 +227,23 @@ class Layer:
             self.continuous_curve_index_group.append(tmp_index_group)
         #end
 
+        # not include in self.continuous_curve_index_group
+        for i, curve in enumerate(self.__curve_set):
+            not_include = True
+            for curve_index in self.continuous_curve_index_group:
+                if i in curve_index:
+                    not_include = False
+                #end
+            #end
+
+            if not_include:
+                self.continuous_curve_index_group.append([i])
+            #end
+        #end
+
         #print( len(self.__curve_set))
+
+        #print(curve_connection_info)
 
         #print(self.continuous_curve_index_group)
     #end

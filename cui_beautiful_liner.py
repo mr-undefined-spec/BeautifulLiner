@@ -44,7 +44,7 @@ def get_smoothened(
     
     linearized  = once_smoothened.linearize(linear_approximate_length)
 
-    linearized.create_continuous_curve_index_group(2.0)
+    linearized.create_continuous_curve_index_group(continuous_ratio)
     delete_edge = linearized.delete_edge(delete_ratio)
     broadened   = delete_edge.broaden(broad_width)
     smoothened  = broadened.broad_smoothen()
@@ -96,7 +96,7 @@ def main():
     argparser.add_argument('-C', '--continuous_ratio',
                             type=float,
                             dest='continuous_ratio',
-                            default=0.1,
+                            default=2.0,
                             help='Ratio of both end areas to check continuous curve')
     argparser.add_argument('-d', '--delete_ratio',
                             type=float,

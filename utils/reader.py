@@ -38,6 +38,9 @@ def _make_cubic_bezier_curve_set(d_str):
     point_strs.pop(0)
 
     for point_str in point_strs:
+        if point_str.strip() == "":
+            break
+        #end
         items = _split_to_xy( point_str.strip() )
         if len(items)==2:
             p3 = Point( float(items[0]), float(items[1]) )
