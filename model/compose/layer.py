@@ -6,6 +6,9 @@ from point import Point
 from curve import Curve
 import tkinter as tk
 
+
+from broad_cubic_bezier_curve import BroadCubicBezierCurve
+
 from enum import Enum
 
 class EndpointStyle(Enum):
@@ -116,26 +119,10 @@ class Layer:
             self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
             new_layer.append( curve.thin_smoothen() )
         #end
+
+        new_layer.set_continuous_curve_index_group( self.continuous_curve_index_group )
         return new_layer
     #end
-
-    """
-    def special_smoothen_for_hair(self, global_calc_step, mode, progress_bar=None, log_text=None):
-        new_layer = Layer(self.name + "H")
-
-        step_name = ""
-        if global_calc_step == 1:
-            step_name = "smoothen 1st"
-        else:
-            step_name = "smoothen 2nd"
-        #end
-        for i, curve in enumerate(self.__curve_set):
-            self.__print_step(mode, global_calc_step, i, step_name, progress_bar, log_text)
-            new_layer.append( curve.special_smoothen_for_hair() )
-        #end
-        return new_layer
-    #end
-    """
 
     def create_intersect_judge_rectangle(self, bbox):
         for i, curve in enumerate(self.__curve_set):
@@ -453,8 +440,10 @@ class Layer:
                 if position == "first" or position == "first_last":
 
                     the_first_point = self.__curve_set[curve_index].going_ctrl_p_set[0].p0
-                    if self.endpoint_style == EndpointStyle.BOTH_POINTED:
-                        the_first_point = self.__curve_set[curve_index].going_ctrl_p_set[0].p0.get_midpoint(self.__curve_set[curve_index].returning_ctrl_p_set[0].p3)
+                    if type(self.__curve_set[0]) is BroadCubicBezierCurve:
+                        if self.endpoint_style == EndpointStyle.BOTH_POINTED:
+                            the_first_point = self.__curve_set[curve_index].going_ctrl_p_set[0].p0.get_midpoint(self.__curve_set[curve_index].returning_ctrl_p_set[0].p3)
+                        #end
                     #end
                     s += "M "
                     s += str( the_first_point ) + " "
@@ -472,6 +461,12 @@ class Layer:
             #end
 
             # returning
+
+            if not type(self.__curve_set[0]) is BroadCubicBezierCurve:
+                s += '" fill="none" opacity="1" stroke="' + self.color + '" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />\n'
+                continue
+            #end
+
             reversed_curve_index_group = list( reversed(curve_index_group) )
             #print(reversed_curve_index_group)
             for i, curve_index in enumerate( reversed_curve_index_group ):
