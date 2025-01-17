@@ -50,32 +50,10 @@ class Curve:
         return len(self._ctrl_p_set)
     #end
 
-    """
-
-    def create_intersect_judge_rectangle(self):
-        min_x = self._ctrl_p_set[0].get_min_x()
-        max_x = self._ctrl_p_set[0].get_max_x()
-        min_y = self._ctrl_p_set[0].get_min_y()
-        max_y = self._ctrl_p_set[0].get_max_y()
-        for ctrl_p in self._ctrl_p_set:
-            min_x = min( min_x, ctrl_p.get_min_x() )
-            max_x = max( max_x, ctrl_p.get_max_x() )
-            min_y = min( min_y, ctrl_p.get_min_y() )
-            max_y = max( max_y, ctrl_p.get_max_y() )
-        #end
-        self.__intersect_judge_rectangular = Rectangular(min_x, max_x, min_y, max_y)
-    #end
-
-    @property
-    def rect(self):
-        return self.__intersect_judge_rectangular
-    #end
-
     @property
     def ctrl_p_set(self):
         return self._ctrl_p_set
     #end
-    """
 
     def to_str(self, position=None):
         s = ""
