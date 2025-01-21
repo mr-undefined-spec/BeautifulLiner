@@ -5,10 +5,10 @@ from point import Point
 
 class LinearApproximateCurveControlPoint():
     def __init__(self, start, end):
-        if not type(start) is Point:
+        if not isinstance(start, Point):
             raise TypeError("p0 must be Point")
         #end if
-        if not type(end) is Point:
+        if not isinstance(end, Point):
             raise TypeError("p1 must be Point")
         #end if
         self.__start = start
