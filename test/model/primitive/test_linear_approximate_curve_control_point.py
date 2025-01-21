@@ -8,21 +8,20 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitiv
 from point import Point
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
+import mocks
+
 import unittest
 from unittest.mock import MagicMock
 
 class TestLinearApproximateCurveControlPoint(unittest.TestCase):
     def setUp(self):
-        lin_p0 = MagicMock(spec=Point, x=0.0, y=0.0)
-        lin_p0.__str__.return_value = "0.000 0.000"
-        lin_p1 = MagicMock(spec=Point, x=1.0, y=1.0)
-        lin_p1.__str__.return_value = "1.000 1.000"
-        lin_p2 = MagicMock(spec=Point, x=1.0, y=0.0)
-        lin_p2.__str__.return_value = "1.000 0.000"
-        lin_p3 = MagicMock(spec=Point, x=0.0, y=1.0)
-        lin_p3.__str__.return_value = "0.000 1.000"
-        lin_p4 = MagicMock(spec=Point, x=2.0, y=1.0)
-        lin_p4.__str__.return_value = "2.000 1.000"
+        lin_p0 = mocks.create_mock_point(0.0, 0.0)
+        lin_p1 = mocks.create_mock_point(1.0, 1.0)
+        lin_p2 = mocks.create_mock_point(1.0, 0.0)
+        lin_p3 = mocks.create_mock_point(0.0, 1.0)
+        lin_p4 = mocks.create_mock_point(2.0, 1.0)
+
         #lin_p0 = Point(0.0, 0.0)
         #lin_p1 = Point(1.0, 1.0)
         #lin_p2 = Point(1.0, 0.0)
