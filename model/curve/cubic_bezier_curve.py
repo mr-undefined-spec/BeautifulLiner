@@ -16,7 +16,7 @@ from curve import Curve
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class CubicBezierCurve(Curve):
     def append(self, bezier_ctrl_p):
-        if not type(bezier_ctrl_p) is CubicBezierCurveControlPoint:
+        if not isinstance(bezier_ctrl_p, CubicBezierCurveControlPoint):
             raise TypeError("The argument of the append method must be a CubicBezierCurveControlPoint")
         #end
         self._ctrl_p_set.append(bezier_ctrl_p)
