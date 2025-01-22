@@ -1,18 +1,15 @@
-
 import os
 import sys
 
 import math
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
-from point import Point
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
 import mocks
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
+from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
+
 import unittest
-from unittest.mock import MagicMock
 
 class TestLinearApproximateCurveControlPoint(unittest.TestCase):
     def setUp(self):
@@ -21,12 +18,6 @@ class TestLinearApproximateCurveControlPoint(unittest.TestCase):
         lin_p2 = mocks.create_mock_point(1.0, 0.0)
         lin_p3 = mocks.create_mock_point(0.0, 1.0)
         lin_p4 = mocks.create_mock_point(2.0, 1.0)
-
-        #lin_p0 = Point(0.0, 0.0)
-        #lin_p1 = Point(1.0, 1.0)
-        #lin_p2 = Point(1.0, 0.0)
-        #lin_p3 = Point(0.0, 1.0)
-        #lin_p4 = Point(2.0, 1.0)
 
         self.linear_ctrl_p_0_1 = LinearApproximateCurveControlPoint(lin_p0, lin_p1)
         self.linear_ctrl_p_2_3 = LinearApproximateCurveControlPoint(lin_p2, lin_p3)
@@ -79,7 +70,8 @@ class TestLinearApproximateCurveControlPoint(unittest.TestCase):
     #end
 
     def test_get_distance_to_point(self):
-        target_point = MagicMock(spec=Point, x=1.0, y=0.0)
+        target_point = mocks.create_mock_point(1.0, 0.0)
+
         the_distance = self.linear_ctrl_p_0_1.get_distance_to_point(target_point)
         self.assertAlmostEqual(the_distance, math.sqrt(2.0)/2.0)
     #end
@@ -123,7 +115,7 @@ class TestLinearApproximateCurveControlPoint(unittest.TestCase):
         # (0, 0) (1, 0)
         # 
         #
-        target_point = MagicMock(spec=Point, x=1.0, y=0.0)
+        target_point = mocks.create_mock_point(1.0, 0.0)
         the_point = self.linear_ctrl_p_0_1.get_perpendicular_intersection_point_from_point(target_point)
         self.assertAlmostEqual(the_point.x, 0.5)
         self.assertAlmostEqual(the_point.y, 0.5)

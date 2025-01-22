@@ -3,13 +3,13 @@ from point import Point
 
 class CubicBezierCurveControlPoint():
     def __init__(self, p0, p1, p2, p3):
-        if not type(p0) is Point:
+        if not isinstance(p0, Point):
             raise TypeError("p0 must be Point")
-        if not type(p1) is Point:
+        if not isinstance(p1, Point):
             raise TypeError("p1 must be Point")
-        if not type(p2) is Point:
+        if not isinstance(p2, Point):
             raise TypeError("p2 must be Point")
-        if not type(p3) is Point:
+        if not isinstance(p3, Point):
             raise TypeError("p3 must be Point")
 
         self.__p0 = Point(p0.x, p0.y)
