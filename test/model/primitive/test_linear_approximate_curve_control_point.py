@@ -26,10 +26,10 @@ class TestLinearApproximateCurveControlPoint(unittest.TestCase):
     #end
 
     def test_init(self):
-        self.assertEqual(self.linear_ctrl_p_0_1.s.x, 0.0)
-        self.assertEqual(self.linear_ctrl_p_0_1.s.y, 0.0)
-        self.assertEqual(self.linear_ctrl_p_0_1.e.x, 1.0)
-        self.assertEqual(self.linear_ctrl_p_0_1.e.y, 1.0)
+        self.assertEqual(self.linear_ctrl_p_0_1.start.x, 0.0)
+        self.assertEqual(self.linear_ctrl_p_0_1.start.y, 0.0)
+        self.assertEqual(self.linear_ctrl_p_0_1.end.x, 1.0)
+        self.assertEqual(self.linear_ctrl_p_0_1.end.y, 1.0)
     #end
 
     def test_max_min_in_cubic_bezier(self):

@@ -16,12 +16,12 @@ class LinearApproximateCurveControlPoint():
     #end
 
     @property
-    def s(self):
+    def start(self):
         return self.__start
     #end
 
     @property
-    def e(self):
+    def end(self):
         return self.__end
     #end
 
@@ -46,13 +46,13 @@ class LinearApproximateCurveControlPoint():
     #end
 
     def is_intersection(self, other_segment):
-        c0 = self.__cross(self.__start, self.__end, other_segment.s)
-        c1 = self.__cross(self.__start, self.__end, other_segment.e)
-        d0 = self.__cross(other_segment.s, other_segment.e, self.__start)
-        d1 = self.__cross(other_segment.s, other_segment.e, self.__end)
+        c0 = self.__cross(self.__start, self.__end, other_segment.start)
+        c1 = self.__cross(self.__start, self.__end, other_segment.end)
+        d0 = self.__cross(other_segment.start, other_segment.end, self.__start)
+        d1 = self.__cross(other_segment.start, other_segment.end, self.__end)
         if c0 == d1 == 0:
-            e0 = self.__dot(self.__start, self.__end, other_segment.s)
-            e1 = self.__dot(self.__start, self.__end, other_segment.e)
+            e0 = self.__dot(self.__start, self.__end, other_segment.start)
+            e1 = self.__dot(self.__start, self.__end, other_segment.end)
             if not e0 < e1:
                 e0, e1 = e1, e0
             #end
@@ -66,11 +66,11 @@ class LinearApproximateCurveControlPoint():
         if self.is_intersection(other_segment):
             a_self  = self.__end.x - self.__start.x
             b_self  = self.__end.y - self.__start.y
-            a_other = other_segment.e.x - other_segment.s.x
-            b_other = other_segment.e.y - other_segment.s.y
+            a_other = other_segment.end.x - other_segment.start.x
+            b_other = other_segment.end.y - other_segment.start.y
 
             d = a_self*b_other - a_other*b_self
-            t = b_other * (other_segment.s.x - self.__start.x) - a_other * (other_segment.s.y - self.__start.y)
+            t = b_other * (other_segment.start.x - self.__start.x) - a_other * (other_segment.start.y - self.__start.y)
             return Point(self.__start.x + a_self*t/d, self.__start.y + b_self*t/d)
         else:
             raise ValueError("ERROR. Not intersect. Please use \"is_intersection\" method before calling \"intersection\" method.")
@@ -108,8 +108,8 @@ class LinearApproximateCurveControlPoint():
     #end
 
     def get_min_distance_to_segment(self, other_segment):
-        distanse_this_seg_to_other_start = self.get_distance_to_point(other_segment.s)
-        distanse_this_seg_to_other_end   = self.get_distance_to_point(other_segment.e)
+        distanse_this_seg_to_other_start = self.get_distance_to_point(other_segment.start)
+        distanse_this_seg_to_other_end   = self.get_distance_to_point(other_segment.end)
         distance_other_seg_to_this_start = other_segment.get_distance_to_point(self.__start)
         distance_other_seg_to_this_end   = other_segment.get_distance_to_point(self.__end)
 
@@ -117,8 +117,8 @@ class LinearApproximateCurveControlPoint():
     #end
 
     def get_average_distance_to_segment(self, other_segment):
-        distanse_this_seg_to_other_start = self.get_distance_to_point(other_segment.s)
-        distanse_this_seg_to_other_end   = self.get_distance_to_point(other_segment.e)
+        distanse_this_seg_to_other_start = self.get_distance_to_point(other_segment.start)
+        distanse_this_seg_to_other_end   = self.get_distance_to_point(other_segment.end)
         distance_other_seg_to_this_start = other_segment.get_distance_to_point(self.__start)
         distance_other_seg_to_this_end   = other_segment.get_distance_to_point(self.__end)
 
