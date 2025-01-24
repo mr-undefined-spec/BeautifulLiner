@@ -5,20 +5,17 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
 import mocks
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/curve'))
-from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from cubic_bezier_curve import CubicBezierCurve
 import unittest
 
-import numpy as np
-import math
-
 class TestCubicBezierCurve(unittest.TestCase):
     def setUp(self):
-        bezier_ctrl_p = mocks.create_mock_cubic_bezier_control_point()
+        p0 = mocks.create_mock_point(0.0, 0.0)
+        p1 = mocks.create_mock_point(1.0, 2.0)
+        p2 = mocks.create_mock_point(10.0, 20.0)
+        p3 = mocks.create_mock_point(100.0, 200.0)
+        bezier_ctrl_p = mocks.create_mock_cubic_bezier_control_point(p0, p1, p2, p3)
         #bezier_ctrl_p = CubicBezierCurveControlPoint(p0, p1, p2, p3)
 
         self.bezier_curve = CubicBezierCurve()
@@ -39,12 +36,11 @@ class TestCubicBezierCurve(unittest.TestCase):
 
 
     def test_append(self):
-        p0 = Point(0.0, 0.0)
-        p1 = Point(1.0, 2.0)
-        p4 = Point(11.0, 22.0)
-        p5 = Point(111.0, 222.0)
-
-        bezier_ctrl_p = CubicBezierCurveControlPoint(p0, p1, p4, p5)
+        p0 = mocks.create_mock_point(0.0, 0.0)
+        p1 = mocks.create_mock_point(1.0, 2.0)
+        p4 = mocks.create_mock_point(11.0, 22.0)
+        p5 = mocks.create_mock_point(111.0, 222.0)
+        bezier_ctrl_p = mocks.create_mock_cubic_bezier_control_point(p0, p1, p4, p5)
         
         self.bezier_curve.append(bezier_ctrl_p)
         self.assertEqual(self.bezier_curve[2].p2.x, 11.0)

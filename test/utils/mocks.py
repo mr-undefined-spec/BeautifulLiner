@@ -15,12 +15,7 @@ def create_mock_point(x, y):
     return point
 #end
 
-def create_mock_cubic_bezier_control_point():
-    p0 = create_mock_point(0.0, 0.0)
-    p1 = create_mock_point(1.0, 2.0)
-    p2 = create_mock_point(10.0, 20.0)
-    p3 = create_mock_point(100.0, 200.0)
-
+def create_mock_cubic_bezier_control_point(p0, p1, p2, p3):
     bezier_ctrl_p = MagicMock(spec=CubicBezierCurveControlPoint, p0=p0, p1=p1, p2=p2, p3=p3)
     s = ""
     for p in [p0, p1, p2, p3]:
