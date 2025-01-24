@@ -2,45 +2,34 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
+import mocks
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/curve'))
-from point import Point
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 from linear_approximate_curve import LinearApproximateCurve
 import unittest
 
-import numpy as np
-import math
-
 class TestCurve(unittest.TestCase):
     def setUp(self):
-        lin_p0 = Point(0.0, 0.0)
-        lin_p1 = Point(1.0, 1.0)
-        lin_p2 = Point(1.0, 0.0)
-        lin_p3 = Point(0.0, 1.0)
-        lin_p4 = Point(2.0, 1.0)
-
-        linear_ctrl_p_0_1 = LinearApproximateCurveControlPoint(lin_p0, lin_p1)
-        linear_ctrl_p_2_3 = LinearApproximateCurveControlPoint(lin_p2, lin_p3)
-        linear_ctrl_p_2_4 = LinearApproximateCurveControlPoint(lin_p2, lin_p4)
+        linear_ctrl_p_set = mocks.create_mock_linear_approximate_curve_control_point_set()
+        
 
         self.linear_curve = LinearApproximateCurve()
-        self.linear_curve.append(linear_ctrl_p_0_1)
-        self.linear_curve.append(linear_ctrl_p_2_3)
-        self.linear_curve.append(linear_ctrl_p_2_4)
+        self.linear_curve.append(linear_ctrl_p_set[0])
+        self.linear_curve.append(linear_ctrl_p_set[1])
+        self.linear_curve.append(linear_ctrl_p_set[2])
 
     #end
     def test_init_and_getitem(self):
-        self.assertEqual(self.linear_curve[0].s.x, 0.0)
-        self.assertEqual(self.linear_curve[0].s.y, 0.0)
-        self.assertEqual(self.linear_curve[0].e.x, 1.0)
-        self.assertEqual(self.linear_curve[0].e.y, 1.0)
+        self.assertEqual(self.linear_curve[0].start.x, 0.0)
+        self.assertEqual(self.linear_curve[0].start.y, 0.0)
+        self.assertEqual(self.linear_curve[0].end.x, 1.0)
+        self.assertEqual(self.linear_curve[0].end.y, 1.0)
 
-        self.assertEqual(self.linear_curve[1].s.x, 1.0)
-        self.assertEqual(self.linear_curve[1].s.y, 0.0)
-        self.assertEqual(self.linear_curve[1].e.x, 0.0)
-        self.assertEqual(self.linear_curve[1].e.y, 1.0)
+        self.assertEqual(self.linear_curve[1].start.x, 1.0)
+        self.assertEqual(self.linear_curve[1].start.y, 0.0)
+        self.assertEqual(self.linear_curve[1].end.x, 0.0)
+        self.assertEqual(self.linear_curve[1].end.y, 1.0)
     #end
 
 
@@ -60,16 +49,17 @@ class TestCurve(unittest.TestCase):
     """
 
     def test_append(self):
-        p5 = Point(11.0, 22.0)
-        p6 = Point(111.0, 222.0)
+        p5 = mocks.create_mock_point(11.0, 22.0)
+        p6 = mocks.create_mock_point(111.0, 222.0)
 
-        linear_ctrl_p_5_6 = LinearApproximateCurveControlPoint(p5, p6)
+        #linear_ctrl_p_5_6 = LinearApproximateCurveControlPoint(p5, p6)
+        linear_ctrl_p_5_6 = mocks.create_mock_linear_approximate_curve_control_point(mocks.create_mock_point(11.0, 22.0), mocks.create_mock_point(111.0, 222.0))
         
         self.linear_curve.append(linear_ctrl_p_5_6)
-        self.assertEqual(self.linear_curve[3].s.x, 11.0)
-        self.assertEqual(self.linear_curve[3].s.y, 22.0)
-        self.assertEqual(self.linear_curve[3].e.x, 111.0)
-        self.assertEqual(self.linear_curve[3].e.y, 222.0)
+        self.assertEqual(self.linear_curve[3].start.x, 11.0)
+        self.assertEqual(self.linear_curve[3].start.y, 22.0)
+        self.assertEqual(self.linear_curve[3].end.x, 111.0)
+        self.assertEqual(self.linear_curve[3].end.y, 222.0)
     #end
 
     def test_iter_and_next(self):

@@ -18,12 +18,23 @@ class LinearApproximateCurve(Curve):
     def __init__(self):
         super().__init__()
         self.qtree_ctrl_p_set = None
+
+        self.min_x = 999999
+        self.max_x = -999999
+        self.min_y = 999999
+        self.max_y = -999999
     #end
 
     def append(self, linear_ctrl_p):
-        if not type(linear_ctrl_p) is LinearApproximateCurveControlPoint:
+        if not isinstance(linear_ctrl_p, LinearApproximateCurveControlPoint):
             raise TypeError("The argument of the append method must be a LinearApproximateCurveControlPoint")
         #end
+
+        self.min_x = min(self.min_x, linear_ctrl_p.start.x, linear_ctrl_p.end.x)
+        self.max_x = max(self.max_x, linear_ctrl_p.start.x, linear_ctrl_p.end.x)
+        self.min_y = min(self.min_y, linear_ctrl_p.start.y, linear_ctrl_p.end.y)
+        self.max_y = max(self.max_y, linear_ctrl_p.start.y, linear_ctrl_p.end.y)
+
         self._ctrl_p_set.append(linear_ctrl_p)
     #end
 
@@ -105,17 +116,7 @@ class LinearApproximateCurve(Curve):
     #end
 
     def create_intersect_judge_rectangle(self):
-        min_x = self._ctrl_p_set[0].get_min_x()
-        max_x = self._ctrl_p_set[0].get_max_x()
-        min_y = self._ctrl_p_set[0].get_min_y()
-        max_y = self._ctrl_p_set[0].get_max_y()
-        for ctrl_p in self._ctrl_p_set:
-            min_x = min( min_x, ctrl_p.get_min_x() )
-            max_x = max( max_x, ctrl_p.get_max_x() )
-            min_y = min( min_y, ctrl_p.get_min_y() )
-            max_y = max( max_y, ctrl_p.get_max_y() )
-        #end
-        self.__intersect_judge_rectangular = Rectangular(min_x, max_x, min_y, max_y)
+        self.__intersect_judge_rectangular = Rectangular(self.min_x, self.max_x, self.min_y, self.max_y)
     #end
 
     @property
