@@ -11,13 +11,20 @@ import unittest
 
 class TestCurve(unittest.TestCase):
     def setUp(self):
-        linear_ctrl_p_set = mocks.create_mock_linear_approximate_curve_control_point_set()
-        
+        p0 = mocks.create_mock_point(0.0, 0.0)
+        p1 = mocks.create_mock_point(1.0, 1.0)
+        p2 = mocks.create_mock_point(1.0, 0.0)
+        p3 = mocks.create_mock_point(0.0, 1.0)
+        p4 = mocks.create_mock_point(2.0, 1.0)
+
+        linear_ctrl_p_0_1 = mocks.create_mock_linear_approximate_curve_control_point(p0, p1)
+        linear_ctrl_p_2_3 = mocks.create_mock_linear_approximate_curve_control_point(p2, p3)
+        linear_ctrl_p_2_4 = mocks.create_mock_linear_approximate_curve_control_point(p2, p4)
 
         self.linear_curve = LinearApproximateCurve()
-        self.linear_curve.append(linear_ctrl_p_set[0])
-        self.linear_curve.append(linear_ctrl_p_set[1])
-        self.linear_curve.append(linear_ctrl_p_set[2])
+        self.linear_curve.append(linear_ctrl_p_0_1)
+        self.linear_curve.append(linear_ctrl_p_2_3)
+        self.linear_curve.append(linear_ctrl_p_2_4)
 
     #end
     def test_init_and_getitem(self):
