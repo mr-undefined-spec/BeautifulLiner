@@ -21,37 +21,37 @@ class TestCurve(unittest.TestCase):
         linear_ctrl_p_2_3 = mocks.create_mock_linear_approximate_curve_control_point(p2, p3)
         linear_ctrl_p_2_4 = mocks.create_mock_linear_approximate_curve_control_point(p2, p4)
 
-        self.linear_curve = LinearApproximateCurve()
-        self.linear_curve.append(linear_ctrl_p_0_1)
-        self.linear_curve.append(linear_ctrl_p_2_3)
-        self.linear_curve.append(linear_ctrl_p_2_4)
+        self.linear_approximate_curve = LinearApproximateCurve()
+        self.linear_approximate_curve.append(linear_ctrl_p_0_1)
+        self.linear_approximate_curve.append(linear_ctrl_p_2_3)
+        self.linear_approximate_curve.append(linear_ctrl_p_2_4)
 
     #end
     def test_init_and_getitem(self):
-        self.assertEqual(self.linear_curve[0].start.x, 0.0)
-        self.assertEqual(self.linear_curve[0].start.y, 0.0)
-        self.assertEqual(self.linear_curve[0].end.x, 1.0)
-        self.assertEqual(self.linear_curve[0].end.y, 1.0)
+        self.assertEqual(self.linear_approximate_curve[0].start.x, 0.0)
+        self.assertEqual(self.linear_approximate_curve[0].start.y, 0.0)
+        self.assertEqual(self.linear_approximate_curve[0].end.x, 1.0)
+        self.assertEqual(self.linear_approximate_curve[0].end.y, 1.0)
 
-        self.assertEqual(self.linear_curve[1].start.x, 1.0)
-        self.assertEqual(self.linear_curve[1].start.y, 0.0)
-        self.assertEqual(self.linear_curve[1].end.x, 0.0)
-        self.assertEqual(self.linear_curve[1].end.y, 1.0)
+        self.assertEqual(self.linear_approximate_curve[1].start.x, 1.0)
+        self.assertEqual(self.linear_approximate_curve[1].start.y, 0.0)
+        self.assertEqual(self.linear_approximate_curve[1].end.x, 0.0)
+        self.assertEqual(self.linear_approximate_curve[1].end.y, 1.0)
     #end
 
 
     """
 
     def test_create_sequential_points(self):
-        self.linear_curve.create_sequential_points()
-        self.assertAlmostEqual(self.linear_curve.sequential_points[0].x, 0.0)
-        self.assertAlmostEqual(self.linear_curve.sequential_points[0].y, 0.0)
-        self.assertAlmostEqual(self.linear_curve.sequential_points[1].x, 1.0)
-        self.assertAlmostEqual(self.linear_curve.sequential_points[1].y, 0.0)
-        self.assertAlmostEqual(self.linear_curve.sequential_points[2].x, 1.0)
-        self.assertAlmostEqual(self.linear_curve.sequential_points[2].y, 0.0)
-        self.assertAlmostEqual(self.linear_curve.sequential_points[3].x, 2.0)
-        self.assertAlmostEqual(self.linear_curve.sequential_points[3].y, 1.0)
+        self.linear_approximate_curve.create_sequential_points()
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[0].x, 0.0)
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[0].y, 0.0)
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[1].x, 1.0)
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[1].y, 0.0)
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[2].x, 1.0)
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[2].y, 0.0)
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[3].x, 2.0)
+        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[3].y, 1.0)
     #end
     """
 
@@ -62,16 +62,16 @@ class TestCurve(unittest.TestCase):
         #linear_ctrl_p_5_6 = LinearApproximateCurveControlPoint(p5, p6)
         linear_ctrl_p_5_6 = mocks.create_mock_linear_approximate_curve_control_point(mocks.create_mock_point(11.0, 22.0), mocks.create_mock_point(111.0, 222.0))
         
-        self.linear_curve.append(linear_ctrl_p_5_6)
-        self.assertEqual(self.linear_curve[3].start.x, 11.0)
-        self.assertEqual(self.linear_curve[3].start.y, 22.0)
-        self.assertEqual(self.linear_curve[3].end.x, 111.0)
-        self.assertEqual(self.linear_curve[3].end.y, 222.0)
+        self.linear_approximate_curve.append(linear_ctrl_p_5_6)
+        self.assertEqual(self.linear_approximate_curve[3].start.x, 11.0)
+        self.assertEqual(self.linear_approximate_curve[3].start.y, 22.0)
+        self.assertEqual(self.linear_approximate_curve[3].end.x, 111.0)
+        self.assertEqual(self.linear_approximate_curve[3].end.y, 222.0)
     #end
 
     def test_iter_and_next(self):
         s = ""
-        for segment in self.linear_curve:
+        for segment in self.linear_approximate_curve:
             s += str(segment)
         #end
         the_answer = "0.000 0.000\n1.000 1.000\n1.000 0.000\n0.000 1.000\n1.000 0.000\n2.000 1.000\n"
@@ -80,16 +80,16 @@ class TestCurve(unittest.TestCase):
 
 
     def test_create_intersect_judge_rectangle(self):
-        # linear_curve
-        self.linear_curve.create_intersect_judge_rectangle()
-        self.assertEqual( self.linear_curve.rect.q.x, 0.0 )
-        self.assertEqual( self.linear_curve.rect.q.y, 0.0 )
-        self.assertEqual( self.linear_curve.rect.z.x, 0.0 )
-        self.assertEqual( self.linear_curve.rect.z.y, 1.0 )
-        self.assertEqual( self.linear_curve.rect.p.x, 2.0 )
-        self.assertEqual( self.linear_curve.rect.p.y, 0.0 )
-        self.assertEqual( self.linear_curve.rect.m.x, 2.0 )
-        self.assertEqual( self.linear_curve.rect.m.y, 1.0 )
+        # linear_approximate_curve
+        self.linear_approximate_curve.create_intersect_judge_rectangle()
+        self.assertEqual( self.linear_approximate_curve.rect.q.x, 0.0 )
+        self.assertEqual( self.linear_approximate_curve.rect.q.y, 0.0 )
+        self.assertEqual( self.linear_approximate_curve.rect.z.x, 0.0 )
+        self.assertEqual( self.linear_approximate_curve.rect.z.y, 1.0 )
+        self.assertEqual( self.linear_approximate_curve.rect.p.x, 2.0 )
+        self.assertEqual( self.linear_approximate_curve.rect.p.y, 0.0 )
+        self.assertEqual( self.linear_approximate_curve.rect.m.x, 2.0 )
+        self.assertEqual( self.linear_approximate_curve.rect.m.y, 1.0 )
     #end
 
 #end
