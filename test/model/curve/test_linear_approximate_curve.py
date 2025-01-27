@@ -20,6 +20,13 @@ class TestCurve(unittest.TestCase):
         linear_ctrl_p_0_1 = mocks.create_mock_linear_approximate_curve_control_point(p0, p1)
         linear_ctrl_p_2_3 = mocks.create_mock_linear_approximate_curve_control_point(p2, p3)
         linear_ctrl_p_2_4 = mocks.create_mock_linear_approximate_curve_control_point(p2, p4)
+        linear_ctrl_p_set = []
+        linear_ctrl_p_set.append(linear_ctrl_p_0_1)
+        linear_ctrl_p_set.append(linear_ctrl_p_2_3)
+        linear_ctrl_p_set.append(linear_ctrl_p_2_4)
+
+        aaa = mocks.create_mock_linear_approximate_curve(linear_ctrl_p_set)
+        print(aaa[0])
 
         self.linear_approximate_curve = LinearApproximateCurve()
         self.linear_approximate_curve.append(linear_ctrl_p_0_1)
