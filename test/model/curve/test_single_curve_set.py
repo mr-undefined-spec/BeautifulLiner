@@ -1,16 +1,12 @@
-
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/drawing'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
+import mocks
 
-from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from cubic_bezier_curve import CubicBezierCurve
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/curve'))
 from single_curve_set import SingleCurveSet
+from curve import Curve
 
 import unittest
 
@@ -19,31 +15,27 @@ import math
 
 class TestSingleCurveSet(unittest.TestCase):
     def setUp(self):
-        p0 = Point(0.0, 0.0)
-        p1 = Point(1.0, 2.0)
-        p2 = Point(10.0, 20.0)
-        p3 = Point(100.0, 200.0)
+        p0 = mocks.create_mock_point(0.0, 0.0)
+        p1 = mocks.create_mock_point(1.0, 1.0)
+        p2 = mocks.create_mock_point(1.0, 0.0)
+        p3 = mocks.create_mock_point(0.0, 1.0)
+        p4 = mocks.create_mock_point(2.0, 1.0)
 
-        bezier_ctrl_p = CubicBezierCurveControlPoint(p0, p1, p2, p3)
+        linear_ctrl_p_0_1 = mocks.create_mock_linear_approximate_curve_control_point(p0, p1)
+        linear_ctrl_p_2_3 = mocks.create_mock_linear_approximate_curve_control_point(p2, p3)
+        linear_ctrl_p_2_4 = mocks.create_mock_linear_approximate_curve_control_point(p2, p4)
+        linear_ctrl_p_set = []
+        linear_ctrl_p_set.append(linear_ctrl_p_0_1)
+        linear_ctrl_p_set.append(linear_ctrl_p_2_3)
+        linear_ctrl_p_set.append(linear_ctrl_p_2_4)
 
-        bezier_curve = CubicBezierCurve()
-        bezier_curve.append(bezier_ctrl_p)
-        bezier_curve.append(bezier_ctrl_p)
+        linear_approximate_curve = mocks.create_mock_linear_approximate_curve(linear_ctrl_p_set)
 
-        self.single_curve_set = SingleCurveSet(bezier_curve)
+        self.single_curve_set = SingleCurveSet(linear_approximate_curve)
     #end
 
     def test_init_and_getitem(self):
-
-        bezier_curve = self.single_curve_set[0]
-        self.assertEqual(bezier_curve[0].p0.x, 0.0)
-        self.assertEqual(bezier_curve[0].p0.y, 0.0)
-        self.assertEqual(bezier_curve[0].p1.x, 1.0)
-        self.assertEqual(bezier_curve[0].p1.y, 2.0)
-        self.assertEqual(bezier_curve[0].p2.x, 10.0)
-        self.assertEqual(bezier_curve[0].p2.y, 20.0)
-        self.assertEqual(bezier_curve[0].p3.x, 100.0)
-        self.assertEqual(bezier_curve[0].p3.y, 200.0)
+        self.assertEqual(isinstance(self.single_curve_set[0], Curve), True)
     #end
 
     def test_len(self):

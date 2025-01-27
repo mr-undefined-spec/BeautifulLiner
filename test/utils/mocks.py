@@ -7,6 +7,9 @@ from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
+from linear_approximate_curve import LinearApproximateCurve
+
 from unittest.mock import MagicMock
 
 def create_mock_point(x, y):
@@ -33,4 +36,10 @@ def create_mock_linear_approximate_curve_control_point(start, end):
     #end
     linear_ctrl_p.__str__.return_value = s
     return linear_ctrl_p
+#end
+
+def create_mock_linear_approximate_curve(linear_approximate_curve_control_point_set):
+    linear_approximate_curve = MagicMock(spec=LinearApproximateCurve)
+    linear_approximate_curve.__getitem__.side_effect = lambda index : linear_approximate_curve_control_point_set[index]
+    return linear_approximate_curve
 #end
