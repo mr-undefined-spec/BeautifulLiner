@@ -9,6 +9,7 @@ from linear_approximate_curve_control_point import LinearApproximateCurveControl
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
+from curve_set import CurveSet
 
 from unittest.mock import MagicMock
 
@@ -42,4 +43,10 @@ def create_mock_linear_approximate_curve(linear_approximate_curve_control_point_
     linear_approximate_curve = MagicMock(spec=LinearApproximateCurve)
     linear_approximate_curve.__getitem__.side_effect = lambda index : linear_approximate_curve_control_point_set[index]
     return linear_approximate_curve
+#end
+
+def create_mock_curve_set():
+    curve_set = MagicMock(spec=CurveSet)
+    curve_set.__getitem__.side_effect = lambda index : None
+    return curve_set
 #end
