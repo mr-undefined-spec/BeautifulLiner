@@ -14,7 +14,7 @@ import unittest
 import numpy as np
 import math
 
-class TestSingleCurveSet(unittest.TestCase):
+class TestLayer(unittest.TestCase):
     def setUp(self):
         curve_set = mocks.create_mock_curve_set()
 

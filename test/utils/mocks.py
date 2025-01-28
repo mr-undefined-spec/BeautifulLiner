@@ -11,6 +11,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
 from curve_set import CurveSet
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
+from layer import Layer
+
 from unittest.mock import MagicMock
 
 def create_mock_point(x, y):
@@ -49,4 +52,10 @@ def create_mock_curve_set():
     curve_set = MagicMock(spec=CurveSet)
     curve_set.__getitem__.side_effect = lambda index : None
     return curve_set
+#end
+
+def create_mock_layer():
+    layer = MagicMock(spec=Layer)
+    layer.__getitem__.side_effect = lambda index : None
+    return layer
 #end
