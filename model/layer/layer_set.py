@@ -34,8 +34,6 @@ class LayerSet:
         '''
     #end
 
-    '''
-
     def set_doc(self, val):
         self.__doc = val
     #end
@@ -44,7 +42,6 @@ class LayerSet:
     def doc(self):
         return self.__doc
     #end
-    '''
 
     def set_view_box(self, val):
         self.__view_box = val
