@@ -1,8 +1,8 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
-import mocks
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../helper'))
+import model_mocks
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/layer'))
 from layer import Layer
@@ -16,7 +16,7 @@ import math
 
 class TestLayer(unittest.TestCase):
     def setUp(self):
-        curve_set = mocks.create_mock_curve_set()
+        curve_set = model_mocks.create_mock_curve_set()
 
         self.layer = Layer("layer_name")
         self.layer.append(curve_set)

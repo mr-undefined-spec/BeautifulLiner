@@ -1,8 +1,8 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
-import mocks
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../helper'))
+import model_mocks
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/layer'))
 from layer_set import LayerSet
@@ -15,7 +15,7 @@ import math
 
 class TestLayerSet(unittest.TestCase):
     def setUp(self):
-        layer = mocks.create_mock_layer()
+        layer = model_mocks.create_mock_layer()
 
         self.layer_set = LayerSet()
         self.layer_set.append(layer)
