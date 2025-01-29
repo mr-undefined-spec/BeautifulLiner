@@ -48,12 +48,14 @@ def create_mock_linear_approximate_curve_control_point(start, end):
 def create_mock_linear_approximate_curve(linear_approximate_curve_control_point_set):
     linear_approximate_curve = MagicMock(spec=LinearApproximateCurve)
     linear_approximate_curve.__getitem__.side_effect = lambda index : linear_approximate_curve_control_point_set[index]
+    linear_approximate_curve.__iter__.return_value = iter(linear_approximate_curve_control_point_set)
     return linear_approximate_curve
 #end
 
-def create_mock_curve_set():
+def create_mock_curve_set(curve_list):
     curve_set = MagicMock(spec=CurveSet)
-    curve_set.__getitem__.side_effect = lambda index : None
+    curve_set.__getitem__.side_effect = lambda index : curve_list[index]
+    curve_set.__iter__.return_value = iter(curve_list)
     return curve_set
 #end
 

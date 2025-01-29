@@ -36,7 +36,7 @@ def create_mock_layer_set_of_cubic_bezier_curve_arc():#radius, center_point_x, c
     return layer_set
 #end
 
-def create_mock_layer_set_of_linear_approximate_curve_arc(radius, center_point_x, center_point_y, start_angle, end_angle, num_angle_divisions):
+def create_mock_layer_set_of_arc_as_linear_approximate_curve(radius, center_point_x, center_point_y, start_angle, end_angle, num_angle_divisions):
 
     start_rad = math.radians(start_angle)
     end_rad = math.radians(end_angle)
@@ -53,8 +53,8 @@ def create_mock_layer_set_of_linear_approximate_curve_arc(radius, center_point_x
 
     linear_approximate_curve = model_mocks.create_mock_linear_approximate_curve(linear_ctrl_p_set)
 
-    curve_set = [linear_approximate_curve]
-    layer = [curve_set]
+    curve_set = model_mocks.create_mock_curve_set([linear_approximate_curve])
+    layer = model_mocks.create_mock_layer([curve_set])
     layer_set = [layer]
 
     return layer_set

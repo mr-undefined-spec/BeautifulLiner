@@ -285,8 +285,6 @@ class LinearizeHandler(BasicHandler):
         return_layer_set = LayerSet()
 
         micro_segment_length = 1.0#self.options.get("micro_segment_length", 1.0)
-        from linear_approximate_curve import LinearApproximateCurve
-        linear_approximate_curve = LinearApproximateCurve()
 
         for layer in layer_set:
             tmp_layer = Layer(layer.name)
