@@ -15,7 +15,7 @@ import math
 
 class TestLayerSet(unittest.TestCase):
     def setUp(self):
-        layer = model_mocks.create_mock_layer()
+        layer = model_mocks.create_mock_layer([])
 
         self.layer_set = LayerSet()
         self.layer_set.append(layer)
