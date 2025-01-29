@@ -3,9 +3,22 @@ import numpy as np
 from scipy.special import comb
 
 import math
+
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
+
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
+
+from single_curve_set import SingleCurveSet
+
+from layer import Layer
+from layer_set import LayerSet
 
 from basic_handler import BasicHandler
 
@@ -267,22 +280,35 @@ class LinearizeHandler(BasicHandler):
     #end
     
     @classmethod
-    def process(cls, ctrl_p_set):
+    def process(cls, layer_set):
+
+        return_layer_set = LayerSet()
+
         micro_segment_length = 1.0#self.options.get("micro_segment_length", 1.0)
         from linear_approximate_curve import LinearApproximateCurve
         linear_approximate_curve = LinearApproximateCurve()
-        for i, ctrl_p in enumerate(ctrl_p_set):
-            points = []
-            for point in cls.__approximate_linear_curve(ctrl_p, i==0, micro_segment_length):
-                points.append( point )
-            #end
 
-            for j in range( len(points)-1 ):
-                linear_approximate_curve.append( LinearApproximateCurveControlPoint(points[j], points[j+1]) )
-            #end
+        for layer in layer_set:
+            tmp_layer = Layer(layer.name)
+            for curve_set in layer:
+                for curve in curve_set:
+                    tmp_curve = LinearApproximateCurve()
+                    for i, ctrl_p in enumerate(curve):
+                        points = []
+                        for point in cls.__approximate_linear_curve(ctrl_p, i==0, micro_segment_length):
+                            points.append( point )
+                        #end
+                        for j in range( len(points)-1 ):
+                            tmp_curve.append( LinearApproximateCurveControlPoint(points[j], points[j+1]) )
+                        #end
+                    #end
+                #end
+                tmp_curve_set = SingleCurveSet(tmp_curve)
 
+                tmp_layer.append(tmp_curve_set)
+            #end
+            return_layer_set.append(tmp_layer)
         #end
-
-        return linear_approximate_curve
+        return return_layer_set
     #end
 #end

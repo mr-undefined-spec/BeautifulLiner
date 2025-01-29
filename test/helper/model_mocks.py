@@ -2,6 +2,8 @@
 import os
 import sys
 
+import math
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/primitive'))
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
@@ -19,6 +21,7 @@ from unittest.mock import MagicMock
 def create_mock_point(x, y):
     point = MagicMock(spec=Point, x=x, y=y)
     point.__str__.return_value = "{:.3f} {:.3f}".format( x, y )
+    point.distance = lambda other_p : math.sqrt( (point.x - other_p.x)*(point.x - other_p.x) + (point.y - other_p.y)*(point.y - other_p.y) )
     return point
 #end
 
@@ -54,8 +57,10 @@ def create_mock_curve_set():
     return curve_set
 #end
 
-def create_mock_layer():
+def create_mock_layer(curve_set_list):
     layer = MagicMock(spec=Layer)
-    layer.__getitem__.side_effect = lambda index : None
+    layer.name = "test_layer"
+    layer.__getitem__.side_effect = lambda index : curve_set_list[index]
+    layer.__iter__.return_value = iter(curve_set_list)
     return layer
 #end
