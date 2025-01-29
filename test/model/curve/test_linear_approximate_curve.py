@@ -40,20 +40,15 @@ class TestCurve(unittest.TestCase):
     #end
 
 
-    """
-
-    def test_create_sequential_points(self):
-        self.linear_approximate_curve.create_sequential_points()
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[0].x, 0.0)
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[0].y, 0.0)
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[1].x, 1.0)
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[1].y, 0.0)
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[2].x, 1.0)
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[2].y, 0.0)
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[3].x, 2.0)
-        self.assertAlmostEqual(self.linear_approximate_curve.sequential_points[3].y, 1.0)
+    def test_get_start_points(self):
+        start_points = self.linear_approximate_curve.get_start_points()
+        self.assertAlmostEqual(start_points[0].x, 0.0)
+        self.assertAlmostEqual(start_points[0].y, 0.0)
+        self.assertAlmostEqual(start_points[1].x, 1.0)
+        self.assertAlmostEqual(start_points[1].y, 0.0)
+        self.assertAlmostEqual(start_points[2].x, 1.0)
+        self.assertAlmostEqual(start_points[2].y, 0.0)
     #end
-    """
 
     def test_append(self):
         p5 = model_mocks.create_mock_point(11.0, 22.0)

@@ -48,72 +48,6 @@ class LinearApproximateCurve(Curve):
         return s
     #end
 
-    def __get_bernstein_polynomial(self, n, t, k):
-        """ Bernstein polynomial when a = 0 and b = 1. """
-        return t ** k * (1 - t) ** (n - k) * comb(n, k)
-    #end
-
-    def __get_bernstein_matrix(self, degree, T):
-        """ Bernstein matrix for Bezier curves. """
-        matrix = []
-        for t in T:
-            row = []
-            for k in range(degree + 1):
-                row.append( self.__get_bernstein_polynomial(degree, t, k) )
-            #end
-            matrix.append(row)
-        #end
-        return np.array(matrix)
-    #end
-
-    def __least_square_fit(self, points, M):
-        M_ = np.linalg.pinv(M)
-        return np.matmul(M_, points)
-    #end
-
-    def _smoothen(self, ctrl_p_set, start_index, the_end):
-        """ Least square qbezier fit using penrose pseudoinverse.
-
-        Based on https://stackoverflow.com/questions/12643079/b%C3%A9zier-curve-fitting-with-scipy
-        and probably on the 1998 thesis by Tim Andrew Pastva, "Bezier Curve Fitting".
-        """
-
-        degree = 3 # only cubic bezier curve
-
-        x_array = []
-        y_array = []
-
-        x_array.append( ctrl_p_set[start_index].s.x )
-        y_array.append( ctrl_p_set[start_index].s.y )
-        for i in range( start_index, the_end ):
-            x_array.append( ctrl_p_set[i].e.x )
-            y_array.append( ctrl_p_set[i].e.y )
-        #end
-
-        x_data = np.array(x_array)
-        y_data = np.array(y_array)
-
-        T = np.linspace(0, 1, len(x_data))
-        M = self.__get_bernstein_matrix(degree, T)
-        points = np.array(list(zip(x_data, y_data)))
-
-        fit = self.__least_square_fit(points, M).tolist()
-
-        first_point = Point(x_data[0], y_data[0] )
-        last_point  = Point(x_data[-1], y_data[-1] )
-
-        return CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point)
-    #end
-
-    def thin_smoothen(self):
-        from cubic_bezier_curve import CubicBezierCurve
-        """ In LinearApproximateCurve class, public smoothen method calls only one protected _smoothen method
-        On the other hand, in BroadLinearApproximateCurve class, public smoothen method calls two protected _smoothen methods(going & returning)"""
-        cubic_bezier_curve = CubicBezierCurve()
-        the_end = self._get_the_end()
-        cubic_bezier_curve.append( self._smoothen(self._ctrl_p_set, self._start_index, the_end) )
-        return cubic_bezier_curve
-    #end
 
     def create_intersect_judge_rectangle(self):
         self.__intersect_judge_rectangular = Rectangular(self.min_x, self.max_x, self.min_y, self.max_y)
@@ -134,16 +68,16 @@ class LinearApproximateCurve(Curve):
         #end
     #end
 
+    def get_start_points(self):
+        start_points = []
+        for ctrl_p in self._ctrl_p_set:
+            start_points.append(ctrl_p.start)
+        #end
+        return start_points
+    #end
+
     """
 
-    def create_sequential_points(self):
-        self.sequential_points = []
-        
-        for ctrl_p in self._ctrl_p_set:
-            self.sequential_points.append(ctrl_p.s)
-        #end
-        #self.sequential_points.append(self._ctrl_p_set[-1].e)
-    #end
 
     def get_min_distance_to_point(self, point):
         min_distance = 999999
