@@ -19,6 +19,7 @@ import model_mocks
 from unittest.mock import MagicMock
 
 import math
+from enum import Enum
 
 def create_mock_layer_set_of_cubic_bezier_curve_arc():#radius, center_point_x, center_point_y, start_angle, end_angle, num_angle_divisions):
     # CubicBezierCurve of 90degree arc (radius=100)
@@ -36,22 +37,51 @@ def create_mock_layer_set_of_cubic_bezier_curve_arc():#radius, center_point_x, c
     return layer_set
 #end
 
-def create_mock_layer_set_of_arc_as_linear_approximate_curve(radius, center_point_x, center_point_y, start_angle, end_angle, num_angle_divisions):
+class ArcDirection(Enum):
+    CLOCKWISE = "clockwize"
+    COUNTER_CLOCKWISE = "counter_clockwise"
+#end
+
+def create_mock_linear_approximate_curve_of_arc(radius, center_point_x, center_point_y, start_angle, end_angle, num_angle_divisions, arc_direction):
 
     start_rad = math.radians(start_angle)
     end_rad = math.radians(end_angle)
     delta_rad = end_rad - start_rad
 
-    linear_ctrl_p_set = []
+    tmp_linear_ctrl_p_set = []
     for i in range(num_angle_divisions):
         start_theta = delta_rad *  i      / num_angle_divisions + start_rad
         end_theta   = delta_rad * (i + 1) / num_angle_divisions + start_rad
-        start_p = model_mocks.create_mock_point(radius*math.cos(start_theta) + center_point_x, radius*math.sin(start_theta)  + center_point_y)
-        end_p   = model_mocks.create_mock_point( radius*math.cos(end_theta)  + center_point_x, radius*math.sin(end_theta)    + center_point_y )
-        linear_ctrl_p_set.append( model_mocks.create_mock_linear_approximate_curve_control_point(start_p, end_p) )
+        start_p = Point(radius*math.cos(start_theta) + center_point_x, radius*math.sin(start_theta)  + center_point_y)
+        end_p   = Point( radius*math.cos(end_theta)  + center_point_x, radius*math.sin(end_theta)    + center_point_y )
+        tmp_linear_ctrl_p_set.append( model_mocks.create_mock_linear_approximate_curve_control_point(start_p, end_p) )
     #end
 
-    linear_approximate_curve = model_mocks.create_mock_linear_approximate_curve(linear_ctrl_p_set)
+    linear_ctrl_p_set = []
+    if arc_direction == ArcDirection.CLOCKWISE:
+        for ctrl_p in tmp_linear_ctrl_p_set:
+            linear_ctrl_p_set.append( model_mocks.create_mock_linear_approximate_curve_control_point(ctrl_p.start, ctrl_p.end) )
+        #end
+    elif arc_direction == ArcDirection.COUNTER_CLOCKWISE:
+        tmp_linear_ctrl_p_set.reverse()
+        for ctrl_p in tmp_linear_ctrl_p_set:
+            linear_ctrl_p_set.append( model_mocks.create_mock_linear_approximate_curve_control_point(ctrl_p.end, ctrl_p.start) )
+        #end
+    #end
+
+    linear_approximate_curve = LinearApproximateCurve()
+    for ctrl_p in linear_ctrl_p_set:
+        linear_approximate_curve.append(ctrl_p)
+    #end
+    return linear_approximate_curve
+#end
+
+def create_mock_linear_layer_set_of_arc(radius, center_point_x, center_point_y, start_angle, end_angle, num_angle_divisions):
+
+    linear_approximate_curve = create_mock_linear_approximate_curve_of_arc(radius, center_point_x, center_point_y, start_angle, end_angle, num_angle_divisions)
+    for ctrl_p in linear_ctrl_p_set:
+        linear_approximate_curve.append(ctrl_p)
+    #end
 
     curve_set = model_mocks.create_mock_curve_set([linear_approximate_curve])
     layer = model_mocks.create_mock_layer([curve_set])
