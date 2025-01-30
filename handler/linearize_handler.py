@@ -15,6 +15,8 @@ from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
+from linear_approximate_curve import LinearApproximateCurve
+
 from single_curve_set import SingleCurveSet
 
 from layer import Layer

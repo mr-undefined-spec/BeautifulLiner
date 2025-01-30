@@ -55,10 +55,10 @@ class Curve:
         return self._ctrl_p_set
     #end
 
-    def to_str(self, position=None):
+    def to_str(self, is_first):
         s = ""
         for i, ctrl_p in enumerate(self._ctrl_p_set):
-            s += ctrl_p.to_str(i==0)
+            s += ctrl_p.to_str(is_first)
         #end
         return s
     #end

@@ -93,9 +93,6 @@ class SmoothenHandler():
     #end
 
     @classmethod
-    def thin_smoothen(self, curve):
-        return cubic_bezier_curve
-    @classmethod
     def process(cls, layer_set):
         return_layer_set = LayerSet()
 
