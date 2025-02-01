@@ -1,8 +1,3 @@
-
-
-
-from xml.dom import minidom
-
 import os
 import sys
 
@@ -22,10 +17,74 @@ from layer_set import LayerSet
 from basic_handler import BasicHandler
 
 import numpy as np
-
-import re
+from scipy.optimize import minimize
 
 class SplitHandler(BasicHandler):
+
+    @classmethod
+    def create_positive_start_signed_array(cls, size, invert_index):
+        """
+        +1 から始めて反転インデックスに従いデータを反転
+        """
+        return_array = np.ones(size, dtype=int)
+        sign = 1  # 初期符号
+
+        for i in range(len(invert_index)):
+            return_array[invert_index[i]:] *= -1  # 反転処理
+        #end
+        return return_array
+    #end
+
+    @classmethod
+    def create_negative_start_signed_array(cls, size, invert_index):
+        """
+        -1 から始めて反転インデックスに従いデータを反転
+        """
+        return_array = np.ones(size, dtype=int)
+        sign = -1  # 初期符号
+
+        for i in range(len(invert_index)):
+            return_array[invert_index[i]:] *= -1  # 反転処理
+        #end
+        return return_array
+    #end
+
+    @classmethod
+    def objective_function(cls, opt_idx, size, original_array):
+        """
+        目的関数: optimized_array (正負どちらの始まりも考慮) が original_array に近づくように最適化
+        """
+        opt_idx = np.round(opt_idx).astype(int)  # 整数化
+        opt_idx = np.clip(opt_idx, 1, size - 1)  # 範囲制限
+
+        # +1 から始まるパターン
+        optimized_array_positive = cls.create_positive_start_signed_array(size, opt_idx)
+        loss_positive = np.sum((optimized_array_positive - original_array) ** 2)
+
+        # -1 から始まるパターン
+        optimized_array_negative = cls.create_negative_start_signed_array(size, opt_idx)
+        loss_negative = np.sum((optimized_array_negative - original_array) ** 2)
+
+        # 最小誤差を採用
+        return min(loss_positive, loss_negative)
+    #end
+
+    @classmethod
+    def optimize_invert_index(cls, original_array, initial_guess_index):
+        """
+        最適なデータ反転インデックスを求める。
+        """
+        size = len(original_array)
+        initial_guess = np.array(initial_guess_index, dtype=float)
+
+        result = minimize(cls.objective_function, initial_guess, args=(size, original_array),
+                        method='Nelder-Mead', tol=1.0e-10, options={'maxiter': 10000, 'disp': False})
+
+        optimized_index = np.round(result.x).astype(int)  # 整数化
+        optimized_index = np.clip(optimized_index, 1, size - 1)  # 範囲制限
+        return sorted(optimized_index.tolist())
+    #end
+
 
     @classmethod
     def calculate_curvature(cls, points):
@@ -55,9 +114,54 @@ class SplitHandler(BasicHandler):
                 curvature = cross_product / (norm_v1 * norm_v2)
             else:
                 curvature = 0
-            curvatures.append(curvature)
+            #end
+
+            if curvature > 0:
+                curvatures.append(1.0)
+            else:
+                curvatures.append(-1.0)
+            #end
+            #curvatures.append(curvature)
+        #end
         
         return np.array(curvatures)
+    #end
+
+    @classmethod
+    def denoise_sign_transitions(cls, curvatures):
+        n = len(curvatures)
+        threshold = int(n * 0.1)  # 10% の閾値
+
+        # 符号が変わるインデックスを取得
+        sign_changes = np.where(np.diff(np.sign(curvatures)) != 0)[0] + 1
+
+        # 連続する符号の範囲を取得
+        segments = []
+        start = 0
+        for idx in sign_changes:
+            segments.append((start, idx))
+            start = idx
+        segments.append((start, n))  # 最後のセグメントを追加
+        print(segments)
+
+        # 短すぎるセグメントを修正
+        new_arr = curvatures.copy()
+        for i, (start, end) in enumerate(segments):
+            if end - start <= threshold:
+                # 周囲の符号に統一
+                if start == 0:
+                    new_sign = np.sign(curvatures[end])
+                elif end == n:
+                    new_sign = np.sign(curvatures[start - 1])
+                else:
+                    new_sign = np.sign(curvatures[start - 1])  # 前のセグメントの符号を優先
+
+                new_arr[start:end] = new_sign
+            #end
+        #end
+
+        return new_arr
+    #end
 
     @classmethod
     def find_inflection_points(cls, curvatures):
@@ -84,9 +188,17 @@ class SplitHandler(BasicHandler):
                     curvatures = cls.calculate_curvature(points)
                     #print(curvatures)
 
-                    inflection_points = cls.find_inflection_points(curvatures)
-                    #print(inflection_points)
+                    size = len(curvatures)
+
+                    initial_guess_index = [size/3, size/2]
+                    #initial_guess_index = []
+
+                    inflection_points = cls.optimize_invert_index(curvatures, initial_guess_index)  
+                    #cls.find_inflection_points(new_curvatures)
+                    print(inflection_points)
                 #end
+
+                print(len(curve_set[0]))
 
                 if inflection_points == []:
                     tmp_layer.append(curve_set)
