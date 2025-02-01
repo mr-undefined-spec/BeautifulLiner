@@ -76,6 +76,14 @@ class LinearApproximateCurve(Curve):
         return start_points
     #end
 
+    def get_start_points_as_numpy_array(self):
+        start_points = []
+        for ctrl_p in self._ctrl_p_set:
+            start_points.append([ctrl_p.start.x, ctrl_p.start.y])
+        #end
+        return np.array(start_points)
+    #end
+
     """
 
 
