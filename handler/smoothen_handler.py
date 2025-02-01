@@ -49,7 +49,7 @@ class SmoothenHandler():
     #end
 
     @classmethod
-    def _smoothen(cls, ctrl_p_set):
+    def smoothen(cls, ctrl_p_set):
         """ Least square qbezier fit using penrose pseudoinverse.
 
         Based on https://stackoverflow.com/questions/12643079/b%C3%A9zier-curve-fitting-with-scipy
@@ -91,29 +91,5 @@ class SmoothenHandler():
 
         return CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point)
     #end
-
-    @classmethod
-    def process(cls, layer_set):
-        return_layer_set = LayerSet()
-
-        from cubic_bezier_curve import CubicBezierCurve
-
-        for layer in layer_set:
-            tmp_layer = Layer(layer.name)
-            for curve_set in layer:
-                tmp_curve_set = MultiCurveSet()
-                for curve in curve_set:
-                    cubic_bezier_curve = CubicBezierCurve()
-                    cubic_bezier_curve.append( cls._smoothen(curve.ctrl_p_set) )
-
-                    tmp_curve_set.append(cubic_bezier_curve)
-                #end
-                tmp_layer.append(tmp_curve_set)
-            #end
-            return_layer_set.append(tmp_layer)
-        #end
-        return return_layer_set
-    #end
-
 
 #end

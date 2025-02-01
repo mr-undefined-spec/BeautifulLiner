@@ -31,45 +31,28 @@ import math
 class TestSplitHandler(unittest.TestCase):
     def setUp(self):
 
-        curve_1 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,    0.0,   0.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)
-        curve_2 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,    0.0, 200.0, 180.0, 270.0, 100, ArcDirection.COUNTER_CLOCKWISE)
-        curve_3 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0, -200.0, 200.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)
-
-        curve_set = model_mocks.create_mock_curve_set([curve_1, curve_2, curve_3])
-        layer = model_mocks.create_mock_layer([curve_set])
-        self.layer_set = [layer]
-        
-        #handler_mocks.create_mock_layer_set_of_arc_as_linear_approximate_curve(100.0, 0.0, 0.0, 0.0, 90.0, 100)
+        self.curve_1 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,    0.0,   0.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)
+        self.curve_2 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,    0.0, 200.0, 180.0, 270.0, 100, ArcDirection.COUNTER_CLOCKWISE)
+        self.curve_3 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0, -200.0, 200.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)
 
     #end
 
     def test_split(self):
 
-        the_answer = ["100.000 0.000\n101.572 53.551\n53.551 101.572\n0.000 100.000\n",
-                        "-0.000 100.000\n-53.551 98.428\n-101.572 146.449\n-100.000 200.000\n",
-                        "-100.000 200.000\n-98.428 253.551\n-146.449 301.572\n-200.000 300.000\n"]
-
-        the_answer_index = 0
+        the_answer_1 = "100.000 0.000\n101.572 53.551\n53.551 101.572\n0.000 100.000\n"
+        the_answer_2 = "-0.000 100.000\n-53.551 98.428\n-101.572 146.449\n-100.000 200.000\n"
+        the_answer_3 = "-100.000 200.000\n-98.428 253.551\n-146.449 301.572\n-200.000 300.000\n"
 
         smoothen_handler = SmoothenHandler()
 
-        smoothen_layer_set = smoothen_handler.process(self.layer_set)
-        for layer in smoothen_layer_set:
-            for curve_set in layer:
-                #print("[")
-                for curve in curve_set:
-                    #print(curve)
-                    #print("[")
-                    for ctrl_p in curve:
-                        #print('"' + str(ctrl_p) + '",')
-                        self.assertEqual(str(ctrl_p), the_answer[the_answer_index])
-                        the_answer_index += 1
-                    #end
-                    #print("],")
-                #end
-                #print("]")
-            #end
-        #end
+        smoothened_curve_1 = smoothen_handler.smoothen(self.curve_1)
+        smoothened_curve_2 = smoothen_handler.smoothen(self.curve_2)
+        smoothened_curve_3 = smoothen_handler.smoothen(self.curve_3)
+
+        self.assertEqual(str(smoothened_curve_1), the_answer_1)
+        self.assertEqual(str(smoothened_curve_2), the_answer_2)
+        self.assertEqual(str(smoothened_curve_3), the_answer_3)
+
     #end
 
 
