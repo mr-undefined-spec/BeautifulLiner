@@ -248,7 +248,7 @@ class LinearizeHandler(BasicHandler):
     #                     * = return_points
     #
     @classmethod
-    def __approximate_linear_curve(cls, ctrl_p, is_first, micro_segment_length):
+    def get_points_of_approximate_linear_curve(cls, ctrl_p, is_first, micro_segment_length):
         division_num = cls.__get_division_num(ctrl_p, micro_segment_length)
     
         q0_list = cls.__get_equally_divided_points_between_2_points(ctrl_p.p0, ctrl_p.p1, division_num)
@@ -279,36 +279,5 @@ class LinearizeHandler(BasicHandler):
         #end
     
         return return_points
-    #end
-    
-    @classmethod
-    def process(cls, layer_set):
-
-        return_layer_set = LayerSet()
-
-        micro_segment_length = 1.0#self.options.get("micro_segment_length", 1.0)
-
-        for layer in layer_set:
-            tmp_layer = Layer(layer.name)
-            for curve_set in layer:
-                for curve in curve_set:
-                    tmp_curve = LinearApproximateCurve()
-                    for i, ctrl_p in enumerate(curve):
-                        points = []
-                        for point in cls.__approximate_linear_curve(ctrl_p, i==0, micro_segment_length):
-                            points.append( point )
-                        #end
-                        for j in range( len(points)-1 ):
-                            tmp_curve.append( LinearApproximateCurveControlPoint(points[j], points[j+1]) )
-                        #end
-                    #end
-                #end
-                tmp_curve_set = SingleCurveSet(tmp_curve)
-
-                tmp_layer.append(tmp_curve_set)
-            #end
-            return_layer_set.append(tmp_layer)
-        #end
-        return return_layer_set
     #end
 #end
