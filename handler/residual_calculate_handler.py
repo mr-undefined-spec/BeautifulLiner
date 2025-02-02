@@ -25,26 +25,23 @@ class ResidualCalculateHandler(BasicHandler):
     @staticmethod
     def calculate_residual(linear_approximate_curve_a, linear_approximate_curve_b):
         """
-        2つの線形近似曲線の点列間の残渣を計算する。
+        2つの線形近似曲線の点列間の残差を計算する。
         
         各点列のすべての点について、もう一方の点列内の最も近い点との距離を求め、
-        その総和を残渣とする。
+        その総和を残差とする。
         
         :param linear_approximate_curve_a: np.ndarray, shape (N, 2)
             近似曲線Aの点列（各点は[x, y]）
         :param linear_approximate_curve_b: np.ndarray, shape (M, 2)
             近似曲線Bの点列（各点は[x, y]）
         :return: float
-            総残渣
+            総残差 
         """
-        tree_a = KDTree(linear_approximate_curve_a.get_start_points_as_numpy_array())
+        #tree_a = KDTree(linear_approximate_curve_a.get_start_points_as_numpy_array())
         tree_b = KDTree(linear_approximate_curve_b.get_start_points_as_numpy_array())
         
         # Aの各点に対してB内の最近点を求める
         distances_a_to_b, _ = tree_b.query(linear_approximate_curve_a.get_start_points_as_numpy_array())
         
-        # Bの各点に対してA内の最近点を求める
-        distances_b_to_a, _ = tree_a.query(linear_approximate_curve_b.get_start_points_as_numpy_array())
-        
-        return np.sum(distances_a_to_b) + np.sum(distances_b_to_a)
+        return np.sum(distances_a_to_b)
 #end
