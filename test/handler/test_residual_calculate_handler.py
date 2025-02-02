@@ -55,6 +55,9 @@ class TestResidualCalculateHandler(unittest.TestCase):
 
         self.assertEqual(residual, 100.0)
 
+        #relative_residual = residual / len(linear_approximate_curve_1)
+        #print(relative_residual)
+
     #end
 
 
