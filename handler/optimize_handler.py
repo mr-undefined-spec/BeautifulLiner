@@ -82,6 +82,8 @@ class OptimizeHandler(BasicHandler):
             optimized_invert_index.append(idx)
         
         optimized_invert_index.reverse()
+
+        optimized_invert_index.append( len(curve_orientations)-1 ) # add last index
         
         return optimized_invert_index
 

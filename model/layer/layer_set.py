@@ -1,6 +1,11 @@
+import os
+import sys
 
 from xml.dom import minidom
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../primitive'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../curve'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../layer'))
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from cubic_bezier_curve import CubicBezierCurve
