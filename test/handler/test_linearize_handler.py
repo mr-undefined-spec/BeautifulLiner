@@ -29,11 +29,11 @@ class TestLinearizeHandler(unittest.TestCase):
         ctrl_p = model_mocks.create_mock_cubic_bezier_control_point(p0, p1, p2, p3)
 
         linearize_handler = LinearizeHandler(options={"micro_segment_length":0.1})
-        linearized_points = linearize_handler.get_points_of_approximate_linear_curve(ctrl_p, True, 0.1)
+        linear_approximate_curve = linearize_handler.get_points_of_approximate_linear_curve(ctrl_p, True, 0.1)
 
-        for p in linearized_points:
-            delta_x = p.x - 0.0
-            delta_y = p.y - 0.0
+        for ctrl_p in linear_approximate_curve:
+            delta_x = ctrl_p.start.x - 0.0
+            delta_y = ctrl_p.start.y - 0.0
             distance_from_origin = round( math.sqrt(delta_x*delta_x + delta_y*delta_y) )
             self.assertEqual(distance_from_origin, 100)
         #end

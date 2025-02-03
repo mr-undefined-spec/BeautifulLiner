@@ -245,7 +245,7 @@ class LinearizeHandler(BasicHandler):
     #                _*                                                                            P3
     #                                                                           
     #                P0                                                        
-    #                     * = return_points
+    #                     * = points
     #
     @classmethod
     def get_points_of_approximate_linear_curve(cls, ctrl_p, is_first, micro_segment_length):
@@ -255,12 +255,12 @@ class LinearizeHandler(BasicHandler):
         q1_list = cls.__get_equally_divided_points_between_2_points(ctrl_p.p1, ctrl_p.p2, division_num)
         q2_list = cls.__get_equally_divided_points_between_2_points(ctrl_p.p2, ctrl_p.p3, division_num)
     
-        return_points = []
+        points = []
         if division_num == 1:
             if is_first:
-                return_points.append( Point(ctrl_p.p0.x, ctrl_p.p0.y) )
+                points.append( Point(ctrl_p.p0.x, ctrl_p.p0.y) )
             #end
-            return_points.append( Point(ctrl_p.p3.x, ctrl_p.p3.y) )
+            points.append( Point(ctrl_p.p3.x, ctrl_p.p3.y) )
         else:
             start = 0 if is_first else 1
             for i in range(start, division_num+1):
@@ -274,10 +274,16 @@ class LinearizeHandler(BasicHandler):
                 r0 = cls.__get_internal_divided_point(q0, q1, ratio_n, ratio_m)
                 r1 = cls.__get_internal_divided_point(q1, q2, ratio_n, ratio_m)
     
-                return_points.append( cls.__get_internal_divided_point(r0, r1, ratio_n, ratio_m) )
+                points.append( cls.__get_internal_divided_point(r0, r1, ratio_n, ratio_m) )
             #end
         #end
-    
-        return return_points
+
+        return_linear_approximate_curve = LinearApproximateCurve()
+        for index in range( len(points)-1 ):
+            linear_ctrl_p = LinearApproximateCurveControlPoint(points[index], points[index+1])
+            return_linear_approximate_curve.append( linear_ctrl_p )
+        #end
+
+        return return_linear_approximate_curve
     #end
 #end
