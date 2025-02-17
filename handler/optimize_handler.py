@@ -40,8 +40,12 @@ class OptimizeHandler(BasicHandler):
     def optimize(curve_orientations, optimize_order):
         """ セグメント平均法を用いた最適な符号反転点の探索 """
 
-        if optimize_order < 2:
-            raise ValueError('optimize_order must be greater than or equal to 2.')
+        if optimize_order < 1:
+            raise ValueError('optimize_order must be greater than or equal to 1.')
+        #end
+
+        if optimize_order == 1:
+            return [0, len(curve_orientations)-1]
         #end
 
         size = len(curve_orientations)

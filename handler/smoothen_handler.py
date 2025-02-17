@@ -9,6 +9,7 @@ from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 from linear_approximate_curve import LinearApproximateCurve
+from cubic_bezier_curve import CubicBezierCurve
 from multi_curve_set import MultiCurveSet
 
 from layer import Layer
@@ -89,7 +90,11 @@ class SmoothenHandler():
         first_point = Point(x_data[0], y_data[0] )
         last_point  = Point(x_data[-1], y_data[-1] )
 
-        return CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point)
+        cubic_bezier_curve = CubicBezierCurve()
+        cubic_bezier_curve.append( CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point) )
+        return cubic_bezier_curve
+
+        #return CubicBezierCurveControlPoint(first_point, Point(fit[1][0], fit[1][1]), Point(fit[2][0], fit[2][1]), last_point)
     #end
 
 #end
