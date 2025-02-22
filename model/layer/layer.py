@@ -8,8 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../curve'))
 
 from point import Point
 
-from curve_set import CurveSet
-import tkinter as tk
+from curve import Curve
 
 from enum import Enum
 
@@ -25,7 +24,7 @@ class Layer:
         #end
         self.__name = name
 
-        self.__curve_set_list = []   
+        self.__curve_list = []   
 
         self.__is_fill = False
         self.__color   = "#000000"
@@ -53,7 +52,7 @@ class Layer:
     #end
 
     def __getitem__(self, i):
-        return self.__curve_set_list[i]
+        return self.__curve_list[i]
     #end
 
     def __iter__(self):
@@ -61,16 +60,16 @@ class Layer:
         return self
     #end
     def __next__(self):
-        if self.__index >= len(self.__curve_set_list): raise StopIteration
+        if self.__index >= len(self.__curve_list): raise StopIteration
         self.__index += 1
-        return self.__curve_set_list[self.__index-1]
+        return self.__curve_list[self.__index-1]
     #end
 
-    def append(self, curve_set):
-        if not isinstance(curve_set, CurveSet):
-            raise TypeError("The argument of the append method must be a CurveSet(SingleCurveSet or MultiCurveSet)")
+    def append(self, curve):
+        if not isinstance(curve, Curve):
+            raise TypeError("The argument of the append method must be a Curve(CubicBezierCurve or LinearApproximateCurve)")
         #end if
-        self.__curve_set_list.append(curve_set)
+        self.__curve_list.append(curve)
     #end
 
     def set_write_options(self, is_fill, color, endpoint_style):

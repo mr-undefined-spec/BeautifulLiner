@@ -9,7 +9,6 @@ from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 from linear_approximate_curve import LinearApproximateCurve
-from multi_curve_set import MultiCurveSet
 
 from layer import Layer
 from layer_set import LayerSet
@@ -44,4 +43,5 @@ class ResidualCalculateHandler(BasicHandler):
         distances_a_to_b, _ = tree_b.query(linear_approximate_curve_a.get_start_points_as_numpy_array())
         
         return np.sum(distances_a_to_b)
+    #end
 #end

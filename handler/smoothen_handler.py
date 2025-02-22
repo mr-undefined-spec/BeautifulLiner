@@ -10,7 +10,6 @@ from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 from linear_approximate_curve import LinearApproximateCurve
 from cubic_bezier_curve import CubicBezierCurve
-from multi_curve_set import MultiCurveSet
 
 from layer import Layer
 from layer_set import LayerSet

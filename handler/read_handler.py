@@ -13,7 +13,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from cubic_bezier_curve import CubicBezierCurve
-from single_curve_set import SingleCurveSet
 
 from layer import Layer
 from layer_set import LayerSet
@@ -34,7 +33,7 @@ class ReadHandler(BasicHandler):
     #end def
 
     @classmethod
-    def __make_cubic_bezier_curve_set(cls, d_str):
+    def __make_cubic_bezier_curve(cls, d_str):
         """
         IN  nodeValue of d in path of layer_set as string
         OUT CubicBezierCurve
@@ -81,15 +80,14 @@ class ReadHandler(BasicHandler):
             last_point = p3
         #end for
 
-        curve_set = SingleCurveSet(curve)
-        return curve_set
+        return curve
     #end def
 
     @classmethod
     def __make_layer(cls, layer_name, paths):
         layer = Layer(layer_name)
         for path in paths:
-            layer.append(  cls.__make_cubic_bezier_curve_set( path.getAttributeNode('d').nodeValue )  )
+            layer.append(  cls.__make_cubic_bezier_curve( path.getAttributeNode('d').nodeValue )  )
         #end for
         return layer
     #end

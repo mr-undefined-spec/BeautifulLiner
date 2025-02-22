@@ -51,13 +51,11 @@ class TestReadHandler(unittest.TestCase):
         the_answer_index = 0
 
         for layer in self.layer_set:
-            for curve_set in layer:
-                for curve in curve_set:
-                    for ctrl_p in curve:
-                        for point in ctrl_p:
-                            self.assertEqual([point.x, point.y], the_answer[the_answer_index])
-                            the_answer_index += 1
-                        #end
+            for curve in layer:
+                for ctrl_p in curve:
+                    for point in ctrl_p:
+                        self.assertEqual([point.x, point.y], the_answer[the_answer_index])
+                        the_answer_index += 1
                     #end
                 #end
             #end

@@ -9,7 +9,6 @@ from linear_approximate_curve_control_point import LinearApproximateCurveControl
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
-from curve_set import CurveSet
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
 from layer import Layer
@@ -48,8 +47,7 @@ class TestSplitHandler(unittest.TestCase):
 
         self.curve = the_curve
 
-        curve_set = model_mocks.create_mock_curve_set([the_curve])
-        layer = model_mocks.create_mock_layer([curve_set])
+        layer = model_mocks.create_mock_layer([the_curve])
         self.layer_set = [layer]
         
         #handler_mocks.create_mock_layer_set_of_arc_as_linear_approximate_curve(100.0, 0.0, 0.0, 0.0, 90.0, 100)

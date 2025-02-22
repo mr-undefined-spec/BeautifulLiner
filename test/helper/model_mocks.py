@@ -11,7 +11,6 @@ from linear_approximate_curve_control_point import LinearApproximateCurveControl
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
-from curve_set import CurveSet
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
 from layer import Layer
@@ -50,13 +49,6 @@ def create_mock_linear_approximate_curve(linear_approximate_curve_control_point_
     linear_approximate_curve.__getitem__.side_effect = lambda index : linear_approximate_curve_control_point_set[index]
     linear_approximate_curve.__iter__.return_value = iter(linear_approximate_curve_control_point_set)
     return linear_approximate_curve
-#end
-
-def create_mock_curve_set(curve_list):
-    curve_set = MagicMock(spec=CurveSet)
-    curve_set.__getitem__.side_effect = lambda index : curve_list[index]
-    curve_set.__iter__.return_value = iter(curve_list)
-    return curve_set
 #end
 
 def create_mock_layer(curve_set_list):

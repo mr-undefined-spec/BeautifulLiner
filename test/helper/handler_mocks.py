@@ -9,7 +9,6 @@ from linear_approximate_curve_control_point import LinearApproximateCurveControl
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
-from curve_set import CurveSet
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
 from layer import Layer
@@ -30,8 +29,7 @@ def create_mock_layer_set_of_cubic_bezier_curve_arc():#radius, center_point_x, c
     ctrl_p = model_mocks.create_mock_cubic_bezier_control_point(p0, p1, p2, p3)
 
     curve = [ctrl_p]
-    curve_set = [curve]
-    layer = model_mocks.create_mock_layer([curve_set])
+    layer = model_mocks.create_mock_layer([curve])
     layer_set = [layer]
 
     return layer_set
@@ -83,8 +81,7 @@ def create_mock_linear_layer_set_of_arc(radius, center_point_x, center_point_y, 
         linear_approximate_curve.append(ctrl_p)
     #end
 
-    curve_set = model_mocks.create_mock_curve_set([linear_approximate_curve])
-    layer = model_mocks.create_mock_layer([curve_set])
+    layer = model_mocks.create_mock_layer([linear_approximate_curve])
     layer_set = [layer]
 
     return layer_set

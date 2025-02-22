@@ -17,8 +17,6 @@ from linear_approximate_curve_control_point import LinearApproximateCurveControl
 
 from linear_approximate_curve import LinearApproximateCurve
 
-from single_curve_set import SingleCurveSet
-
 from layer import Layer
 from layer_set import LayerSet
 

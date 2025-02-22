@@ -9,7 +9,6 @@ from linear_approximate_curve_control_point import LinearApproximateCurveControl
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
-from curve_set import CurveSet
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
 from layer import Layer
@@ -28,7 +27,7 @@ import unittest
 import numpy as np
 import math
 
-class TestSplitHandler(unittest.TestCase):
+class TestSmoothenHandler(unittest.TestCase):
     def setUp(self):
 
         self.curve_1 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,    0.0,   0.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)
@@ -37,7 +36,7 @@ class TestSplitHandler(unittest.TestCase):
 
     #end
 
-    def test_split(self):
+    def test_smoothen(self):
 
         the_answer_1 = "100.000 0.000\n101.572 53.551\n53.551 101.572\n0.000 100.000\n"
         the_answer_2 = "-0.000 100.000\n-53.551 98.428\n-101.572 146.449\n-100.000 200.000\n"
@@ -49,9 +48,9 @@ class TestSplitHandler(unittest.TestCase):
         smoothened_curve_2 = smoothen_handler.smoothen(self.curve_2)
         smoothened_curve_3 = smoothen_handler.smoothen(self.curve_3)
 
-        self.assertEqual(str(smoothened_curve_1), the_answer_1)
-        self.assertEqual(str(smoothened_curve_2), the_answer_2)
-        self.assertEqual(str(smoothened_curve_3), the_answer_3)
+        self.assertEqual(str(smoothened_curve_1[0]), the_answer_1)
+        self.assertEqual(str(smoothened_curve_2[0]), the_answer_2)
+        self.assertEqual(str(smoothened_curve_3[0]), the_answer_3)
 
     #end
 
