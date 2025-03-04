@@ -84,9 +84,8 @@ class TestCurve(unittest.TestCase):
     #end
 
 
-    def test_create_intersect_judge_rectangle(self):
+    def test_rect(self):
         # linear_approximate_curve
-        self.linear_approximate_curve.create_intersect_judge_rectangle()
         self.assertEqual( self.linear_approximate_curve.rect.q.x, 0.0 )
         self.assertEqual( self.linear_approximate_curve.rect.q.y, 0.0 )
         self.assertEqual( self.linear_approximate_curve.rect.z.x, 0.0 )

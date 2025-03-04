@@ -48,14 +48,9 @@ class LinearApproximateCurve(Curve):
         return s
     #end
 
-
-    def create_intersect_judge_rectangle(self):
-        self.__intersect_judge_rectangular = Rectangular(self.min_x, self.max_x, self.min_y, self.max_y)
-    #end
-
     @property
     def rect(self):
-        return self.__intersect_judge_rectangular
+        return Rectangular(self.min_x, self.max_x, self.min_y, self.max_y)
     #end
 
     def create_qtree_ctrl_p_set(self, bbox):
