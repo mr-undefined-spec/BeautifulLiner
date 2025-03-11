@@ -15,21 +15,6 @@ class Curve:
     def __init__(self):
         self._ctrl_p_set = []
         self.__intersect_judge_rectangular = None
-        self._start_index = 0
-        self._end_index   = -1
-    #end
-
-    def _get_the_end(self):
-        # if self._end_index is initial state, then ...
-        if (self._end_index == -1):
-            return len(self._ctrl_p_set) 
-        #end
-        # if self._end_index is over the array size
-        if ( self._end_index >= len(self._ctrl_p_set) ):
-            return len(self._ctrl_p_set)
-        #end
-        # others, self._end_index is correct
-        return self._end_index
     #end
 
     def __getitem__(self, i):

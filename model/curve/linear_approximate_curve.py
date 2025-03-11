@@ -100,7 +100,9 @@ class LinearApproximateCurve(Curve):
     #end
 
     def update_end_index(self, end_index):
-        if( end_index < self._end_index ):
+        if( self._end_index == -1):
+            self._end_index = end_index
+        elif( end_index < self._end_index ):
             self._end_index = end_index
         #end
     #end
@@ -306,6 +308,11 @@ class LinearApproximateCurve(Curve):
     @property
     def start_index(self):
         return self._start_index
+    #end
+    @property
+    def end_index(self):
+        return self._end_index
+    #end
 
 
     def __get_intersect_segment_set(self, target_rect_tuple):
