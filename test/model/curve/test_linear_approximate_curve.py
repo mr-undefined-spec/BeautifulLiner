@@ -96,6 +96,11 @@ class TestCurve(unittest.TestCase):
         self.assertEqual( self.linear_approximate_curve.rect.m.y, 1.0 )
     #end
 
+    def test_get_bounding_boxes(self):
+        bbox = self.linear_approximate_curve.get_bounding_boxes()
+        self.assertEqual( bbox, [(0.0, 0.0, 1.0, 1.0), (0.0, 0.0, 1.0, 1.0), (1.0, 0.0, 2.0, 1.0)] )
+    #end
+
 #end
 
 if __name__ == '__main__':

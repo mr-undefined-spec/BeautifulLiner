@@ -17,12 +17,27 @@ from curve import Curve
 class LinearApproximateCurve(Curve):
     def __init__(self):
         super().__init__()
-        self.qtree_ctrl_p_set = None
 
         self.min_x = 999999
         self.max_x = -999999
         self.min_y = 999999
         self.max_y = -999999
+
+        self._start_index = 0
+        self._end_index   = -1
+    #end
+
+    def _get_the_end(self):
+        # if self._end_index is initial state, then ...
+        if (self._end_index == -1):
+            return len(self._ctrl_p_set) 
+        #end
+        # if self._end_index is over the array size
+        if ( self._end_index >= len(self._ctrl_p_set) ):
+            return len(self._ctrl_p_set)
+        #end
+        # others, self._end_index is correct
+        return self._end_index
     #end
 
     def append(self, linear_ctrl_p):
@@ -53,16 +68,6 @@ class LinearApproximateCurve(Curve):
         return Rectangular(self.min_x, self.max_x, self.min_y, self.max_y)
     #end
 
-    def create_qtree_ctrl_p_set(self, bbox):
-        
-        self.qtree_ctrl_p_set = Index(bbox=bbox)
-
-        for ctrl_p in self._ctrl_p_set:
-            rect_tuple = ctrl_p.get_rect_tuple()
-            self.qtree_ctrl_p_set.insert(ctrl_p, rect_tuple)
-        #end
-    #end
-
     def get_start_points(self):
         start_points = []
         for ctrl_p in self._ctrl_p_set:
@@ -79,7 +84,39 @@ class LinearApproximateCurve(Curve):
         return np.array(start_points)
     #end
 
+    def get_bounding_boxes(self):
+        """各線分に対し、軸平行境界ボックス(AABB)を取得"""
+        return [
+            (min(ctrl_p.start.x, ctrl_p.end.x), min(ctrl_p.start.y, ctrl_p.end.y), 
+             max(ctrl_p.start.x, ctrl_p.end.x), max(ctrl_p.start.y, ctrl_p.end.y))
+            for ctrl_p in self._ctrl_p_set
+        ]
+    #end
+
+    def update_start_index(self, start_index):
+        if( self._start_index < start_index ):
+            self._start_index = start_index
+        #end
+    #end
+
+    def update_end_index(self, end_index):
+        if( end_index < self._end_index ):
+            self._end_index = end_index
+        #end
+    #end
+
+
     """
+
+    def create_qtree_ctrl_p_set(self, bbox):
+        
+        self.qtree_ctrl_p_set = Index(bbox=bbox)
+
+        for ctrl_p in self._ctrl_p_set:
+            rect_tuple = ctrl_p.get_rect_tuple()
+            self.qtree_ctrl_p_set.insert(ctrl_p, rect_tuple)
+        #end
+    #end
 
 
     def get_min_distance_to_point(self, point):
