@@ -49,7 +49,7 @@ class SmoothenHandler():
     #end
 
     @classmethod
-    def smoothen(cls, ctrl_p_set):
+    def smoothen(cls, linear_approximate_curve):
         """ Least square qbezier fit using penrose pseudoinverse.
 
         Based on https://stackoverflow.com/questions/12643079/b%C3%A9zier-curve-fitting-with-scipy
@@ -60,15 +60,7 @@ class SmoothenHandler():
 
         x_array = []
         y_array = []
-
-        """
-        x_array.append( ctrl_p_set[start_index].s.x )
-        y_array.append( ctrl_p_set[start_index].s.y )
-        for i in range( start_index, the_end ):
-            x_array.append( ctrl_p_set[i].e.x )
-            y_array.append( ctrl_p_set[i].e.y )
-        #end
-        """
+        ctrl_p_set = linear_approximate_curve.get_ctrl_p_set()
 
         x_array.append( ctrl_p_set[0].start.x )
         y_array.append( ctrl_p_set[0].start.y )

@@ -44,7 +44,7 @@ class OptimizeHandler(BasicHandler):
         #end
 
         if optimize_order == 1:
-            return [0, len(curve_orientations)-1]
+            return [0, len(curve_orientations)]
         #end
 
         size = len(curve_orientations)

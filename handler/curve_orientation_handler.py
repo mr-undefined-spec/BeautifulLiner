@@ -50,6 +50,11 @@ class CurveOrientationHandler(BasicHandler):
             #end
             #curve_orientations.append(curvature)
         #end
+
+        first_element = curve_orientations[0]
+        last_element = curve_orientations[-1]
+        curve_orientations.insert(0, first_element)
+        curve_orientations.append(last_element)
         
         return np.array(curve_orientations)
     #end

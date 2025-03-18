@@ -107,6 +107,16 @@ class LinearApproximateCurve(Curve):
         #end
     #end
 
+    def get_ctrl_p_set(self):
+        return_ctrl_p_set = []
+        the_end = self._get_the_end()
+        for i in range( self._start_index, the_end ):
+            return_ctrl_p_set.append( self._ctrl_p_set[i] )
+        #end
+        return return_ctrl_p_set
+    #end
+
+
 
     """
 
