@@ -68,6 +68,17 @@ class LinearApproximateCurve(Curve):
         return Rectangular(self.min_x, self.max_x, self.min_y, self.max_y)
     #end
 
+    def get_points(self):
+        points = []
+        points.append(self._ctrl_p_set[self._start_index].start)
+
+        the_end = self._get_the_end()
+        for i in range( self._start_index, the_end ):
+            points.append(self._ctrl_p_set[i].end)
+        #end
+        return points
+    #end
+
     def get_start_points(self):
         start_points = []
         for ctrl_p in self._ctrl_p_set:

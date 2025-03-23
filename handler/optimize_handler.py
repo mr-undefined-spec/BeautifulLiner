@@ -36,7 +36,7 @@ class OptimizeHandler(BasicHandler):
     #end
 
     @staticmethod
-    def optimize(curve_orientations, optimize_order):
+    def optimize(curve_orientations, optimize_order, index_offset):
         """ セグメント平均法を用いた最適な符号反転点の探索 """
 
         if optimize_order < 1:
@@ -44,7 +44,7 @@ class OptimizeHandler(BasicHandler):
         #end
 
         if optimize_order == 1:
-            return [0, len(curve_orientations)]
+            return [index_offset, len(curve_orientations) + index_offset]
         #end
 
         size = len(curve_orientations)
@@ -82,11 +82,11 @@ class OptimizeHandler(BasicHandler):
         idx = size
         for m in range(best_m, 0, -1):
             idx = prev[idx][m]
-            optimized_invert_index.append(idx)
+            optimized_invert_index.append(idx + index_offset)
         
         optimized_invert_index.reverse()
 
-        optimized_invert_index.append( len(curve_orientations)-1 ) # add last index
+        optimized_invert_index.append( len(curve_orientations)-1 + index_offset ) # add last index
         
         return optimized_invert_index
 

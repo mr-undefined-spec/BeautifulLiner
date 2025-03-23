@@ -19,10 +19,13 @@ import numpy as np
 
 class PickupIntersectionCandidatesHandler(BasicHandler):
     @classmethod
-    def pickup_intersection_candidates(cls, target_curve, other_curves):
+    def process(cls, target_curve, other_curves):
         candidates = []
         for other_curve in other_curves:
-            if target_curve.rect.test_collision(other_curve.rect):
+            if other_curve == target_curve:
+                # do nothing
+                pass
+            elif target_curve.rect.test_collision(other_curve.rect):
                 candidates.append(other_curve)
             #end
         #end

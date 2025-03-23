@@ -72,6 +72,10 @@ class Layer:
         self.__curve_list.append(curve)
     #end
 
+    def get_curves(self):
+        return self.__curve_list
+    #end
+
     def set_write_options(self, is_fill, color, endpoint_style):
         self.__is_fill = is_fill
         self.__color   = color

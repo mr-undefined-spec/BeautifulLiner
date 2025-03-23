@@ -41,7 +41,7 @@ class TestDeleteEdgeHandler(unittest.TestCase):
         curve_4 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0, -200.0, 200.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)
 
         pickup_intersection_candidates_handler = PickupIntersectionCandidatesHandler()
-        candidates = pickup_intersection_candidates_handler.pickup_intersection_candidates(curve_1, [curve_2, curve_3, curve_4])
+        candidates = pickup_intersection_candidates_handler.process(curve_1, [curve_1, curve_2, curve_3, curve_4])
 
         self.assertEqual(candidates[0], curve_2)
 
