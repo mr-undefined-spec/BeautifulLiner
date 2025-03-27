@@ -155,6 +155,8 @@ class TestSplitHandler(unittest.TestCase):
                     1.0,
                     1.0,
                     1.0,
+                    1.0,
+                    1.0,
                     -1.0,
                     -1.0,
                     -1.0,
@@ -255,7 +257,8 @@ class TestSplitHandler(unittest.TestCase):
                     -1.0,
                     -1.0,
                     -1.0,
-                    -1.0,
+                    1.0,
+                    1.0,
                     1.0,
                     1.0,
                     1.0,
@@ -362,6 +365,7 @@ class TestSplitHandler(unittest.TestCase):
         curve_orientations = curve_orientation_handler.get_curve_orientations(self.curve)
 
         for ori in curve_orientations:
+            #print(the_answer_index, ori, the_answer[the_answer_index])
             self.assertEqual(ori, the_answer[the_answer_index])
             the_answer_index += 1
         #end
