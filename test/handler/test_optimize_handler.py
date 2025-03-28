@@ -58,8 +58,7 @@ class TestOptimizeHandler(unittest.TestCase):
 
         original_invert_index_2 = [20]
         test_curve_orientations_2 = self.generate_data_including_noise(size, original_invert_index_2, noise_ratio, seed)
-        optimize_handler = OptimizeHandler()
-        optimized_invert_index_2 = optimize_handler.optimize(test_curve_orientations_2, 2, 0)
+        optimized_invert_index_2 = OptimizeHandler.process(test_curve_orientations_2, 2, 0)
         #print(test_curve_orientations_2)
         #print(original_invert_index_2)
         #print(optimized_invert_index_2)
@@ -67,16 +66,14 @@ class TestOptimizeHandler(unittest.TestCase):
 
         original_invert_index_3 = [30, 45]
         test_curve_orientations_3 = self.generate_data_including_noise(size, original_invert_index_3, noise_ratio, seed)
-        optimize_handler = OptimizeHandler()
-        optimized_invert_index_3 = optimize_handler.optimize(test_curve_orientations_3, 3, 0)
+        optimized_invert_index_3 = OptimizeHandler.process(test_curve_orientations_3, 3, 0)
         #print(original_invert_index_3)
         #print(optimized_invert_index_3)
         self.assertEqual(optimized_invert_index_3, [0, 30, 45, 99])
 
         original_invert_index_4 = [10, 20, 75]
         test_curve_orientations_4 = self.generate_data_including_noise(size,original_invert_index_4, noise_ratio, seed)
-        optimize_handler = OptimizeHandler()
-        optimized_invert_index_4 = optimize_handler.optimize(test_curve_orientations_4, 4, 0)
+        optimized_invert_index_4 = OptimizeHandler.process(test_curve_orientations_4, 4, 0)
         #print(original_invert_index_4)
         #print(optimized_invert_index_4)
         self.assertEqual(optimized_invert_index_4, [0, 10, 20, 75, 99])
@@ -90,8 +87,7 @@ class TestOptimizeHandler(unittest.TestCase):
 
         original_invert_index_2 = [20]
         test_curve_orientations_2 = self.generate_data_including_noise(size, original_invert_index_2, noise_ratio, seed)
-        optimize_handler = OptimizeHandler()
-        optimized_invert_index_2 = optimize_handler.optimize(test_curve_orientations_2, 2, 0)
+        optimized_invert_index_2 = OptimizeHandler.process(test_curve_orientations_2, 2, 0)
         #print(test_curve_orientations_2)
         #print(original_invert_index_2)
         #print(optimized_invert_index_2)
@@ -99,16 +95,14 @@ class TestOptimizeHandler(unittest.TestCase):
 
         original_invert_index_3 = [30, 45]
         test_curve_orientations_3 = self.generate_data_including_noise(size, original_invert_index_3, noise_ratio, seed)
-        optimize_handler = OptimizeHandler()
-        optimized_invert_index_3 = optimize_handler.optimize(test_curve_orientations_3, 3, 0)
+        optimized_invert_index_3 = OptimizeHandler.process(test_curve_orientations_3, 3, 0)
         #print(original_invert_index_3)
         #print(optimized_invert_index_3)
         self.assertEqual(optimized_invert_index_3, [0, 30, 44, 99]) # <- not 45 because of noise
 
         original_invert_index_4 = [10, 20, 75]
         test_curve_orientations_4 = self.generate_data_including_noise(size,original_invert_index_4, noise_ratio, seed)
-        optimize_handler = OptimizeHandler()
-        optimized_invert_index_4 = optimize_handler.optimize(test_curve_orientations_4, 4, 0)
+        optimized_invert_index_4 = OptimizeHandler.process(test_curve_orientations_4, 4, 0)
         #print(original_invert_index_4)
         #print(optimized_invert_index_4)
         self.assertEqual(optimized_invert_index_4, [0, 11, 20, 75, 99]) # <- not 10 because of noise

@@ -360,9 +360,7 @@ class TestSplitHandler(unittest.TestCase):
 
         the_answer_index = 0
 
-        curve_orientation_handler = CurveOrientationHandler()
-
-        curve_orientations = curve_orientation_handler.get_curve_orientations(self.curve)
+        curve_orientations = CurveOrientationHandler.process(self.curve)
 
         for ori in curve_orientations:
             #print(the_answer_index, ori, the_answer[the_answer_index])

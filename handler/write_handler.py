@@ -21,8 +21,8 @@ from basic_handler import BasicHandler
 
 class WriteHandler(BasicHandler):
 
-    @classmethod
-    def write(cls, layer_set, output_file_name):
+    @staticmethod
+    def process(layer_set, output_file_name):
         bbox = layer_set.get_bbox()
         s = ""
         s += '<?xml version="1.0" encoding="UTF-8"?>\n'

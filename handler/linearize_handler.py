@@ -164,8 +164,8 @@ class LinearizeHandler(BasicHandler):
     # 4. If the division num of Q0, Q1 and Q2 Points is large enough, the resulting point sequence can approximate a cubic Bezier curve with sufficient accuracy.
     #
     
-    @classmethod
-    def __get_division_num(cls, ctrl_p, micro_segment_length):
+    @staticmethod
+    def __get_division_num(ctrl_p, micro_segment_length):
         length_p0_p1 = ctrl_p.p0.distance(ctrl_p.p1)
         length_p1_p2 = ctrl_p.p1.distance(ctrl_p.p2)
         length_p2_p3 = ctrl_p.p2.distance(ctrl_p.p3)
@@ -191,8 +191,8 @@ class LinearizeHandler(BasicHandler):
     #   Note!
     #     The length of return_points is "division_num + 1"
     #
-    @classmethod
-    def __get_equally_divided_points_between_2_points(cls, point_a, point_b, division_num):
+    @staticmethod
+    def __get_equally_divided_points_between_2_points(point_a, point_b, division_num):
         delta_x = (point_b.x - point_a.x) / float(division_num)
         delta_y = (point_b.y - point_a.y) / float(division_num)
     
@@ -217,8 +217,8 @@ class LinearizeHandler(BasicHandler):
     #      m   :           n
     #
     #
-    @classmethod
-    def __get_internal_divided_point(cls, point_a, point_b, ratio_m, ratio_n):
+    @staticmethod
+    def __get_internal_divided_point(point_a, point_b, ratio_m, ratio_n):
         x = ( point_a.x*ratio_n + point_b.x*ratio_m ) / (ratio_m + ratio_n)
         y = ( point_a.y*ratio_n + point_b.y*ratio_m ) / (ratio_m + ratio_n)
         return Point(x, y)
@@ -245,13 +245,13 @@ class LinearizeHandler(BasicHandler):
     #                P0                                                        
     #                     * = points
     #
-    @classmethod
-    def get_points_of_approximate_linear_curve(cls, ctrl_p, is_first, micro_segment_length):
-        division_num = cls.__get_division_num(ctrl_p, micro_segment_length)
+    @staticmethod
+    def process(ctrl_p, is_first, micro_segment_length):
+        division_num = LinearizeHandler.__get_division_num(ctrl_p, micro_segment_length)
     
-        q0_list = cls.__get_equally_divided_points_between_2_points(ctrl_p.p0, ctrl_p.p1, division_num)
-        q1_list = cls.__get_equally_divided_points_between_2_points(ctrl_p.p1, ctrl_p.p2, division_num)
-        q2_list = cls.__get_equally_divided_points_between_2_points(ctrl_p.p2, ctrl_p.p3, division_num)
+        q0_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p0, ctrl_p.p1, division_num)
+        q1_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p1, ctrl_p.p2, division_num)
+        q2_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p2, ctrl_p.p3, division_num)
     
         points = []
         if division_num == 1:
@@ -269,10 +269,10 @@ class LinearizeHandler(BasicHandler):
                 ratio_n = float(i)
                 ratio_m = float(division_num - i)
     
-                r0 = cls.__get_internal_divided_point(q0, q1, ratio_n, ratio_m)
-                r1 = cls.__get_internal_divided_point(q1, q2, ratio_n, ratio_m)
+                r0 = LinearizeHandler.__get_internal_divided_point(q0, q1, ratio_n, ratio_m)
+                r1 = LinearizeHandler.__get_internal_divided_point(q1, q2, ratio_n, ratio_m)
     
-                points.append( cls.__get_internal_divided_point(r0, r1, ratio_n, ratio_m) )
+                points.append( LinearizeHandler.__get_internal_divided_point(r0, r1, ratio_n, ratio_m) )
             #end
         #end
 

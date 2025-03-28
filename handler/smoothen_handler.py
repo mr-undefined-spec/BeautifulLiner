@@ -22,34 +22,34 @@ from scipy.special import comb
 
 class SmoothenHandler():
 
-    @classmethod
-    def __get_bernstein_polynomial(cls, n, t, k):
+    @staticmethod
+    def __get_bernstein_polynomial(n, t, k):
         """ Bernstein polynomial when a = 0 and b = 1. """
         return t ** k * (1 - t) ** (n - k) * comb(n, k)
     #end
 
-    @classmethod
-    def __get_bernstein_matrix(cls, degree, T):
+    @staticmethod
+    def __get_bernstein_matrix(degree, T):
         """ Bernstein matrix for Bezier curves. """
         matrix = []
         for t in T:
             row = []
             for k in range(degree + 1):
-                row.append( cls.__get_bernstein_polynomial(degree, t, k) )
+                row.append( SmoothenHandler.__get_bernstein_polynomial(degree, t, k) )
             #end
             matrix.append(row)
         #end
         return np.array(matrix)
     #end
 
-    @classmethod
-    def __least_square_fit(cls, points, M):
+    @staticmethod
+    def __least_square_fit(points, M):
         M_ = np.linalg.pinv(M)
         return np.matmul(M_, points)
     #end
 
-    @classmethod
-    def smoothen(cls, linear_approximate_curve):
+    @staticmethod
+    def process(linear_approximate_curve):
         """ Least square qbezier fit using penrose pseudoinverse.
 
         Based on https://stackoverflow.com/questions/12643079/b%C3%A9zier-curve-fitting-with-scipy
@@ -73,10 +73,10 @@ class SmoothenHandler():
         y_data = np.array(y_array)
 
         T = np.linspace(0, 1, len(x_data))
-        M = cls.__get_bernstein_matrix(degree, T)
+        M = SmoothenHandler.__get_bernstein_matrix(degree, T)
         points = np.array(list(zip(x_data, y_data)))
 
-        fit = cls.__least_square_fit(points, M).tolist()
+        fit = SmoothenHandler.__least_square_fit(points, M).tolist()
 
         first_point = Point(x_data[0], y_data[0] )
         last_point  = Point(x_data[-1], y_data[-1] )

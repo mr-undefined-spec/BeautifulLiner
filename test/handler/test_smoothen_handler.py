@@ -42,11 +42,9 @@ class TestSmoothenHandler(unittest.TestCase):
         the_answer_2 = "-0.000 100.000\n-53.551 98.428\n-101.572 146.449\n-100.000 200.000\n"
         the_answer_3 = "-100.000 200.000\n-98.428 253.551\n-146.449 301.572\n-200.000 300.000\n"
 
-        smoothen_handler = SmoothenHandler()
-
-        smoothened_curve_1 = smoothen_handler.smoothen(self.curve_1)
-        smoothened_curve_2 = smoothen_handler.smoothen(self.curve_2)
-        smoothened_curve_3 = smoothen_handler.smoothen(self.curve_3)
+        smoothened_curve_1 = SmoothenHandler.process(self.curve_1)
+        smoothened_curve_2 = SmoothenHandler.process(self.curve_2)
+        smoothened_curve_3 = SmoothenHandler.process(self.curve_3)
 
         self.assertEqual(str(smoothened_curve_1[0]), the_answer_1)
         self.assertEqual(str(smoothened_curve_2[0]), the_answer_2)

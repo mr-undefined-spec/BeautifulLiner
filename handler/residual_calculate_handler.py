@@ -22,7 +22,7 @@ from scipy.spatial import KDTree
 
 class ResidualCalculateHandler(BasicHandler):
     @staticmethod
-    def calculate_residual(linear_approximate_curve_a, linear_approximate_curve_b):
+    def process(linear_approximate_curve_a, linear_approximate_curve_b):
         """
         2つの線形近似曲線の点列間の残差を計算する。
         

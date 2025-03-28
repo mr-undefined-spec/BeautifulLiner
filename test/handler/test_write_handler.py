@@ -45,8 +45,7 @@ class TestWriteHandler(unittest.TestCase):
         self.layer_set.view_box = "0,0,100,100"
         self.layer_set.__iter__.return_value = iter([layer])
 
-        write_handler = WriteHandler()
-        write_handler.write(self.layer_set, "test.svg")
+        WriteHandler.process(self.layer_set, "test.svg")
 
     #end
 

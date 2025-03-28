@@ -18,8 +18,8 @@ from basic_handler import BasicHandler
 import numpy as np
 
 class PickupIntersectionCandidatesHandler(BasicHandler):
-    @classmethod
-    def process(cls, target_curve, other_curves):
+    @staticmethod
+    def process(target_curve, other_curves):
         candidates = []
         for other_curve in other_curves:
             if other_curve == target_curve:

@@ -25,15 +25,15 @@ import re
 
 class ReadHandler(BasicHandler):
 
-    @classmethod
-    def __split_to_xy(cls, point_str):
+    @staticmethod
+    def __split_to_xy(point_str):
         s2 = point_str.replace("-", " -")
         tmp_items = re.split(r'\s+|\+', s2)
         return list( filter(None, tmp_items) )
     #end def
 
-    @classmethod
-    def __make_cubic_bezier_curve(cls, d_str):
+    @staticmethod
+    def __make_cubic_bezier_curve(d_str):
         """
         IN  nodeValue of d in path of layer_set as string
         OUT CubicBezierCurve
@@ -43,7 +43,7 @@ class ReadHandler(BasicHandler):
         point_strs = re.split("[C|L|M|Z]", d_str)
         point_strs.pop(0)
         # exception handling for 1st point
-        items = cls.__split_to_xy( point_strs[0].strip() )
+        items = ReadHandler.__split_to_xy( point_strs[0].strip() )
         last_point = Point( float(items[0]), float(items[1]) )
         point_strs.pop(0)
 
@@ -51,7 +51,7 @@ class ReadHandler(BasicHandler):
             if point_str.strip() == "":
                 break
             #end
-            items = cls.__split_to_xy( point_str.strip() )
+            items = ReadHandler.__split_to_xy( point_str.strip() )
             if len(items)==2:
                 p3 = Point( float(items[0]), float(items[1]) )
                 x1, y1, x2, y2 = 0.0, 0.0, 0.0, 0.0
@@ -83,17 +83,17 @@ class ReadHandler(BasicHandler):
         return curve
     #end def
 
-    @classmethod
-    def __make_layer(cls, layer_name, paths):
+    @staticmethod
+    def __make_layer(layer_name, paths):
         layer = Layer(layer_name)
         for path in paths:
-            layer.append(  cls.__make_cubic_bezier_curve( path.getAttributeNode('d').nodeValue )  )
+            layer.append(  ReadHandler.__make_cubic_bezier_curve( path.getAttributeNode('d').nodeValue )  )
         #end for
         return layer
     #end
 
-    @classmethod
-    def __get_group_paths_tuple(cls, doc):
+    @staticmethod
+    def __get_group_paths_tuple(doc):
         return_tuple = []
         for group in doc.getElementsByTagName("g"):
             the_tuple = []
@@ -110,8 +110,8 @@ class ReadHandler(BasicHandler):
         return tuple(return_tuple)
     #end
 
-    @classmethod
-    def create_layer_set_from_file(cls, file_name):
+    @staticmethod
+    def process(file_name):
         layer_set = LayerSet()
 
         if not type(file_name) is str:
@@ -121,12 +121,12 @@ class ReadHandler(BasicHandler):
         doc = minidom.parse(file_name)
         layer_set.set_doc(doc)
 
-        for group_paths_set in cls.__get_group_paths_tuple(doc):
+        for group_paths_set in ReadHandler.__get_group_paths_tuple(doc):
             group = group_paths_set[0]
             paths = group_paths_set[1]
             layer_name = group.getAttributeNode('id').nodeValue
 
-            layer_set.append(cls.__make_layer(layer_name, paths) )
+            layer_set.append(ReadHandler.__make_layer(layer_name, paths) )
         #end
         root = doc.getElementsByTagName("svg")
         layer_set.set_view_box( root[0].attributes["viewBox"].value )

@@ -20,8 +20,8 @@ from scipy.optimize import minimize
 
 class CurveOrientationHandler(BasicHandler):
 
-    @classmethod
-    def get_curve_orientations(cls, curve):
+    @staticmethod
+    def process(curve):
         """
         Curveの離散的な点列に基づいて相対的な回転関係（時計回りか反時計回りか）を計算する
         """

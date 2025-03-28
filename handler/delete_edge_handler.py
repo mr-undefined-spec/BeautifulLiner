@@ -21,7 +21,7 @@ from rtree import index
 
 class DeleteEdgeHandler(BasicHandler):
     @staticmethod
-    def intersect_segments(seg1, seg2):
+    def __intersect_segments(seg1, seg2):
         """２つの線分が交差しているか判定し、交点を求める"""
         def ccw(A, B, C):
             return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x)
@@ -43,7 +43,7 @@ class DeleteEdgeHandler(BasicHandler):
     #end
 
     @staticmethod
-    def process(target_curve, other_curve, delete_edge_ratio=0.1):
+    def process(target_curve, other_curve, delete_edge_ratio):
         """ターゲットの曲線と一本の曲線を比較し、交差したらstart_index, end_indexを更新する"""
         idx = index.Index()
 
@@ -66,7 +66,7 @@ class DeleteEdgeHandler(BasicHandler):
             possible_intersections = list(idx.intersection(bbox, objects=True))
             for j in possible_intersections:
                 other_seg = other_curve[j.object]
-                intersection = DeleteEdgeHandler.intersect_segments(seg, other_seg)
+                intersection = DeleteEdgeHandler.__intersect_segments(seg, other_seg)
                 if intersection:
                     intersections.append((i, intersection))
                 #end

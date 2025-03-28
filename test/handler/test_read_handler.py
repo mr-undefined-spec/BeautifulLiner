@@ -21,7 +21,7 @@ import math
 
 class TestReadHandler(unittest.TestCase):
     def test_read(self):
-        self.layer_set = ReadHandler.create_layer_set_from_file("data/test.svg")
+        self.layer_set = ReadHandler.process("data/test.svg")
 
         the_answer = [[402.67,127.291],
                     [399.823,128.714],

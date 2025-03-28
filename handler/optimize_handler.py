@@ -36,7 +36,7 @@ class OptimizeHandler(BasicHandler):
     #end
 
     @staticmethod
-    def optimize(curve_orientations, optimize_order, index_offset):
+    def process(curve_orientations, optimize_order, index_offset):
         """ セグメント平均法を用いた最適な符号反転点の探索 """
 
         if optimize_order < 1:

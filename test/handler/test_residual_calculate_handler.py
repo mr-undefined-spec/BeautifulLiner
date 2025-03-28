@@ -49,8 +49,7 @@ class TestResidualCalculateHandler(unittest.TestCase):
         #end
         #linear_approximate_curve_2 = model_mocks.create_mock_linear_approximate_curve(ctrl_p_set_2)
 
-        residual_calculate_handler = ResidualCalculateHandler()
-        residual = residual_calculate_handler.calculate_residual(linear_approximate_curve_1, linear_approximate_curve_2)
+        residual = ResidualCalculateHandler.process(linear_approximate_curve_1, linear_approximate_curve_2)
         #print(residual)
 
         self.assertEqual(residual, 100.0)
