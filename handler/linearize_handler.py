@@ -246,7 +246,7 @@ class LinearizeHandler(BasicHandler):
     #                     * = points
     #
     @staticmethod
-    def process(ctrl_p, is_first, micro_segment_length):
+    def __get_points_of_approximate_linear_curve(ctrl_p, is_first, micro_segment_length):
         division_num = LinearizeHandler.__get_division_num(ctrl_p, micro_segment_length)
     
         q0_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p0, ctrl_p.p1, division_num)
@@ -276,6 +276,8 @@ class LinearizeHandler(BasicHandler):
             #end
         #end
 
+        return points
+
         return_linear_approximate_curve = LinearApproximateCurve()
         for index in range( len(points)-1 ):
             linear_ctrl_p = LinearApproximateCurveControlPoint(points[index], points[index+1])
@@ -283,5 +285,22 @@ class LinearizeHandler(BasicHandler):
         #end
 
         return return_linear_approximate_curve
+    #end
+
+    @staticmethod
+    def process(cubic_bezier_curve, micro_segment_length):
+        tmp_points_set = []
+        for i, ctrl_p in enumerate(cubic_bezier_curve):
+            tmp_points = LinearizeHandler.__get_points_of_approximate_linear_curve(ctrl_p, i==0, micro_segment_length)
+            tmp_points_set.append( tmp_points )
+        #end
+
+        linearized_curve = LinearApproximateCurve()
+        for tmp_points in tmp_points_set:
+            for index in range( len(tmp_points)-1 ):
+                linearized_curve.append( LinearApproximateCurveControlPoint(tmp_points[index], tmp_points[index+1]) )
+            #end
+        #end
+        return linearized_curve
     #end
 #end
