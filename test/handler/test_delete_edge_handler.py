@@ -39,8 +39,8 @@ class TestDeleteEdgeHandler(unittest.TestCase):
         curve_2 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,  100.0,   0.0,  90.0, 180.0, 100, ArcDirection.CLOCKWISE)
 
         self.assertEqual(curve_1.end_index, -1)
-        DeleteEdgeHandler.process(curve_1, curve_2, 0.5)
-        self.assertEqual(curve_1.end_index, 66)
+        edge_deleted_curve = DeleteEdgeHandler.process(curve_1, curve_2, 0.5)
+        self.assertEqual(edge_deleted_curve.end_index, 66)
     #end
 
 

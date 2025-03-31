@@ -45,6 +45,9 @@ class DeleteEdgeHandler(BasicHandler):
     @staticmethod
     def process(target_curve, other_curve, delete_edge_ratio):
         """ターゲットの曲線と一本の曲線を比較し、交差したらstart_index, end_indexを更新する"""
+        return_curve = LinearApproximateCurve()
+        return_curve.copy(target_curve)
+
         idx = index.Index()
 
         # 他の曲線の線分をR-treeに登録
@@ -82,10 +85,12 @@ class DeleteEdgeHandler(BasicHandler):
 
         # 切り取られる箇所に応じて start_index または end_index を更新
         if first_intersection_index < num_segments // 2:
-            target_curve.update_start_index(first_intersection_index)
+            return_curve.update_start_index(first_intersection_index)
         else:
-            target_curve.update_end_index(first_intersection_index)
+            return_curve.update_end_index(first_intersection_index)
         #end
+
+        return return_curve
     #end
 
 #end

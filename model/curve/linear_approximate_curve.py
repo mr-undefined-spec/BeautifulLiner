@@ -79,6 +79,15 @@ class LinearApproximateCurve(Curve):
         return points
     #end
 
+    def copy(self, other_linear_approximate_curve):
+        for ctrl_p in other_linear_approximate_curve:
+            self.append(ctrl_p)
+        #end
+        self._start_index = other_linear_approximate_curve.start_index
+        self._end_index = other_linear_approximate_curve.end_index
+    #end
+
+
     def get_start_points(self):
         start_points = []
         for ctrl_p in self._ctrl_p_set:
