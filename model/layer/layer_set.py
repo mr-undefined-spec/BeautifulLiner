@@ -84,5 +84,15 @@ class LayerSet:
         return self.__layer_set[self.__index-1]
     #end def
 
+    def get_total_curve_num(self):
+        total_curve_num = 0
+        for layer in self.__layer_set:
+            for curve in layer:
+                total_curve_num += 1
+            #end
+        #end
+        return total_curve_num
+    #end
+
 #end
 

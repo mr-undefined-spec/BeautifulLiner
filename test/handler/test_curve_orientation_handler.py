@@ -156,7 +156,7 @@ class TestSplitHandler(unittest.TestCase):
                     1.0,
                     1.0,
                     1.0,
-                    1.0,
+                    -1.0,
                     -1.0,
                     -1.0,
                     -1.0,
