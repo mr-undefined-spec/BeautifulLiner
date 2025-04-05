@@ -33,6 +33,8 @@ class CurveOrientationHandler(BasicHandler):
         skip_ratio = 0.1
         skip_size = int( len(points)*skip_ratio ) 
 
+        are_all_cross_products_less_than = True
+
         # 点列を3点ずつ取り出す
         for i in range(skip_size, len(points)-skip_size):
             p1, p2, p3 = points[0], points[i], points[-1]
@@ -49,7 +51,10 @@ class CurveOrientationHandler(BasicHandler):
 
             #print(length_v1)
             #print(length_v2)
-            print(cross_product)
+            #print(cross_product)
+            if( cross_product > 0.1 ):
+                are_all_cross_products_less_than = False
+            #end
             
             if cross_product > 0:
                 curve_orientations.append(1.0)
@@ -100,6 +105,12 @@ class CurveOrientationHandler(BasicHandler):
             curve_orientations.append(last_element)
         #end
 
-        return np.array(curve_orientations)
+        if are_all_cross_products_less_than:
+            size = len(curve_orientations)
+            return np.ones(size)
+        else:
+            return np.array(curve_orientations)
+        #end
+
     #end
 #end

@@ -77,7 +77,7 @@ class DeleteEdgeHandler(BasicHandler):
         #end for i
 
         if not intersections:
-            return  # 交差がなければ何もしない
+            return return_curve # 交差がなければ何もしない
         #end
 
         # 最初の交点で切り取る
