@@ -136,10 +136,6 @@ class LinearApproximateCurve(Curve):
         return return_ctrl_p_set
     #end
 
-
-
-    """
-
     def create_qtree_ctrl_p_set(self, bbox):
         
         self.qtree_ctrl_p_set = Index(bbox=bbox)
@@ -149,6 +145,13 @@ class LinearApproximateCurve(Curve):
             self.qtree_ctrl_p_set.insert(ctrl_p, rect_tuple)
         #end
     #end
+
+    def get_intersect_segment_set(self, target_rect_tuple):
+        return self.qtree_ctrl_p_set.intersect(target_rect_tuple)
+    #end
+
+    """
+
 
 
     def get_min_distance_to_point(self, point):
@@ -345,9 +348,6 @@ class LinearApproximateCurve(Curve):
     #end
 
 
-    def __get_intersect_segment_set(self, target_rect_tuple):
-        return self.qtree_ctrl_p_set.intersect(target_rect_tuple)
-    #end
 
     def update_start_end_index_with_intersection(self, other_curve, ratio):
         the_end_of_start_side_index = int( len(self._ctrl_p_set)*ratio )
