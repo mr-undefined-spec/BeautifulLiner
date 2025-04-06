@@ -28,11 +28,9 @@ os.chdir(cwd)
 doTestIn(r".\model\curve")
 os.chdir(cwd)
 
-doTestIn(r".\model\compose")
+doTestIn(r".\model\layer")
 os.chdir(cwd)
 
-doTestIn(r".\model")
+doTestIn(r".\handler")
 os.chdir(cwd)
 
-doTestIn(r".\utils")
-os.chdir(cwd)

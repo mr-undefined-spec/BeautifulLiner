@@ -39,16 +39,14 @@ class WriteHandler(BasicHandler):
         for layer in layer_set:
             #s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
             s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
-            s += '<path stroke="#00fb00" stroke-width="2.01172" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round" d="'
+
+
             for i, curve in enumerate(layer):
-                for j, ctrl_p in enumerate(curve):
-                    if i==0:
-                        s += "M " + str(ctrl_p.start) + " "
-                    #end
-                    s += "L " + str(ctrl_p.end) + " "
-                #end
+                s += '  <path stroke="#00fb00" stroke-width="2.01172" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round" '
+                s += r' d="'
+                s += curve.to_str()
+                s += r'" />' + '\n'
             #end
-            s += '"/>\n'
             s += '</g>\n'
         #end
         s += '</svg>'
