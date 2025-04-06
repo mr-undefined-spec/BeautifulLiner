@@ -43,15 +43,22 @@ class DeleteEdgeHandler(BasicHandler):
     #end
 
     @staticmethod
-    def process(target_curve, other_curve, delete_edge_ratio):
+    def process(target_curve, other_curve, delete_ratio):
         """ターゲットの曲線と一本の曲線を比較し、交差したらstart_index, end_indexを更新する"""
         return_curve = LinearApproximateCurve()
         return_curve.copy(target_curve)
 
+        num_segments = len(target_curve)
+        start_ignore = int(num_segments * delete_ratio)
+        end_ignore = num_segments - start_ignore
 
         first_intersection_index = None
 
         for i, the_segment in enumerate(target_curve.ctrl_p_set):
+            if start_ignore < i and i <= end_ignore:
+                continue  # 端部しか交差判定しない
+            #end
+
             the_rect_tuple = the_segment.get_rect_tuple()
             for other_segment in other_curve.get_intersect_segment_set(the_rect_tuple):
                 if the_segment.is_intersection(other_segment):
@@ -72,7 +79,40 @@ class DeleteEdgeHandler(BasicHandler):
             return_curve.update_end_index(first_intersection_index)
         #end
 
+        #print(return_curve.start_index)
+        #print(return_curve.end_index)
+
         return return_curve
+
+        """
+        # 他の曲線の線分をR-treeに登録
+        for i, bbox in enumerate(other_curve.get_bounding_boxes()):
+            idx.insert(i, bbox, obj=i)
+        #end
+
+        print("bbox end")
+
+
+        intersections = []
+
+        for i, (seg, bbox) in enumerate(zip(target_curve.ctrl_p_set, target_curve.get_bounding_boxes())):
+
+            possible_intersections = list(idx.intersection(bbox, objects=True))
+            for j in possible_intersections:
+                other_seg = other_curve[j.object]
+                intersection = DeleteEdgeHandler.__intersect_segments(seg, other_seg)
+                if intersection:
+                    intersections.append((i, intersection))
+                #end
+            #end for j
+        #end for i
+
+        # 最初の交点で切り取る
+        first_intersection_index, first_intersection = min(intersections, key=lambda x: x[0])
+
+
+        """
+
 
     #end
 
