@@ -1,7 +1,8 @@
+import unittest
+import math
+
 import os
 import sys
-
-import math
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../helper'))
 import model_mocks
@@ -9,7 +10,6 @@ import model_mocks
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
-import unittest
 
 class TestLinearApproximateCurveControlPoint(unittest.TestCase):
     def setUp(self):

@@ -1,18 +1,7 @@
+import unittest
 
 import os
 import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/primitive'))
-from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
-from linear_approximate_curve import LinearApproximateCurve
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
-from layer import Layer
-from layer_set import LayerSet
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../handler'))
 from broaden_handler import BroadenHandler
@@ -22,10 +11,6 @@ import model_mocks
 import handler_mocks
 from handler_mocks import ArcDirection
 
-import unittest
-
-import numpy as np
-import math
 
 class TestBroadenHandler(unittest.TestCase):
     def setUp(self):

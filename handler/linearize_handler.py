@@ -1,32 +1,16 @@
-
-import numpy as np
-from scipy.special import comb
-
 import math
 
 import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
-
 from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
 
-from layer import Layer
-from layer_set import LayerSet
-
 from basic_handler import BasicHandler
-
-from rectangular import Rectangular
-
-from pyqtree import Index
-
-from curve import Curve
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class LinearizeHandler(BasicHandler):
@@ -248,7 +232,7 @@ class LinearizeHandler(BasicHandler):
     @staticmethod
     def __get_points_of_approximate_linear_curve(ctrl_p, is_first, micro_segment_length):
         division_num = LinearizeHandler.__get_division_num(ctrl_p, micro_segment_length)
-    
+
         q0_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p0, ctrl_p.p1, division_num)
         q1_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p1, ctrl_p.p2, division_num)
         q2_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p2, ctrl_p.p3, division_num)

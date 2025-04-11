@@ -1,24 +1,7 @@
+import unittest
 
 import os
 import sys
-
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
-
-from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-from cubic_bezier_curve import CubicBezierCurve
-from linear_approximate_curve import LinearApproximateCurve
-
-from layer_set import LayerSet
-
-
-import unittest
-
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../handler'))
 from pickup_intersection_candidates_handler import PickupIntersectionCandidatesHandler
@@ -33,7 +16,7 @@ from unittest.mock import MagicMock
 import numpy as np
 import math
 
-class TestDeleteEdgeHandler(unittest.TestCase):
+class TestPickupIntersectionCandidatesHandler(unittest.TestCase):
     def test_delete_edge(self):
         curve_1 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,    0.0,   0.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)
         curve_2 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,  100.0,   0.0,  90.0, 180.0, 100, ArcDirection.CLOCKWISE)

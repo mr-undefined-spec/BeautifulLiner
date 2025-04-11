@@ -11,16 +11,12 @@ from cubic_bezier_curve import CubicBezierCurve
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
 from layer import Layer
-from layer_set import LayerSet
+from canvas import Canvas
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../handler'))
 from linearize_handler import LinearizeHandler
-
-from residual_calculate_handler import ResidualCalculateHandler
-from optimize_handler import OptimizeHandler
 from curve_orientation_handler import CurveOrientationHandler
 from split_handler import SplitHandler
-
 from smoothen_handler import SmoothenHandler
 
 from basic_controller import BasicController
@@ -31,20 +27,12 @@ class SmoothenController(BasicController):
         self.total_step_num = total_step_num
     #end
 
-    def process(self, linearize_layer_set, linear_approximate_length, eps_smooth_curve):
-        linearize_handler = LinearizeHandler()
-
-        residual_calculate_handler = ResidualCalculateHandler()
-        optimize_handler = OptimizeHandler()
-        curve_orientation_handler = CurveOrientationHandler()
-
-        smoothen_handler = SmoothenHandler()
-
-        smooth_layer_set = LayerSet()
+    def process(self, linearize_canvas, linear_approximate_length, eps_smooth_curve):
+        smooth_canvas = Canvas()
 
         # optimize
         max_optimize_order = 4  
-        for layer in linearize_layer_set:
+        for layer in linearize_canvas:
             tmp_layer = Layer(layer.name)
             for step_num, curve in enumerate(layer):
                 self.print_step("smoothen", step_num)
@@ -75,11 +63,11 @@ class SmoothenController(BasicController):
                 tmp_layer.append(combined_smooth_curve)
 
             #end
-            smooth_layer_set.append(tmp_layer)
+            smooth_canvas.append(tmp_layer)
         #end
 
-        smooth_layer_set.set_view_box( linearize_layer_set.view_box )
+        smooth_canvas.set_view_box( linearize_canvas.view_box )
 
-        return smooth_layer_set
+        return smooth_canvas
     #end
 #end

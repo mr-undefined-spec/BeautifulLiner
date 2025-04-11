@@ -1,15 +1,10 @@
+#import numpy as np
 
-import numpy as np
-from scipy.special import comb
+import os
+import sys
 
-import math
-from point import Point
+sys.path.append(os.path.join(os.path.dirname(__file__), '../primitive'))
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-
-from rectangular import Rectangular
-
-from pyqtree import Index
 
 from curve import Curve
 

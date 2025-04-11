@@ -1,18 +1,11 @@
-from argparse import ArgumentParser
-
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'model/layer'))
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-from linear_approximate_curve import LinearApproximateCurve
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
 from layer import Layer
-from layer_set import LayerSet
+from canvas import Canvas
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'handler'))
-
+sys.path.append(os.path.join(os.path.dirname(__file__), '../handler'))
 from pickup_intersection_candidates_handler import PickupIntersectionCandidatesHandler
 from delete_edge_handler import DeleteEdgeHandler
 
@@ -23,16 +16,16 @@ class DeleteEdgeController(BasicController):
         self.total_step_num = total_step_num
     #end
 
-    def process(self, linearize_layer_set, delete_ratio):
+    def process(self, linearize_canvas, delete_ratio):
 
         # initialize handlers
         pickup_intersection_candidates_handler = PickupIntersectionCandidatesHandler()
         delete_edge_handler = DeleteEdgeHandler()
 
-        delete_edge_layer_set = LayerSet()
+        delete_edge_canvas = Canvas()
 
         # delete edge
-        for layer in linearize_layer_set:
+        for layer in linearize_canvas:
             tmp_layer = Layer(layer.name)
             other_curves = layer.get_curves()
             for i, target_curve in enumerate(layer):
@@ -49,10 +42,10 @@ class DeleteEdgeController(BasicController):
                 
                 tmp_layer.append(tmp_curve)
             #end
-            delete_edge_layer_set.append(tmp_layer)
+            delete_edge_canvas.append(tmp_layer)
         #end
-        delete_edge_layer_set.set_view_box( linearize_layer_set.view_box )
+        delete_edge_canvas.set_view_box( linearize_canvas.view_box )
 
-        return delete_edge_layer_set
+        return delete_edge_canvas
     #end
 #end

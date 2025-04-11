@@ -4,15 +4,9 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/primitive'))
 from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
-from layer import Layer
-from layer_set import LayerSet
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../handler'))
 from curve_orientation_handler import CurveOrientationHandler
@@ -24,10 +18,7 @@ from handler_mocks import ArcDirection
 
 import unittest
 
-import numpy as np
-import math
-
-class TestSplitHandler(unittest.TestCase):
+class TestCurveOrientationHandler(unittest.TestCase):
     def setUp(self):
 
         curve_1 = handler_mocks.create_mock_linear_approximate_curve_of_arc(100.0,    0.0,   0.0,   0.0,  90.0, 100, ArcDirection.CLOCKWISE)

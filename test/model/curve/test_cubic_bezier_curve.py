@@ -1,13 +1,13 @@
+import unittest
 
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../helper'))
-import model_mocks
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/curve'))
 from cubic_bezier_curve import CubicBezierCurve
-import unittest
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../helper'))
+import model_mocks
 
 class TestCubicBezierCurve(unittest.TestCase):
     def setUp(self):
@@ -16,7 +16,6 @@ class TestCubicBezierCurve(unittest.TestCase):
         p2 = model_mocks.create_mock_point(10.0, 20.0)
         p3 = model_mocks.create_mock_point(100.0, 200.0)
         bezier_ctrl_p = model_mocks.create_mock_cubic_bezier_control_point(p0, p1, p2, p3)
-        #bezier_ctrl_p = CubicBezierCurveControlPoint(p0, p1, p2, p3)
 
         self.bezier_curve = CubicBezierCurve()
         self.bezier_curve.append(bezier_ctrl_p)

@@ -1,21 +1,8 @@
+#import numpy as np
 
-
-
-from xml.dom import minidom
-
-import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
-
-from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from cubic_bezier_curve import CubicBezierCurve
-
-from layer import Layer
-from layer_set import LayerSet
+#import os
+#import sys
+#sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
 
 from basic_handler import BasicHandler
 

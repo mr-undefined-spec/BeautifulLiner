@@ -2,41 +2,15 @@ from argparse import ArgumentParser
 
 import os
 import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), 'model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'model/layer'))
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-from linear_approximate_curve import LinearApproximateCurve
-from layer import Layer
-from layer_set import LayerSet
-
-sys.path.append(os.path.join(os.path.dirname(__file__), 'handler'))
-
-from read_handler import ReadHandler
-from linearize_handler import LinearizeHandler
-
-from residual_calculate_handler import ResidualCalculateHandler
-from optimize_handler import OptimizeHandler
-from curve_orientation_handler import CurveOrientationHandler
-
-from smoothen_handler import SmoothenHandler
-
-from delete_edge_handler import DeleteEdgeHandler
-
-
 sys.path.append(os.path.join(os.path.dirname(__file__), 'controller'))
 from read_controller import ReadController
 from linearize_controller import LinearizeController
-
 from smoothen_controller import SmoothenController
-
 from qtree_controller import QtreeController
 from delete_edge_controller import DeleteEdgeController
-
 from write_controller import WriteController
 
-def print_layer_set(layer_set):
+def print_canvas(layer_set):
     template = r'<path stroke="#00ff00" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"'
     for layer in layer_set:
         for i, curve in enumerate(layer):
@@ -89,10 +63,11 @@ def main():
 
     # pre-process   
     read_controller = ReadController()
-    read_layer_set = read_controller.process(args.reading_file_path)
+    read_canvas = read_controller.process(args.reading_file_path)
+    #print_canvas(read_canvas)
 
     # initialize controllers
-    total_curve_num = read_layer_set.get_total_curve_num()
+    total_curve_num = read_canvas.get_total_curve_num()
     total_step_num = total_curve_num * 6
     linearize_controller = LinearizeController(total_step_num)
     smoothen_controller = SmoothenController(total_step_num)
@@ -102,42 +77,37 @@ def main():
 
     # once linearize
     linearize_controller.set_step_offset(0)
-    first_linearize_layer_set = linearize_controller.process(read_layer_set, args.linear_approximate_length)
-
-    #print_layer_set(first_linearize_layer_set)
-
+    first_linearize_canvas = linearize_controller.process(read_canvas, args.linear_approximate_length)
+    #print_canvas(first_linearize_canvas)
 
     # once smoothen
     smoothen_controller.set_step_offset(total_curve_num*1)
-    first_smooth_layer_set = smoothen_controller.process(first_linearize_layer_set, args.linear_approximate_length, args.eps_smooth_curve)
+    first_smooth_canvas = smoothen_controller.process(first_linearize_canvas, args.linear_approximate_length, args.eps_smooth_curve)
+    #print_canvas(first_smooth_canvas)
 
     # second linearize
     linearize_controller.set_step_offset(total_curve_num*2)
-    second_linearize_layer_set = linearize_controller.process(first_smooth_layer_set, args.linear_approximate_length)
-
-    #print_layer_set(second_linearize_layer_set)
+    second_linearize_canvas = linearize_controller.process(first_smooth_canvas, args.linear_approximate_length)
+    #print_canvas(second_linearize_canvas)
 
     # create qtree
     qtree_controller.set_step_offset(total_curve_num*3)
-    second_linearize_layer_set = qtree_controller.process(second_linearize_layer_set)
+    second_linearize_canvas = qtree_controller.process(second_linearize_canvas)
 
 
     # delete edge
     delete_edge_controller.set_step_offset(total_curve_num*4)
-    delete_edge_layer_set = delete_edge_controller.process(second_linearize_layer_set, args.delete_ratio)
+    delete_edge_canvas = delete_edge_controller.process(second_linearize_canvas, args.delete_ratio)
 
     # second smoothen
     smoothen_controller.set_step_offset(total_curve_num*5)
-    second_smooth_layer_set = smoothen_controller.process(delete_edge_layer_set, args.linear_approximate_length, args.eps_smooth_curve)
-
-    #print_layer_set(second_smooth_layer_set)
+    second_smooth_canvas = smoothen_controller.process(delete_edge_canvas, args.linear_approximate_length, args.eps_smooth_curve)
+    #print_canvas(second_smooth_canvas)
 
     output_file_name = args.reading_file_path.replace(".svg", "_BeauL.svg") 
 
     write_controller = WriteController()
-    write_controller.process(second_smooth_layer_set, output_file_name)
-
-
+    write_controller.process(second_smooth_canvas, output_file_name)
     print("Create " + output_file_name )
     print("END OF JOB")
 #end

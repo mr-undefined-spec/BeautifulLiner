@@ -1,27 +1,20 @@
-
-
-
 from xml.dom import minidom
+import re
 
 import os
 import sys
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
-
 from point import Point
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
 from cubic_bezier_curve import CubicBezierCurve
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
 from layer import Layer
-from layer_set import LayerSet
+from canvas import Canvas
 
 from basic_handler import BasicHandler
-
-import tkinter as tk
-
-import re
 
 class ReadHandler(BasicHandler):
 
@@ -35,7 +28,7 @@ class ReadHandler(BasicHandler):
     @staticmethod
     def __make_cubic_bezier_curve(d_str):
         """
-        IN  nodeValue of d in path of layer_set as string
+        IN  nodeValue of d in path of canvas as string
         OUT CubicBezierCurve
         """
         curve = CubicBezierCurve()
@@ -112,26 +105,26 @@ class ReadHandler(BasicHandler):
 
     @staticmethod
     def process(file_name):
-        layer_set = LayerSet()
+        canvas = Canvas()
 
         if not type(file_name) is str:
             raise ValueError("file_name must be str")
         #end
 
         doc = minidom.parse(file_name)
-        layer_set.set_doc(doc)
+        canvas.set_doc(doc)
 
         for group_paths_set in ReadHandler.__get_group_paths_tuple(doc):
             group = group_paths_set[0]
             paths = group_paths_set[1]
             layer_name = group.getAttributeNode('id').nodeValue
 
-            layer_set.append(ReadHandler.__make_layer(layer_name, paths) )
+            canvas.append(ReadHandler.__make_layer(layer_name, paths) )
         #end
         root = doc.getElementsByTagName("svg")
-        layer_set.set_view_box( root[0].attributes["viewBox"].value )
+        canvas.set_view_box( root[0].attributes["viewBox"].value )
 
-        return layer_set
+        return canvas
     #end
 
 #end

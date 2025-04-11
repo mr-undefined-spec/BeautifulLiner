@@ -1,16 +1,11 @@
+import copy
+from enum import Enum
+
 import os
 import sys
 
-import copy
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../primitive'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../curve'))
-
-from point import Point
-
 from curve import Curve
-
-from enum import Enum
 
 class EndpointStyle(Enum):
     BOTH_POINTED = "both_pointed"

@@ -1,3 +1,4 @@
+import unittest
 
 import os
 import sys
@@ -8,7 +9,6 @@ import model_mocks
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitive'))
 from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 
-import unittest
 
 class TestCubicBezierCurveControlPoint(unittest.TestCase):
     def setUp(self):

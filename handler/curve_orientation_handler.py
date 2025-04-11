@@ -1,24 +1,18 @@
+import math
+import numpy as np
+
 import os
 import sys
 
-import math
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
-
 from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-from linear_approximate_curve import LinearApproximateCurve
 
-from layer import Layer
-from layer_set import LayerSet
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
+from linear_approximate_curve import LinearApproximateCurve
 
 from basic_handler import BasicHandler
 
-import numpy as np
-from scipy.optimize import minimize
 
 class CurveOrientationHandler(BasicHandler):
     def get_perpendicular_intersection_point_from_point(self, start, end, point):
@@ -49,6 +43,7 @@ class CurveOrientationHandler(BasicHandler):
         # If the segment is a point, return the point itself
         if dx == 0 and dy == 0:
             return Point(start.x, start.y)
+        #end
         
         # Calculate the parameter t for the projection
         t = ((point.x - start.x) * dx + (point.y - start.y) * dy) / (dx * dx + dy * dy)

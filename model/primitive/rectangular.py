@@ -1,5 +1,5 @@
-
 from point import Point
+
 class Rectangular:
     """
     Rectangular has 4 points

@@ -1,3 +1,5 @@
+import unittest
+
 import os
 import sys
 
@@ -10,11 +12,6 @@ from layer import EndpointStyle
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/curve'))
 from curve import Curve
-
-import unittest
-
-import numpy as np
-import math
 
 class TestLayer(unittest.TestCase):
     def setUp(self):

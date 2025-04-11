@@ -1,26 +1,18 @@
+import math
+
 import os
 import sys
 
-import math
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
-
 from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-from linear_approximate_curve import LinearApproximateCurve
-from cubic_bezier_curve import CubicBezierCurve
 
-from layer import Layer
-from layer_set import LayerSet
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
+from broad_linear_approximate_curve import BroadLinearApproximateCurve
 
 from basic_handler import BasicHandler
 
 class BroadenHandler(BasicHandler):
-
-
     # 
     # The broaden algorithm
     #                                                                                                                                        
@@ -239,7 +231,6 @@ class BroadenHandler(BasicHandler):
 
     @staticmethod
     def process(original_curve, broaden_width, position):
-        from broad_linear_approximate_curve import BroadLinearApproximateCurve
         broad_curve = BroadLinearApproximateCurve()
 
         tmp_going_ctlr_p_list = BroadenHandler.__get_slightly_away_control_point_list(original_curve._going_ctlr_p_list, broaden_width, True, position)

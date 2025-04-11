@@ -1,17 +1,8 @@
+#import numpy as np
 
-import numpy as np
-from scipy.special import comb
-
-import math
-from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-
-from rectangular import Rectangular
-
-from pyqtree import Index
-
-from curve import Curve
+#import os
+#import sys
+#sys.path.append(os.path.join(os.path.dirname(__file__), '../../handler'))
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class BasicHandler():

@@ -1,21 +1,10 @@
-import os
-import sys
+#import numpy as np
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
-
-from point import Point
-from cubic_bezier_curve_control_point import CubicBezierCurveControlPoint
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
-from linear_approximate_curve import LinearApproximateCurve
-
-from layer import Layer
-from layer_set import LayerSet
+#import os
+#import sys
+#sys.path.append(os.path.join(os.path.dirname(__file__), '../../handler'))
 
 from basic_handler import BasicHandler
-
-import numpy as np
 
 class PickupIntersectionCandidatesHandler(BasicHandler):
     @staticmethod

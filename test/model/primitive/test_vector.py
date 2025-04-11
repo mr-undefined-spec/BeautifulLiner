@@ -1,3 +1,5 @@
+import unittest
+import math
 
 import os
 import sys
@@ -6,9 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../../model/primitiv
 from point import Point
 from vector import Vector
 
-import unittest
-
-import math
 
 class TestPoint(unittest.TestCase):
     def setUp(self):
