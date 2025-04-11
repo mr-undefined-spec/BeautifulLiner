@@ -150,10 +150,12 @@ class LinearApproximateCurveControlPoint():
         s += str(self.__end) + "\n"
         return s
     #end 
-    def to_str(self, is_first_ctrl_p):
+    def to_str(self, is_going_first, is_returning_first=False):
         s = ""
-        if is_first_ctrl_p:
+        if is_going_first:
             s += "M " + str(self.__start) + " "
+        elif is_returning_first:
+            s += "L " + str(self.__start) + " "
         #end
         s += "L " + str(self.__end) + " "
         return s
