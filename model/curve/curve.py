@@ -13,12 +13,12 @@ from pyqtree import Index
 
 class Curve:
     def __init__(self):
-        self._ctrl_p_set = []
+        self._going_ctlr_p_list = []
         self.__intersect_judge_rectangular = None
     #end
 
     def __getitem__(self, i):
-        return self._ctrl_p_set[i]
+        return self._going_ctlr_p_list[i]
     #end
 
     def __iter__(self):
@@ -26,23 +26,23 @@ class Curve:
         return self
     #end
     def __next__(self):
-        if self._index >= len(self._ctrl_p_set): raise StopIteration
+        if self._index >= len(self._going_ctlr_p_list): raise StopIteration
         self._index += 1
-        return self._ctrl_p_set[self._index-1]
+        return self._going_ctlr_p_list[self._index-1]
     #end
 
     def __len__(self):
-        return len(self._ctrl_p_set)
+        return len(self._going_ctlr_p_list)
     #end
 
     @property
-    def ctrl_p_set(self):
-        return self._ctrl_p_set
+    def going_ctlr_p_list(self):
+        return self._going_ctlr_p_list
     #end
 
     def to_str(self):
         s = ""
-        for i, ctrl_p in enumerate(self._ctrl_p_set):
+        for i, ctrl_p in enumerate(self._going_ctlr_p_list):
             s += ctrl_p.to_str(i==0)
         #end
         return s

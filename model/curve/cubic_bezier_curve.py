@@ -19,7 +19,7 @@ class CubicBezierCurve(Curve):
         if not isinstance(bezier_ctrl_p, CubicBezierCurveControlPoint):
             raise TypeError("The argument of the append method must be a CubicBezierCurveControlPoint")
         #end
-        self._ctrl_p_set.append(bezier_ctrl_p)
+        self._going_ctlr_p_list.append(bezier_ctrl_p)
     #end
 
 #end

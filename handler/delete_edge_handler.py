@@ -54,7 +54,7 @@ class DeleteEdgeHandler(BasicHandler):
 
         first_intersection_index = None
 
-        for i, the_segment in enumerate(target_curve.ctrl_p_set):
+        for i, the_segment in enumerate(target_curve.going_ctlr_p_list):
             if start_ignore < i and i <= end_ignore:
                 continue  # 端部しか交差判定しない
             #end

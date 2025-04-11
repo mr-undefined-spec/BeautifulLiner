@@ -41,6 +41,14 @@ def create_mock_linear_approximate_curve_control_point(start, end):
         s += str(p) + "\n"
     #end
     linear_ctrl_p.__str__.return_value = s
+    linear_ctrl_p.to_str.return_value = s
+
+    min_x = min(start.x, end.x)
+    max_x = max(start.x, end.x)
+    min_y = min(start.y, end.y)
+    max_y = max(start.y, end.y)
+    linear_ctrl_p.get_rect_tuple.return_value = (min_x, min_y, max_x, max_y)
+
     return linear_ctrl_p
 #end
 

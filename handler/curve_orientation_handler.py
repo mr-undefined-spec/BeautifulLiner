@@ -83,15 +83,15 @@ class CurveOrientationHandler(BasicHandler):
             p1, p2, p3 = points[0], points[i], points[-1]
             
             # ベクトルを計算
-            #v1 = [p2.x - p1.x, p2.y - p1.y]
-            v1 = [p1.x - p2.x, p1.y - p2.y]
+            v1 = [p2.x - p1.x, p2.y - p1.y]
+            #v1 = [p1.x - p2.x, p1.y - p2.y]
             v2 = [p3.x - p2.x, p3.y - p2.y]
             length_v1 = np.linalg.norm(v1)
             length_v2 = np.linalg.norm(v2)
             
             # 外積の大きさ（曲率の分子）を計算
-            #cross_product = np.cross(v1, v2) / length_v1 / length_v2
-            cross_product = (v1[0]*v2[1] - v1[1]*v2[0]) / length_v1 / length_v2
+            cross_product = np.cross(v1, v2) / length_v1 / length_v2
+            #cross_product = (v1[0]*v2[1] - v1[1]*v2[0]) / length_v1 / length_v2
 
 
 
