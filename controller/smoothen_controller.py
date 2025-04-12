@@ -2,8 +2,8 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
-from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
+#sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
+#from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
 from linear_approximate_curve import LinearApproximateCurve
@@ -30,8 +30,6 @@ class SmoothenController(BasicController):
     def process(self, linearize_canvas, linear_approximate_length, eps_smooth_curve):
         smooth_canvas = Canvas()
 
-        # optimize
-        max_optimize_order = 4  
         for layer in linearize_canvas:
             tmp_layer = Layer(layer.name)
             for step_num, curve in enumerate(layer):
