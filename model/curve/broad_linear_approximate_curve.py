@@ -17,16 +17,8 @@ from curve import Curve
 class BroadLinearApproximateCurve(Curve):
 
     def __init__(self):
-        self._going_ctrl_p_list = []
+        super().__init__()
         self._returning_ctrl_p_list = []
-
-        self._start_index = 0
-        self._end_index   = -1
-    #end
-
-    @property
-    def going_ctrl_p_list(self):
-        return self._going_ctrl_p_list
     #end
 
     @property
@@ -59,51 +51,5 @@ class BroadLinearApproximateCurve(Curve):
         return s
     #end
 
-    def get_points(self):
-        points = []
-        points.append(self._going_ctrl_p_list[self._start_index].start)
-
-        the_end = self._get_the_end()
-        for i in range( self._start_index, the_end ):
-            points.append(self._going_ctrl_p_list[i].end)
-        #end
-        return points
-    #end
-
-    def update_start_index(self, start_index):
-        if( self._start_index < start_index ):
-            self._start_index = start_index
-        #end
-    #end
-
-    def update_end_index(self, end_index):
-        if( self._end_index == -1):
-            self._end_index = end_index
-        elif( end_index < self._end_index ):
-            self._end_index = end_index
-        #end
-    #end
-
-    @property
-    def start_index(self):
-        return self._start_index
-    #end
-    @property
-    def end_index(self):
-        return self._end_index
-    #end
-
-    def _get_the_end(self):
-        # if self._end_index is initial state, then ...
-        if (self._end_index == -1):
-            return len(self._going_ctrl_p_list) 
-        #end
-        # if self._end_index is over the array size
-        if ( self._end_index >= len(self._going_ctrl_p_list) ):
-            return len(self._going_ctrl_p_list)
-        #end
-        # others, self._end_index is correct
-        return self._end_index
-    #end
 
 #end

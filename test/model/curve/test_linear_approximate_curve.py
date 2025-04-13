@@ -40,26 +40,6 @@ class TestCurve(unittest.TestCase):
     #end
 
 
-    def test_get_start_points(self):
-        start_points = self.linear_approximate_curve.get_start_points()
-        self.assertAlmostEqual(start_points[0].x, 0.0)
-        self.assertAlmostEqual(start_points[0].y, 0.0)
-        self.assertAlmostEqual(start_points[1].x, 1.0)
-        self.assertAlmostEqual(start_points[1].y, 0.0)
-        self.assertAlmostEqual(start_points[2].x, 1.0)
-        self.assertAlmostEqual(start_points[2].y, 0.0)
-    #end
-
-    def test_get_start_points_as_numpy_array(self):
-        np_start_points = self.linear_approximate_curve.get_start_points_as_numpy_array()
-        self.assertAlmostEqual(np_start_points[0][0], 0.0)
-        self.assertAlmostEqual(np_start_points[0][1], 0.0)
-        self.assertAlmostEqual(np_start_points[1][0], 1.0)
-        self.assertAlmostEqual(np_start_points[1][1], 0.0)
-        self.assertAlmostEqual(np_start_points[2][0], 1.0)
-        self.assertAlmostEqual(np_start_points[2][1], 0.0)
-    #end
-
     def test_append(self):
         p5 = model_mocks.create_mock_point(11.0, 22.0)
         p6 = model_mocks.create_mock_point(111.0, 222.0)

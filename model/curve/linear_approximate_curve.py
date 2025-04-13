@@ -18,22 +18,6 @@ class LinearApproximateCurve(Curve):
         self.max_x = -999999
         self.min_y = 999999
         self.max_y = -999999
-
-        self._start_index = 0
-        self._end_index   = -1
-    #end
-
-    def _get_the_end(self):
-        # if self._end_index is initial state, then ...
-        if (self._end_index == -1):
-            return len(self._going_ctrl_p_list) 
-        #end
-        # if self._end_index is over the array size
-        if ( self._end_index >= len(self._going_ctrl_p_list) ):
-            return len(self._going_ctrl_p_list)
-        #end
-        # others, self._end_index is correct
-        return self._end_index
     #end
 
     def append(self, linear_ctrl_p):
@@ -83,23 +67,6 @@ class LinearApproximateCurve(Curve):
         self._end_index = other_linear_approximate_curve.end_index
     #end
 
-
-    def get_start_points(self):
-        start_points = []
-        for ctrl_p in self._going_ctrl_p_list:
-            start_points.append(ctrl_p.start)
-        #end
-        return start_points
-    #end
-
-    def get_start_points_as_numpy_array(self):
-        start_points = []
-        for ctrl_p in self._going_ctrl_p_list:
-            start_points.append([ctrl_p.start.x, ctrl_p.start.y])
-        #end
-        return np.array(start_points)
-    #end
-
     def get_bounding_boxes(self):
         """各線分に対し、軸平行境界ボックス(AABB)を取得"""
         return [
@@ -107,20 +74,6 @@ class LinearApproximateCurve(Curve):
              max(ctrl_p.start.x, ctrl_p.end.x), max(ctrl_p.start.y, ctrl_p.end.y))
             for ctrl_p in self._going_ctrl_p_list
         ]
-    #end
-
-    def update_start_index(self, start_index):
-        if( self._start_index < start_index ):
-            self._start_index = start_index
-        #end
-    #end
-
-    def update_end_index(self, end_index):
-        if( self._end_index == -1):
-            self._end_index = end_index
-        elif( end_index < self._end_index ):
-            self._end_index = end_index
-        #end
     #end
 
     def get_going_ctrl_p_list(self):
@@ -146,14 +99,6 @@ class LinearApproximateCurve(Curve):
         return self.qtree_going_ctrl_p_list.intersect(target_rect_tuple)
     #end
 
-    @property
-    def start_index(self):
-        return self._start_index
-    #end
-    @property
-    def end_index(self):
-        return self._end_index
-    #end
 
 
 
