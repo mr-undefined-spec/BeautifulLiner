@@ -15,25 +15,6 @@ from basic_handler import BasicHandler
 
 
 class CurveOrientationHandler(BasicHandler):
-    def get_perpendicular_intersection_point_from_point(self, start, end, point):
-        # Calculate the differences
-        dx = end.x - start.x
-        dy = end.y - start.y
-        
-        # If the segment is a point, return the point itself
-        if dx == 0 and dy == 0:
-            return Point(start.x, start.y)
-        
-        # Calculate the parameter t for the projection
-        t = ((point.x - start.x) * dx + (point.y - start.y) * dy) / (dx * dx + dy * dy)
-        
-        # Compute the intersection point
-        intersection_x = start.x + t * dx
-        intersection_y = start.y + t * dy
-        
-        return Point(intersection_x, intersection_y)
-    #end
-
     @staticmethod
     def get_the_distance_of_perpendicular_intersection_point_from_point(start, point, end):
         # Calculate the differences

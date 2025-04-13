@@ -162,5 +162,6 @@ class LinearApproximateCurveControlPoint():
 
     def __minus__(self, other):
         return LinearApproximateCurveControlPoint(self.__start - other, self.__end - other) 
+    #end
 #end
 
