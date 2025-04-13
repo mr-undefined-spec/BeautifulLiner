@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), 'controller'))
 from read_controller import ReadController
 from linearize_controller import LinearizeController
-from smoothen_controller import SmoothenController
+from thin_smoothen_controller import ThinSmoothenController
 from qtree_controller import QtreeController
 from delete_edge_controller import DeleteEdgeController
 from broaden_controller import BroadenController
@@ -71,7 +71,7 @@ def main():
     total_curve_num = read_canvas.get_total_curve_num()
     total_step_num = total_curve_num * 6
     linearize_controller = LinearizeController(total_step_num)
-    smoothen_controller = SmoothenController(total_step_num)
+    thin_smoothen_controller = ThinSmoothenController(total_step_num)
     qtree_controller = QtreeController(total_step_num)
     broaden_controller = BroadenController(total_step_num)
     delete_edge_controller = DeleteEdgeController(total_step_num)
@@ -83,8 +83,8 @@ def main():
     #print_canvas(first_linearize_canvas)
 
     # once smoothen
-    smoothen_controller.set_step_offset(total_curve_num*1)
-    first_smooth_canvas = smoothen_controller.process(first_linearize_canvas, args.linear_approximate_length, args.eps_smooth_curve)
+    thin_smoothen_controller.set_step_offset(total_curve_num*1)
+    first_smooth_canvas = thin_smoothen_controller.process(first_linearize_canvas)
     #print_canvas(first_smooth_canvas)
 
     # second linearize

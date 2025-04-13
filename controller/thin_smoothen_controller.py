@@ -14,7 +14,6 @@ from layer import Layer
 from canvas import Canvas
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../handler'))
-from linearize_handler import LinearizeHandler
 from curve_orientation_handler import CurveOrientationHandler
 from split_handler import SplitHandler
 from smoothen_handler import SmoothenHandler
@@ -22,12 +21,12 @@ from smoothen_handler import SmoothenHandler
 from basic_controller import BasicController
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-class SmoothenController(BasicController):
+class ThinSmoothenController(BasicController):
     def __init__(self, total_step_num):
         self.total_step_num = total_step_num
     #end
 
-    def process(self, linearize_canvas, linear_approximate_length, eps_smooth_curve):
+    def process(self, linearize_canvas):
         smooth_canvas = Canvas()
 
         for layer in linearize_canvas:
