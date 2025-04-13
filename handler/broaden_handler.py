@@ -5,6 +5,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
 from point import Point
+from vector import Vector
 from linear_approximate_curve_control_point import LinearApproximateCurveControlPoint
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
@@ -152,6 +153,48 @@ class BroadenHandler(BasicHandler):
     #end 
 
     @staticmethod
+    def __get_extrapolation_point(outer_most_point, second_outer_most_point):
+        vec = Vector(second_outer_most_point, outer_most_point)
+        return Point(outer_most_point.x + vec.x, outer_most_point.y + vec.y)
+    #end
+
+    @staticmethod
+    def __get_end_point(position, direction_type, end_side_type, prev_point, current_point, broaden_width):
+        delta = 0
+        if position == "first":
+            if direction_type == "going" and end_side_type == "start_side":
+                return current_point
+            elif direction_type == "going" and end_side_type == "end_side":
+                delta = broaden_width
+            elif direction_type == "returning" and end_side_type == "start_side":
+                delta = broaden_width
+            elif direction_type == "returning" and end_side_type == "end_side":
+                return current_point
+            else:
+                raise TypeError("Wrong conditions are set. direction=" + direction_type + ", end_side=" + end_side_type )
+            #end
+        elif position == "last":
+            if direction_type == "going" and end_side_type == "start_side":
+                delta = broaden_width
+            elif direction_type == "going" and end_side_type == "end_side":
+                return current_point
+            elif direction_type == "returning" and end_side_type == "start_side":
+                return current_point
+            elif direction_type == "returning" and end_side_type == "end_side":
+                delta = broaden_width
+            else:
+                raise TypeError("Wrong conditions are set. direction=" + direction_type + ", end_side=" + end_side_type )
+            #end
+        elif position == "middle":
+            delta = broaden_width
+        elif position == "first_last":
+            return current_point
+        #end
+
+        return BroadenHandler.__get_delta_point(prev_point, current_point, delta)
+    #end
+
+    @staticmethod
     def __get_slightly_away_control_point_list(ctrl_p_set, broaden_width, is_going, position):
         slightly_away_control_point_list = []
 
@@ -173,8 +216,22 @@ class BroadenHandler(BasicHandler):
         half_length = len(points)/2.0 - 0.5 
     
         # first point is equal to original first point
-        last_slightly_away_point = points[0]
-    
+        last_slightly_away_point = None
+        direction_type = ""
+        if is_going:
+            direction_type = "going"
+            prev_point = BroadenHandler.__get_extrapolation_point(points[0], points[1])
+            current_point = points[0]
+
+            last_slightly_away_point = BroadenHandler.__get_end_point(position, direction_type, "start_side", prev_point, current_point, broaden_width)
+        else:
+            prev_point = BroadenHandler.__get_extrapolation_point(points[0], points[1])
+            current_point = points[0]
+
+            direction_type = "returning"
+            last_slightly_away_point = BroadenHandler.__get_end_point(position, direction_type, "start_side", prev_point, current_point, broaden_width)
+        #end
+
         # middle points are slightly away points
         for i in range( len(points) - 2 ):
             delta = 0
@@ -222,10 +279,26 @@ class BroadenHandler(BasicHandler):
             #end
         #end
     
+        """
         # last point is equal to original last point
-        the_ctrl_p = LinearApproximateCurveControlPoint(last_slightly_away_point, points[-1])
+        """
+        end_side_slightly_away_point = points[-1]
+        if is_going:
+            direction_type = "going"
+            prev_point = points[-2]
+            current_point = points[-1]
+
+            end_side_slightly_away_point = BroadenHandler.__get_end_point(position, direction_type, "end_side", prev_point, current_point, broaden_width)
+        else:
+            prev_point = points[-2]
+            current_point = BroadenHandler.__get_extrapolation_point(points[-1], points[-2])
+
+            direction_type = "returning"
+            end_side_slightly_away_point = BroadenHandler.__get_end_point(position, direction_type, "end_side", prev_point, current_point, broaden_width)
+        #end
+        the_ctrl_p = LinearApproximateCurveControlPoint(last_slightly_away_point, end_side_slightly_away_point)
         slightly_away_control_point_list.append( the_ctrl_p )
-    
+
         return slightly_away_control_point_list
     #end 
 
