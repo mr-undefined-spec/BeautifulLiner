@@ -26,11 +26,11 @@ class LinearApproximateCurve(Curve):
     def _get_the_end(self):
         # if self._end_index is initial state, then ...
         if (self._end_index == -1):
-            return len(self._going_ctlr_p_list) 
+            return len(self._going_ctrl_p_list) 
         #end
         # if self._end_index is over the array size
-        if ( self._end_index >= len(self._going_ctlr_p_list) ):
-            return len(self._going_ctlr_p_list)
+        if ( self._end_index >= len(self._going_ctrl_p_list) ):
+            return len(self._going_ctrl_p_list)
         #end
         # others, self._end_index is correct
         return self._end_index
@@ -46,14 +46,14 @@ class LinearApproximateCurve(Curve):
         self.min_y = min(self.min_y, linear_ctrl_p.start.y, linear_ctrl_p.end.y)
         self.max_y = max(self.max_y, linear_ctrl_p.start.y, linear_ctrl_p.end.y)
 
-        self._going_ctlr_p_list.append(linear_ctrl_p)
+        self._going_ctrl_p_list.append(linear_ctrl_p)
     #end
 
     def to_str(self):
         s = ""
         the_end = self._get_the_end()
         for i in range( self._start_index, the_end ):
-            ctrl_p = self._going_ctlr_p_list[i]
+            ctrl_p = self._going_ctrl_p_list[i]
             s += ctrl_p.to_str(i==self._start_index)
         #end
         return s
@@ -66,11 +66,11 @@ class LinearApproximateCurve(Curve):
 
     def get_points(self):
         points = []
-        points.append(self._going_ctlr_p_list[self._start_index].start)
+        points.append(self._going_ctrl_p_list[self._start_index].start)
 
         the_end = self._get_the_end()
         for i in range( self._start_index, the_end ):
-            points.append(self._going_ctlr_p_list[i].end)
+            points.append(self._going_ctrl_p_list[i].end)
         #end
         return points
     #end
@@ -86,7 +86,7 @@ class LinearApproximateCurve(Curve):
 
     def get_start_points(self):
         start_points = []
-        for ctrl_p in self._going_ctlr_p_list:
+        for ctrl_p in self._going_ctrl_p_list:
             start_points.append(ctrl_p.start)
         #end
         return start_points
@@ -94,7 +94,7 @@ class LinearApproximateCurve(Curve):
 
     def get_start_points_as_numpy_array(self):
         start_points = []
-        for ctrl_p in self._going_ctlr_p_list:
+        for ctrl_p in self._going_ctrl_p_list:
             start_points.append([ctrl_p.start.x, ctrl_p.start.y])
         #end
         return np.array(start_points)
@@ -105,7 +105,7 @@ class LinearApproximateCurve(Curve):
         return [
             (min(ctrl_p.start.x, ctrl_p.end.x), min(ctrl_p.start.y, ctrl_p.end.y), 
              max(ctrl_p.start.x, ctrl_p.end.x), max(ctrl_p.start.y, ctrl_p.end.y))
-            for ctrl_p in self._going_ctlr_p_list
+            for ctrl_p in self._going_ctrl_p_list
         ]
     #end
 
@@ -123,27 +123,27 @@ class LinearApproximateCurve(Curve):
         #end
     #end
 
-    def get_going_ctlr_p_list(self):
-        return_going_ctlr_p_list = []
+    def get_going_ctrl_p_list(self):
+        return_going_ctrl_p_list = []
         the_end = self._get_the_end()
         for i in range( self._start_index, the_end ):
-            return_going_ctlr_p_list.append( self._going_ctlr_p_list[i] )
+            return_going_ctrl_p_list.append( self._going_ctrl_p_list[i] )
         #end
-        return return_going_ctlr_p_list
+        return return_going_ctrl_p_list
     #end
 
-    def create_qtree_going_ctlr_p_list(self, bbox):
+    def create_qtree_going_ctrl_p_list(self, bbox):
         
-        self.qtree_going_ctlr_p_list = Index(bbox=bbox)
+        self.qtree_going_ctrl_p_list = Index(bbox=bbox)
 
-        for ctrl_p in self._going_ctlr_p_list:
+        for ctrl_p in self._going_ctrl_p_list:
             rect_tuple = ctrl_p.get_rect_tuple()
-            self.qtree_going_ctlr_p_list.insert(ctrl_p, rect_tuple)
+            self.qtree_going_ctrl_p_list.insert(ctrl_p, rect_tuple)
         #end
     #end
 
     def get_intersect_segment_set(self, target_rect_tuple):
-        return self.qtree_going_ctlr_p_list.intersect(target_rect_tuple)
+        return self.qtree_going_ctrl_p_list.intersect(target_rect_tuple)
     #end
 
     """
@@ -152,7 +152,7 @@ class LinearApproximateCurve(Curve):
 
     def get_min_distance_to_point(self, point):
         min_distance = 999999
-        for i, ctrl_p in enumerate(self._going_ctlr_p_list):
+        for i, ctrl_p in enumerate(self._going_ctrl_p_list):
             if ctrl_p.get_distance_to_point(point) < min_distance:
                 min_distance = ctrl_p.get_distance_to_point(point)
             #end
@@ -164,7 +164,7 @@ class LinearApproximateCurve(Curve):
     def get_ctrl_p_index_at_min_distance_to_point(self, point):
         the_index = None
         min_distance = 999999
-        for i, ctrl_p in enumerate(self._going_ctlr_p_list):
+        for i, ctrl_p in enumerate(self._going_ctrl_p_list):
             if ctrl_p.get_distance_to_point(point) < min_distance:
                 the_index = i
                 min_distance = ctrl_p.get_distance_to_point(point)
@@ -318,7 +318,7 @@ class LinearApproximateCurve(Curve):
 
     def get_perpendicular_intersection_point_from_point(self, point):
         the_index = self.get_ctrl_p_index_at_min_distance_to_point(point)
-        return self._going_ctlr_p_list[the_index].get_perpendicular_intersection_point_from_point(point)
+        return self._going_ctrl_p_list[the_index].get_perpendicular_intersection_point_from_point(point)
     #end
 
     def create_connection_point_at_start_point(self, other_curve):
@@ -346,9 +346,9 @@ class LinearApproximateCurve(Curve):
 
 
     def update_start_end_index_with_intersection(self, other_curve, ratio):
-        the_end_of_start_side_index = int( len(self._going_ctlr_p_list)*ratio )
+        the_end_of_start_side_index = int( len(self._going_ctrl_p_list)*ratio )
         for i in range( self._start_index, the_end_of_start_side_index ):
-            the_segment = self._going_ctlr_p_list[i]
+            the_segment = self._going_ctrl_p_list[i]
             the_rect_tuple = the_segment.get_rect_tuple()
             for other_segment in other_curve.__get_intersect_segment_set(the_rect_tuple):
                 if the_segment.is_intersection(other_segment):
@@ -357,10 +357,10 @@ class LinearApproximateCurve(Curve):
             #end
         #end
 
-        the_start_of_end_side_index = int( len(self._going_ctlr_p_list)*(1.0-ratio) )
+        the_start_of_end_side_index = int( len(self._going_ctrl_p_list)*(1.0-ratio) )
         the_end = self._get_the_end()
         for i in range( the_start_of_end_side_index, the_end ):
-            the_segment = self._going_ctlr_p_list[i]
+            the_segment = self._going_ctrl_p_list[i]
             the_rect_tuple = the_segment.get_rect_tuple()
             for other_segment in other_curve.__get_intersect_segment_set(the_rect_tuple):
                 if the_segment.is_intersection(other_segment):
@@ -373,7 +373,7 @@ class LinearApproximateCurve(Curve):
     def __get_nearest_ctrl_p_index_to_point(self, point):
         min_distance = 999999
         the_index = None
-        for i, ctrl_p in enumerate(self._going_ctlr_p_list):
+        for i, ctrl_p in enumerate(self._going_ctrl_p_list):
             if ctrl_p.get_distance_to_point(point) < min_distance:
                 the_index = i
                 min_distance = ctrl_p.get_distance_to_point(point)
@@ -390,7 +390,7 @@ class LinearApproximateCurve(Curve):
             self._end_index = self.__get_nearest_ctrl_p_index_to_point(midpoint_end)
         #end
 
-        #print(self._start_index, self._end_index, len(self._going_ctlr_p_list))
+        #print(self._start_index, self._end_index, len(self._going_ctrl_p_list))
     #end 
 
 

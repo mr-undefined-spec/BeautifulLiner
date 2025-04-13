@@ -53,7 +53,7 @@ class SmoothenHandler():
 
         x_array = []
         y_array = []
-        ctrl_p_set = linear_approximate_curve.get_going_ctlr_p_list()
+        ctrl_p_set = linear_approximate_curve.get_going_ctrl_p_list()
 
         x_array.append( ctrl_p_set[0].start.x )
         y_array.append( ctrl_p_set[0].start.y )

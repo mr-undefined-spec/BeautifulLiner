@@ -28,7 +28,7 @@ class QtreeController(BasicController):
         for layer in linearize_canvas:
             tmp_layer = Layer(layer.name)
             for step_num, curve in enumerate(layer):
-                curve.create_qtree_going_ctlr_p_list(bbox)
+                curve.create_qtree_going_ctrl_p_list(bbox)
                 tmp_layer.append(curve)
                 self.print_step("create qtree", step_num)
             #end
