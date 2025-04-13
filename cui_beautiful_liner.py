@@ -9,6 +9,7 @@ from thin_smoothen_controller import ThinSmoothenController
 from qtree_controller import QtreeController
 from delete_edge_controller import DeleteEdgeController
 from broaden_controller import BroadenController
+from broad_smoothen_controller import BroadSmoothenController
 from write_controller import WriteController
 
 def print_canvas(layer_set):
@@ -69,12 +70,13 @@ def main():
 
     # initialize controllers
     total_curve_num = read_canvas.get_total_curve_num()
-    total_step_num = total_curve_num * 6
+    total_step_num = total_curve_num * 7
     linearize_controller = LinearizeController(total_step_num)
     thin_smoothen_controller = ThinSmoothenController(total_step_num)
     qtree_controller = QtreeController(total_step_num)
-    broaden_controller = BroadenController(total_step_num)
     delete_edge_controller = DeleteEdgeController(total_step_num)
+    broaden_controller = BroadenController(total_step_num)
+    broad_smoothen_controller = BroadSmoothenController(total_step_num)
 
 
     # once linearize
@@ -103,17 +105,17 @@ def main():
     # broaden
     broaden_controller.set_step_offset(total_curve_num*5)
     broad_canvas = broaden_controller.process(delete_edge_canvas, args.broad_width)
-    print_canvas(broad_canvas)
+    #print_canvas(broad_canvas)
 
     # second smoothen
-    #smoothen_controller.set_step_offset(total_curve_num*6)
-    #second_smooth_canvas = smoothen_controller.process(broad_canvas, args.linear_approximate_length, args.eps_smooth_curve)
+    broad_smoothen_controller.set_step_offset(total_curve_num*6)
+    second_smooth_canvas = broad_smoothen_controller.process(broad_canvas)
     #print_canvas(second_smooth_canvas)
 
     output_file_name = args.reading_file_path.replace(".svg", "_BeauL.svg") 
 
     write_controller = WriteController()
-    write_controller.process(broad_canvas, output_file_name)
+    write_controller.process(second_smooth_canvas, output_file_name)
     print("Create " + output_file_name )
     print("END OF JOB")
 #end

@@ -206,11 +206,11 @@ class BroadenHandler(BasicHandler):
             #end
             points.append(ctrl_p_set[-1].end)
         else: # is returning
-            reversed_going_ctlr_p_list = list( reversed(ctrl_p_set) )
-            for ctrl_p in reversed_going_ctlr_p_list:
+            reversed_going_ctrl_p_list = list( reversed(ctrl_p_set) )
+            for ctrl_p in reversed_going_ctrl_p_list:
                 points.append(ctrl_p.end)
             #end
-            points.append(reversed_going_ctlr_p_list[-1].start)
+            points.append(reversed_going_ctrl_p_list[-1].start)
         #end
     
         half_length = len(points)/2.0 - 0.5 
@@ -306,13 +306,13 @@ class BroadenHandler(BasicHandler):
     def process(original_curve, broaden_width, position):
         broad_curve = BroadLinearApproximateCurve()
 
-        tmp_going_ctlr_p_list = BroadenHandler.__get_slightly_away_control_point_list(original_curve._going_ctlr_p_list, broaden_width, True, position)
-        for going_ctlr_p in tmp_going_ctlr_p_list:
+        tmp_going_ctrl_p_list = BroadenHandler.__get_slightly_away_control_point_list(original_curve._going_ctrl_p_list, broaden_width, True, position)
+        for going_ctlr_p in tmp_going_ctrl_p_list:
             broad_curve.append_going(going_ctlr_p)
         #end
 
-        tmp_returning_going_ctlr_p_list = BroadenHandler.__get_slightly_away_control_point_list(original_curve._going_ctlr_p_list, broaden_width, False, position)
-        for returning_going_ctlr_p in tmp_returning_going_ctlr_p_list:
+        tmp_returning_going_ctrl_p_list = BroadenHandler.__get_slightly_away_control_point_list(original_curve._going_ctrl_p_list, broaden_width, False, position)
+        for returning_going_ctlr_p in tmp_returning_going_ctrl_p_list:
             broad_curve.append_returning(returning_going_ctlr_p)
         #end
 

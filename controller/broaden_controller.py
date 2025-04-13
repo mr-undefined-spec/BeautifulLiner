@@ -2,6 +2,11 @@
 import os
 import sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
+from linear_approximate_curve import LinearApproximateCurve
+from cubic_bezier_curve import CubicBezierCurve
+from broad_linear_approximate_curve import BroadLinearApproximateCurve
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
 from layer import Layer
 from canvas import Canvas
@@ -47,12 +52,34 @@ class BroadenController(BasicController):
                 curve_orientations = CurveOrientationHandler.process(curve)
                 split_curve_ranges = SplitHandler.process(curve_orientations, curve.start_index)
 
+                tmp_broad_curve_list = []
+
                 for index_curve, split_curve_range in enumerate(split_curve_ranges):
+
+                    tmp_linearized_curve = LinearApproximateCurve()
+                    for j in range(split_curve_range[0], split_curve_range[1] - 1):
+                        tmp_linearized_curve.append(curve[j])
+                    #end
+
                     position = self.__get_position(index_curve, len(split_curve_ranges))
-                    broad_curve = BroadenHandler.process(curve, broaden_width, position)
+                    tmp_broad_curve_list.append( BroadenHandler.process(tmp_linearized_curve, broaden_width, position) )
                 #end
 
-                tmp_layer.append(broad_curve)
+                combined_broad_curve = BroadLinearApproximateCurve()
+                for broad_curve_going in tmp_broad_curve_list:
+                    for going_ctrl_p in broad_curve_going.going_ctrl_p_list:
+                        combined_broad_curve.append_going(going_ctrl_p)
+                    #end
+                #end
+                for broad_curve_returning in reversed(tmp_broad_curve_list):
+                    for returning_ctrl_p in broad_curve_returning.returning_ctrl_p_list:
+                        combined_broad_curve.append_returning(returning_ctrl_p)
+                    #end
+                #end
+                combined_broad_curve.update_start_index(curve.start_index)
+                combined_broad_curve.update_end_index(curve.end_index)
+
+                tmp_layer.append(combined_broad_curve)
 
             #end
             broad_canvas.append(tmp_layer)
