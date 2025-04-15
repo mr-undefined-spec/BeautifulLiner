@@ -48,16 +48,6 @@ class LinearApproximateCurve(Curve):
         return Rectangular(self.min_x, self.max_x, self.min_y, self.max_y)
     #end
 
-    def get_points(self):
-        points = []
-        points.append(self._going_ctrl_p_list[self._start_index].start)
-
-        the_end = self._get_the_end()
-        for i in range( self._start_index, the_end ):
-            points.append(self._going_ctrl_p_list[i].end)
-        #end
-        return points
-    #end
 
     def copy(self, other_linear_approximate_curve):
         for ctrl_p in other_linear_approximate_curve:
@@ -65,6 +55,7 @@ class LinearApproximateCurve(Curve):
         #end
         self._start_index = other_linear_approximate_curve.start_index
         self._end_index = other_linear_approximate_curve.end_index
+        self._split_ranges = other_linear_approximate_curve.split_ranges
     #end
 
     def get_bounding_boxes(self):

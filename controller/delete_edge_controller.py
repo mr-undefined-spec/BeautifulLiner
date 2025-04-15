@@ -1,6 +1,9 @@
 import os
 import sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../model/curve'))
+from linear_approximate_curve import LinearApproximateCurve
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
 from layer import Layer
 from canvas import Canvas

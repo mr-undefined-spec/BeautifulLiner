@@ -11,6 +11,8 @@ class Curve:
 
         self._start_index = 0
         self._end_index   = -1
+
+        self._split_ranges = []
     #end
 
     @property
@@ -81,6 +83,15 @@ class Curve:
             points.append(self._going_ctrl_p_list[i].end)
         #end
         return points
+    #end
+
+    def set_split_ranges(self, split_ranges):
+        self._split_ranges = split_ranges
+    #end
+
+    @property
+    def split_ranges(self):
+        return self._split_ranges
     #end
 
     def to_str(self):

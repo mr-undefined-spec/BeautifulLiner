@@ -35,25 +35,24 @@ class BroadSmoothenController(BasicController):
             for step_num, curve in enumerate(layer):
                 self.print_step("broad smoothen", step_num)
 
-                curve_orientations = CurveOrientationHandler.process(curve)
-
-                split_curve_ranges = SplitHandler.process(curve_orientations, curve.start_index)
-                last_index = split_curve_ranges[-1][1]
+                #curve_orientations = CurveOrientationHandler.process(curve)
+                #split_curve_ranges = SplitHandler.process(curve_orientations, curve.start_index)
+                last_index = curve.split_ranges[-1][1]
 
                 tmp_going_smooth_curve_list = []
-                for split_curve_range in split_curve_ranges:
+                for the_range in curve.split_ranges:
                     tmp_linearized_curve = LinearApproximateCurve()
-                    for j in range(split_curve_range[0], split_curve_range[1] - 1):
+                    for j in range(the_range[0], the_range[1] - 1):
                         tmp_linearized_curve.append(curve.going_ctrl_p_list[j])
                     #end
                     tmp_going_smooth_curve_list.append( SmoothenHandler.process(tmp_linearized_curve) )
                 #end
 
                 tmp_returning_smooth_curve_list = []
-                for split_curve_range in reversed(split_curve_ranges):
+                for the_range in curve.split_ranges:
                     tmp_linearized_curve = LinearApproximateCurve()
-                    start = last_index - split_curve_range[1] 
-                    end = last_index - split_curve_range[0] - 1
+                    start = last_index - the_range[1] 
+                    end = last_index - the_range[0] - 1
                     for j in range(start, end):
                         tmp_linearized_curve.append(curve.returning_ctrl_p_list[j])
                     #end

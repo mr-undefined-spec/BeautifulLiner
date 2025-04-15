@@ -49,19 +49,17 @@ class BroadenController(BasicController):
             for step_num, curve in enumerate(layer):
                 self.print_step("broaden", step_num)
 
-                curve_orientations = CurveOrientationHandler.process(curve)
-                split_curve_ranges = SplitHandler.process(curve_orientations, curve.start_index)
-
                 tmp_broad_curve_list = []
 
-                for index_curve, split_curve_range in enumerate(split_curve_ranges):
+
+                for index_curve, the_range in enumerate(curve.split_ranges):
 
                     tmp_linearized_curve = LinearApproximateCurve()
-                    for j in range(split_curve_range[0], split_curve_range[1] - 1):
+                    for j in range(the_range[0], the_range[1] - 1):
                         tmp_linearized_curve.append(curve[j])
                     #end
 
-                    position = self.__get_position(index_curve, len(split_curve_ranges))
+                    position = self.__get_position(index_curve, len(the_range))
                     tmp_broad_curve_list.append( BroadenHandler.process(tmp_linearized_curve, broaden_width, position) )
                 #end
 
@@ -78,6 +76,7 @@ class BroadenController(BasicController):
                 #end
                 combined_broad_curve.update_start_index(curve.start_index)
                 combined_broad_curve.update_end_index(curve.end_index)
+                combined_broad_curve.set_split_ranges(curve.split_ranges)
 
                 tmp_layer.append(combined_broad_curve)
 
