@@ -12,7 +12,6 @@ from layer import Layer
 from canvas import Canvas
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../handler'))
-from curve_orientation_handler import CurveOrientationHandler
 from split_handler import SplitHandler
 from broaden_handler import BroadenHandler
 
@@ -51,15 +50,16 @@ class BroadenController(BasicController):
 
                 tmp_broad_curve_list = []
 
+                curve_split_ranges = SplitHandler.process(curve, curve.start_index)
 
-                for index_curve, the_range in enumerate(curve.split_ranges):
+                for index_curve, the_range in enumerate(curve_split_ranges):
 
                     tmp_linearized_curve = LinearApproximateCurve()
                     for j in range(the_range[0], the_range[1] - 1):
                         tmp_linearized_curve.append(curve[j])
                     #end
 
-                    position = self.__get_position(index_curve, len(the_range))
+                    position = self.__get_position(index_curve, len(curve_split_ranges))
                     tmp_broad_curve_list.append( BroadenHandler.process(tmp_linearized_curve, broaden_width, position) )
                 #end
 

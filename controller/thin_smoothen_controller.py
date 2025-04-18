@@ -14,9 +14,8 @@ from layer import Layer
 from canvas import Canvas
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../handler'))
-from curve_orientation_handler import CurveOrientationHandler
-from split_handler import SplitHandler
 from smoothen_handler import SmoothenHandler
+from split_handler import SplitHandler
 
 from basic_controller import BasicController
 
@@ -35,8 +34,9 @@ class ThinSmoothenController(BasicController):
                 self.print_step("smoothen", step_num)
 
                 tmp_smooth_curve_list = []
+                curve_split_ranges = SplitHandler.process(curve, curve.start_index)
 
-                for the_range in curve.split_ranges:
+                for the_range in curve_split_ranges:
                     tmp_linearized_curve = LinearApproximateCurve()
                     for j in range(the_range[0], the_range[1] - 1):
                         tmp_linearized_curve.append(curve[j])

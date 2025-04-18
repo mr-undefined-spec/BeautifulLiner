@@ -10,7 +10,7 @@ from basic_handler import BasicHandler
 class SplitHandler(BasicHandler):
 
     @staticmethod
-    def get_the_distance_of_perpendicular_intersection_point_from_point(start, point, end):
+    def __get_the_distance_of_perpendicular_intersection_point_from_point(start, point, end):
         # Calculate the differences
         dx = end.x - start.x
         dy = end.y - start.y
@@ -38,7 +38,7 @@ class SplitHandler(BasicHandler):
         are_all_points_close_to_line = True
 
         for i in range(skip_size, len(points)-skip_size):
-            dist = SplitHandler.get_the_distance_of_perpendicular_intersection_point_from_point(points[0], points[i], points[-1])
+            dist = SplitHandler.__get_the_distance_of_perpendicular_intersection_point_from_point(points[0], points[i], points[-1])
             if dist > eps_dist:
                 are_all_points_close_to_line = False
             #end
@@ -137,6 +137,65 @@ class SplitHandler(BasicHandler):
     #end
 
     @staticmethod
+    def __calculate_angle_between_vectors(v1, v2):
+        """2つのベクトル間の角度をラジアンで計算"""
+        dot_product = v1[0]*v2[0] + v1[1]*v2[1]
+        mag_v1 = math.sqrt(v1[0]**2 + v1[1]**2)
+        mag_v2 = math.sqrt(v2[0]**2 + v2[1]**2)
+        cos_theta = dot_product / (mag_v1 * mag_v2)
+        # 安全のために値を[-1, 1]にクリップ
+        cos_theta = max(-1, min(1, cos_theta))
+        return math.acos(cos_theta)  # ラジアンで返す
+    #end
+
+    @staticmethod
+    def __get_index_of_max_dist_less_than_angle_threshold(points, start_index, end_index, angle_threshold_deg):
+        """
+        点列から曲線の特徴点を分析し、最大角度が閾値を超えるか判定
+        points: [(x1, y1), (x2, y2), ..., (xn, yn)]
+        angle_threshold_deg: 判定に使う角度の閾値（度数法）
+        """
+        if len(points) < 3:
+            raise ValueError("点列は最低3点必要です")
+        #end
+
+        start = points[start_index]
+        end = points[end_index-1]
+
+        # 最も離れている点を見つける
+        max_dist = -1
+        max_point = None
+        max_index = -1
+
+        for i in range(start_index + 1, end_index - 2):  # 最初と最後の点は除く
+            p = points[i]
+            dist = SplitHandler.__get_the_distance_of_perpendicular_intersection_point_from_point(start, p, end)
+            if dist > max_dist:
+                max_dist = dist
+                max_point = p
+                max_index = i
+            #end
+        #end
+
+        if max_point is None:
+            return -1
+        #end
+
+        # 三角形の3点: start, max_point, end から角度を求める
+        vec1 = (start.x - max_point.x, start.y - max_point.y)
+        vec2 = (end.x - max_point.x, end.y - max_point.y)
+
+        angle_rad = SplitHandler.__calculate_angle_between_vectors(vec1, vec2)
+        angle_deg = math.degrees(angle_rad)
+
+        if angle_deg < angle_threshold_deg:
+            return max_index
+        else:
+            return -1
+        #end
+    #end
+
+    @staticmethod
     def __create_curve_orientations(curve):
         points = curve.get_points()
         #print(points)
@@ -145,12 +204,11 @@ class SplitHandler(BasicHandler):
         skip_size = int( len(points)*skip_ratio ) 
 
         if SplitHandler.__are_all_points_close_to_line(points, skip_size, 1.0):
-            return np.ones(size)
+            return np.ones( len(points) )
         #end
 
         curve_orientations = SplitHandler.__create_curve_orientations_with_3points_relative_position(points, skip_size)
 
-        once_split_curve_ranges = SplitHandler.__create_split_curve_ranges(curve_orientations, 0)
 
 
         return curve_orientations
@@ -159,7 +217,22 @@ class SplitHandler(BasicHandler):
     @staticmethod
     def process(curve, index_offset):
         curve_orientations = SplitHandler.__create_curve_orientations(curve)
-        split_curve_ranges = SplitHandler.__create_split_curve_ranges(curve_orientations, index_offset)
+
+        once_split_curve_ranges = SplitHandler.__create_split_curve_ranges(curve_orientations, 0)
+
+        split_curve_ranges = []
+        for ranges in once_split_curve_ranges:
+            the_index = SplitHandler.__get_index_of_max_dist_less_than_angle_threshold(curve.get_points(), 
+            ranges[0], ranges[1], 90.0)
+            if the_index != -1:
+                split_curve_ranges.append((ranges[0] + index_offset, the_index + index_offset))
+                split_curve_ranges.append((the_index + 1 + index_offset, ranges[1] + index_offset))
+            else:
+                split_curve_ranges.append((ranges[0] + index_offset, ranges[1] + index_offset))
+            #end
+        #end
+        
+        #SplitHandler.__create_split_curve_ranges(curve_orientations, index_offset)
 
         return split_curve_ranges
     #end

@@ -15,9 +15,8 @@ from canvas import Canvas
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../handler'))
 from linearize_handler import LinearizeHandler
-from curve_orientation_handler import CurveOrientationHandler
-from split_handler import SplitHandler
 from smoothen_handler import SmoothenHandler
+from split_handler import SplitHandler
 
 from basic_controller import BasicController
 
@@ -35,12 +34,12 @@ class BroadSmoothenController(BasicController):
             for step_num, curve in enumerate(layer):
                 self.print_step("broad smoothen", step_num)
 
-                #curve_orientations = CurveOrientationHandler.process(curve)
-                #split_curve_ranges = SplitHandler.process(curve_orientations, curve.start_index)
-                last_index = curve.split_ranges[-1][1]
+
+                curve_split_ranges = SplitHandler.process(curve, curve.start_index)
+                last_index = curve_split_ranges[-1][1]
 
                 tmp_going_smooth_curve_list = []
-                for the_range in curve.split_ranges:
+                for the_range in curve_split_ranges:
                     tmp_linearized_curve = LinearApproximateCurve()
                     for j in range(the_range[0], the_range[1] - 1):
                         tmp_linearized_curve.append(curve.going_ctrl_p_list[j])
@@ -49,7 +48,7 @@ class BroadSmoothenController(BasicController):
                 #end
 
                 tmp_returning_smooth_curve_list = []
-                for the_range in curve.split_ranges:
+                for the_range in curve_split_ranges:
                     tmp_linearized_curve = LinearApproximateCurve()
                     start = last_index - the_range[1] 
                     end = last_index - the_range[0] - 1

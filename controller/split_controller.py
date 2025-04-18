@@ -14,9 +14,7 @@ from layer import Layer
 from canvas import Canvas
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../handler'))
-from curve_orientation_handler import CurveOrientationHandler
 from split_handler import SplitHandler
-from smoothen_handler import SmoothenHandler
 
 from basic_controller import BasicController
 
@@ -34,9 +32,7 @@ class SplitController(BasicController):
             for step_num, curve in enumerate(layer):
                 self.print_step("split", step_num)
 
-                curve_orientations = CurveOrientationHandler.process(curve)
-
-                split_curve_ranges = SplitHandler.process(curve_orientations, curve.start_index)
+                split_curve_ranges = SplitHandler.process(curve, curve.start_index)
 
                 #new_curve = LinearApproximateCurve()
                 #new_curve.copy(curve)

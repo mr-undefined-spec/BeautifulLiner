@@ -71,7 +71,7 @@ def main():
 
     # initialize controllers
     total_curve_num = read_canvas.get_total_curve_num()
-    total_step_num = total_curve_num * 10
+    total_step_num = total_curve_num * 8
     linearize_controller = LinearizeController(total_step_num)
     thin_smoothen_controller = ThinSmoothenController(total_step_num)
     split_controller = SplitController(total_step_num)
@@ -86,16 +86,10 @@ def main():
     first_linearize_canvas = linearize_controller.process(read_canvas, args.linear_approximate_length)
     #print_canvas(first_linearize_canvas)
 
-    # once split
-    split_controller.set_step_offset(total_curve_num*1)
-    first_split_canvas = split_controller.process(first_linearize_canvas)
-
     # once smoothen
     thin_smoothen_controller.set_step_offset(total_curve_num*2)
-    first_smooth_canvas = thin_smoothen_controller.process(first_split_canvas)
+    first_smooth_canvas = thin_smoothen_controller.process(first_linearize_canvas)
     #print_canvas(first_smooth_canvas)
-
-
 
     # second linearize
     linearize_controller.set_step_offset(total_curve_num*3)
@@ -107,32 +101,24 @@ def main():
     qtree_canvas = qtree_controller.process(second_linearize_canvas)
     #qtree_canvas = qtree_controller.process(first_linearize_canvas)
 
-    # split
-    split_controller.set_step_offset(total_curve_num*5)
-    second_split_canvas = split_controller.process(qtree_canvas)
-
     # delete edge
-    delete_edge_controller.set_step_offset(total_curve_num*6)
-    delete_edge_canvas = delete_edge_controller.process(second_split_canvas, args.delete_ratio)
+    delete_edge_controller.set_step_offset(total_curve_num*5)
+    delete_edge_canvas = delete_edge_controller.process(qtree_canvas, args.delete_ratio)
 
     # broaden
-    broaden_controller.set_step_offset(total_curve_num*7)
+    broaden_controller.set_step_offset(total_curve_num*6)
     broad_canvas = broaden_controller.process(delete_edge_canvas, args.broad_width)
     #print_canvas(broad_canvas)
 
-    # split
-    split_controller.set_step_offset(total_curve_num*8)
-    third_split_canvas = split_controller.process(broad_canvas)
-
     # smoothen
-    broad_smoothen_controller.set_step_offset(total_curve_num*9)
-    second_smooth_canvas = broad_smoothen_controller.process(third_split_canvas)
+    broad_smoothen_controller.set_step_offset(total_curve_num*7)
+    second_smooth_canvas = broad_smoothen_controller.process(broad_canvas)
     #print_canvas(second_smooth_canvas)
 
     output_file_name = args.reading_file_path.replace(".svg", "_BeauL.svg") 
 
     write_controller = WriteController()
-    write_controller.process(second_smooth_canvas, output_file_name)
+    write_controller.process(broad_canvas  , output_file_name)
     print("Create " + output_file_name )
     print("END OF JOB")
 #end
