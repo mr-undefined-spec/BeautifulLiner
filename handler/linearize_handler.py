@@ -233,6 +233,7 @@ class LinearizeHandler(BasicHandler):
     def __get_points_of_approximate_linear_curve(ctrl_p, is_first, micro_segment_length):
         division_num = LinearizeHandler.__get_division_num(ctrl_p, micro_segment_length)
 
+
         q0_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p0, ctrl_p.p1, division_num)
         q1_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p1, ctrl_p.p2, division_num)
         q2_list = LinearizeHandler.__get_equally_divided_points_between_2_points(ctrl_p.p2, ctrl_p.p3, division_num)
@@ -244,7 +245,7 @@ class LinearizeHandler(BasicHandler):
             #end
             points.append( Point(ctrl_p.p3.x, ctrl_p.p3.y) )
         else:
-            start = 0 if is_first else 1
+            start = 0
             for i in range(start, division_num+1):
                 q0 = q0_list[i]
                 q1 = q1_list[i]
@@ -262,17 +263,11 @@ class LinearizeHandler(BasicHandler):
 
         return points
 
-        return_linear_approximate_curve = LinearApproximateCurve()
-        for index in range( len(points)-1 ):
-            linear_ctrl_p = LinearApproximateCurveControlPoint(points[index], points[index+1])
-            return_linear_approximate_curve.append( linear_ctrl_p )
-        #end
-
-        return return_linear_approximate_curve
     #end
 
     @staticmethod
     def process(cubic_bezier_curve, micro_segment_length):
+        
         tmp_points_set = []
         for i, ctrl_p in enumerate(cubic_bezier_curve):
             tmp_points = LinearizeHandler.__get_points_of_approximate_linear_curve(ctrl_p, i==0, micro_segment_length)
@@ -280,10 +275,17 @@ class LinearizeHandler(BasicHandler):
         #end
 
         linearized_curve = LinearApproximateCurve()
-        for tmp_points in tmp_points_set:
+        for i, tmp_points in enumerate(tmp_points_set):
             for index in range( len(tmp_points)-1 ):
                 linearized_curve.append( LinearApproximateCurveControlPoint(tmp_points[index], tmp_points[index+1]) )
             #end
+
+            if i != len(tmp_points_set)-1:
+                end_point_i = tmp_points_set[i][-1]
+                start_point_i_plus_1 = tmp_points_set[i+1][0]
+                linearized_curve.append( LinearApproximateCurveControlPoint(end_point_i, start_point_i_plus_1) )
+            #end
+
         #end
         return linearized_curve
     #end

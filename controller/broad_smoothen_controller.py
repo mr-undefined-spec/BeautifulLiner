@@ -43,7 +43,7 @@ class BroadSmoothenController(BasicController):
                 #end
 
                 tmp_returning_smooth_curve_list = []
-                for the_range in curve_split_ranges:
+                for the_range in reversed(curve_split_ranges):
                     tmp_linearized_curve = LinearApproximateCurve()
                     start = last_index - the_range[1] 
                     end = last_index - the_range[0] - 1
