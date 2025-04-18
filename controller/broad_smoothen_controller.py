@@ -30,7 +30,6 @@ class BroadSmoothenController(BasicController):
             for step_num, curve in enumerate(layer):
                 self.print_step("broad smoothen", step_num)
 
-
                 curve_split_ranges = SplitHandler.process(curve, curve.start_index)
                 last_index = curve_split_ranges[-1][1]
 

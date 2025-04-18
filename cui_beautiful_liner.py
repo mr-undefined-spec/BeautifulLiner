@@ -100,7 +100,7 @@ def main():
         qtree_controller,
         delete_edge_controller,
         broaden_controller,
-        broad_smoothen_controller
+        broad_smoothen_controller,
     ]
 
     canvas = read_canvas

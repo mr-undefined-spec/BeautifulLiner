@@ -199,6 +199,8 @@ class SplitHandler(BasicHandler):
     def __create_curve_orientations(curve):
         points = curve.get_points()
         #print(points)
+        #print( len(points) )
+        #print( len(curve) )
 
         skip_ratio = 0.1
         skip_size = int( len(points)*skip_ratio ) 

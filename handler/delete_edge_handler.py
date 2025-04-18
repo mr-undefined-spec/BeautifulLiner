@@ -41,7 +41,7 @@ class DeleteEdgeHandler(BasicHandler):
         num_segments = len(target_curve)
         # 切り取られる箇所に応じて start_index または end_index を更新
         if first_intersection_index < num_segments // 2:
-            return_curve.update_start_index(first_intersection_index)
+            return_curve.update_start_index(first_intersection_index+1)
         else:
             return_curve.update_end_index(first_intersection_index)
         #end

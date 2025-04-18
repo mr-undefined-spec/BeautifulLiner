@@ -54,7 +54,6 @@ class BroadenController(BasicController):
                 curve_split_ranges = SplitHandler.process(curve, curve.start_index)
 
                 for index_curve, the_range in enumerate(curve_split_ranges):
-
                     tmp_linearized_curve = LinearApproximateCurve()
                     for j in range(the_range[0], the_range[1] - 1):
                         tmp_linearized_curve.append(curve[j])
@@ -75,9 +74,9 @@ class BroadenController(BasicController):
                         combined_broad_curve.append_returning(returning_ctrl_p)
                     #end
                 #end
-                combined_broad_curve.update_start_index(curve.start_index)
-                combined_broad_curve.update_end_index(curve.end_index)
-                combined_broad_curve.set_split_ranges(curve.split_ranges)
+                #combined_broad_curve.update_start_index(curve.start_index)
+                #combined_broad_curve.update_end_index(curve.end_index)
+                #combined_broad_curve.set_split_ranges(curve.split_ranges)
 
                 tmp_layer.append(combined_broad_curve)
 
