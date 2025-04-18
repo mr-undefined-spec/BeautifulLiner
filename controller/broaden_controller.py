@@ -20,8 +20,9 @@ from basic_controller import BasicController
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class BroadenController(BasicController):
-    def __init__(self, total_step_num):
-        self.total_step_num = total_step_num
+
+    def set_broad_width(self, broad_width):
+        self.broad_width = broad_width
     #end
 
     def __get_position(self, index_curve, len_curve):
@@ -38,7 +39,7 @@ class BroadenController(BasicController):
         #end
     #end
 
-    def process(self, linearize_canvas, broaden_width):
+    def process(self, linearize_canvas):
         broaden_handler = BroadenHandler()
 
         broad_canvas = Canvas()
@@ -60,7 +61,7 @@ class BroadenController(BasicController):
                     #end
 
                     position = self.__get_position(index_curve, len(curve_split_ranges))
-                    tmp_broad_curve_list.append( BroadenHandler.process(tmp_linearized_curve, broaden_width, position) )
+                    tmp_broad_curve_list.append( BroadenHandler.process(tmp_linearized_curve, self.broad_width, position) )
                 #end
 
                 combined_broad_curve = BroadLinearApproximateCurve()

@@ -10,11 +10,11 @@ from linearize_handler import LinearizeHandler
 from basic_controller import BasicController
 
 class LinearizeController(BasicController):
-    def __init__(self, total_step_num):
-        self.total_step_num = total_step_num
+    def set_linear_approximate_length(self, linear_approximate_length):
+        self.linear_approximate_length = linear_approximate_length
     #end
 
-    def process(self, cubic_bezier_canvas, linear_approximate_length):
+    def process(self, cubic_bezier_canvas):
 
         # initialize handlers
         linearize_handler = LinearizeHandler()
@@ -25,7 +25,7 @@ class LinearizeController(BasicController):
             tmp_layer = Layer(cubic_bezier_layer.name)
             for i, cubic_bezier_curve in enumerate(cubic_bezier_layer):
                 self.print_step("linearize", i)
-                linearized_curve = LinearizeHandler.process(cubic_bezier_curve, linear_approximate_length)
+                linearized_curve = LinearizeHandler.process(cubic_bezier_curve, self.linear_approximate_length)
                 tmp_layer.append(linearized_curve)
             #end
             linearize_canvas.append(tmp_layer)

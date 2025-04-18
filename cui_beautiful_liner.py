@@ -6,7 +6,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'controller'))
 from read_controller import ReadController
 from linearize_controller import LinearizeController
 from thin_smoothen_controller import ThinSmoothenController
-from split_controller import SplitController
 from qtree_controller import QtreeController
 from delete_edge_controller import DeleteEdgeController
 from broaden_controller import BroadenController
@@ -72,53 +71,49 @@ def main():
     # initialize controllers
     total_curve_num = read_canvas.get_total_curve_num()
     total_step_num = total_curve_num * 8
-    linearize_controller = LinearizeController(total_step_num)
-    thin_smoothen_controller = ThinSmoothenController(total_step_num)
-    split_controller = SplitController(total_step_num)
-    qtree_controller = QtreeController(total_step_num)
-    delete_edge_controller = DeleteEdgeController(total_step_num)
-    broaden_controller = BroadenController(total_step_num)
-    broad_smoothen_controller = BroadSmoothenController(total_step_num)
 
+    linearize_controller = LinearizeController()
+    linearize_controller.set_total_step_num(total_step_num)
+    linearize_controller.set_linear_approximate_length(args.linear_approximate_length)
 
-    # once linearize
-    linearize_controller.set_step_offset(0)
-    first_linearize_canvas = linearize_controller.process(read_canvas, args.linear_approximate_length)
-    #print_canvas(first_linearize_canvas)
+    thin_smoothen_controller = ThinSmoothenController()
+    thin_smoothen_controller.set_total_step_num(total_step_num)
+    
+    qtree_controller = QtreeController()
+    qtree_controller.set_total_step_num(total_step_num)
 
-    # once smoothen
-    thin_smoothen_controller.set_step_offset(total_curve_num*2)
-    first_smooth_canvas = thin_smoothen_controller.process(first_linearize_canvas)
-    #print_canvas(first_smooth_canvas)
+    delete_edge_controller = DeleteEdgeController()
+    delete_edge_controller.set_total_step_num(total_step_num)
+    delete_edge_controller.set_delete_ratio(args.delete_ratio)
 
-    # second linearize
-    linearize_controller.set_step_offset(total_curve_num*3)
-    second_linearize_canvas = linearize_controller.process(first_smooth_canvas, args.linear_approximate_length)
-    #print_canvas(second_linearize_canvas)
+    broaden_controller = BroadenController()
+    broaden_controller.set_total_step_num(total_step_num)
+    broaden_controller.set_broad_width(args.broad_width)
 
-    # create qtree
-    qtree_controller.set_step_offset(total_curve_num*4)
-    qtree_canvas = qtree_controller.process(second_linearize_canvas)
-    #qtree_canvas = qtree_controller.process(first_linearize_canvas)
+    broad_smoothen_controller = BroadSmoothenController()
+    broad_smoothen_controller.set_total_step_num(total_step_num)
 
-    # delete edge
-    delete_edge_controller.set_step_offset(total_curve_num*5)
-    delete_edge_canvas = delete_edge_controller.process(qtree_canvas, args.delete_ratio)
+    controllers = [
+        linearize_controller,
+        thin_smoothen_controller,
+        linearize_controller,
+        qtree_controller,
+        delete_edge_controller,
+        broaden_controller,
+        broad_smoothen_controller
+    ]
 
-    # broaden
-    broaden_controller.set_step_offset(total_curve_num*6)
-    broad_canvas = broaden_controller.process(delete_edge_canvas, args.broad_width)
-    #print_canvas(broad_canvas)
+    canvas = read_canvas
 
-    # smoothen
-    broad_smoothen_controller.set_step_offset(total_curve_num*7)
-    second_smooth_canvas = broad_smoothen_controller.process(broad_canvas)
-    #print_canvas(second_smooth_canvas)
+    for i, controller in enumerate(controllers):
+        controller.set_step_offset(i*total_curve_num)
+        canvas = controller.process(canvas)
+    #end
 
     output_file_name = args.reading_file_path.replace(".svg", "_BeauL.svg") 
 
     write_controller = WriteController()
-    write_controller.process(broad_canvas  , output_file_name)
+    write_controller.process(canvas  , output_file_name)
     print("Create " + output_file_name )
     print("END OF JOB")
 #end

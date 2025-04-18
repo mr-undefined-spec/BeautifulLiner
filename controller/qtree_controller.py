@@ -16,10 +16,6 @@ from basic_controller import BasicController
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class QtreeController(BasicController):
-    def __init__(self, total_step_num):
-        self.total_step_num = total_step_num
-    #end
-
     def process(self, linearize_canvas):
         new_linear_canvas = Canvas()
 

@@ -22,10 +22,6 @@ from basic_controller import BasicController
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 class BroadSmoothenController(BasicController):
-    def __init__(self, total_step_num):
-        self.total_step_num = total_step_num
-    #end
-
     def process(self, linearize_canvas):
         smooth_canvas = Canvas()
 

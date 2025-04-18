@@ -15,11 +15,11 @@ from delete_edge_handler import DeleteEdgeHandler
 from basic_controller import BasicController
 
 class DeleteEdgeController(BasicController):
-    def __init__(self, total_step_num):
-        self.total_step_num = total_step_num
+    def set_delete_ratio(self, delete_ratio):
+        self.delete_ratio = delete_ratio
     #end
 
-    def process(self, linearize_canvas, delete_ratio):
+    def process(self, linearize_canvas):
 
         # initialize handlers
         pickup_intersection_candidates_handler = PickupIntersectionCandidatesHandler()
@@ -40,7 +40,7 @@ class DeleteEdgeController(BasicController):
                 tmp_curve = target_curve
 
                 for other_curve in candidates:
-                    tmp_curve = DeleteEdgeHandler.process(tmp_curve, other_curve, delete_ratio)
+                    tmp_curve = DeleteEdgeHandler.process(tmp_curve, other_curve, self.delete_ratio)
                 #end
                 
                 tmp_layer.append(tmp_curve)
