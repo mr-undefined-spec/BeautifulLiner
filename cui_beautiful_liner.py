@@ -2,6 +2,13 @@ from argparse import ArgumentParser
 
 import os
 import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'model/layer'))
+from layer import Layer
+from layer import EndpointStyle
+from canvas import Canvas
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__), 'controller'))
 from read_controller import ReadController
 from linearize_controller import LinearizeController
@@ -58,7 +65,7 @@ def main():
     argparser.add_argument('-c', '--color',
                             type=str,
                             dest='output_color',
-                            default="red",
+                            default="black",
                             help='Output line color')
     args = argparser.parse_args()
 
@@ -110,10 +117,18 @@ def main():
         canvas = controller.process(canvas)
     #end
 
+    new_canvas = Canvas()
+    new_canvas.set_view_box(canvas.view_box)
+    for layer in canvas:
+        new_layer = layer
+        new_layer.set_write_options(True, args.output_color, EndpointStyle.BOTH_POINTED)
+        new_canvas.append(new_layer)
+    #end
+
     output_file_name = args.reading_file_path.replace(".svg", "_BeauL.svg") 
 
     write_controller = WriteController()
-    write_controller.process(canvas  , output_file_name)
+    write_controller.process(new_canvas, output_file_name)
     print("Create " + output_file_name )
     print("END OF JOB")
 #end

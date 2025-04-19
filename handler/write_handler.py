@@ -29,7 +29,10 @@ class WriteHandler(BasicHandler):
 
 
             for i, curve in enumerate(layer):
-                s += '  <path stroke="#00fb00" stroke-width="2.01172" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round" '
+                if layer.is_fill:
+                    s += '  <path stroke="none" stroke-width="1.0" fill="' + layer.color + '" stroke-linecap="round" opacity="1" stroke-linejoin="round" '
+                else:
+                    s += '  <path stroke="' + layer.color + '" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round" '
                 s += r' d="'
                 s += curve.to_str()
                 s += r'" />' + '\n'
