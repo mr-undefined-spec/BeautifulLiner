@@ -22,7 +22,7 @@ class LinearizeController(BasicController):
         # linearize
         linearize_canvas = Canvas()
         for cubic_bezier_layer in cubic_bezier_canvas:
-            tmp_layer = Layer(cubic_bezier_layer.name)
+            tmp_layer = Layer(cubic_bezier_layer.name, cubic_bezier_layer.color)
             for i, cubic_bezier_curve in enumerate(cubic_bezier_layer):
                 self.print_step("linearize", i)
                 linearized_curve = LinearizeHandler.process(cubic_bezier_curve, self.linear_approximate_length)

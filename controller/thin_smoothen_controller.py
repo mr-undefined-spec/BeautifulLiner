@@ -25,7 +25,7 @@ class ThinSmoothenController(BasicController):
         smooth_canvas = Canvas()
 
         for layer in linearize_canvas:
-            tmp_layer = Layer(layer.name)
+            tmp_layer = Layer(layer.name, layer.color)
             for step_num, curve in enumerate(layer):
                 self.print_step("smoothen", step_num)
 

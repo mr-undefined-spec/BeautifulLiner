@@ -29,7 +29,7 @@ class DeleteEdgeController(BasicController):
 
         # delete edge
         for layer in linearize_canvas:
-            tmp_layer = Layer(layer.name)
+            tmp_layer = Layer(layer.name, layer.color)
             other_curves = layer.get_curves()
             for i, target_curve in enumerate(layer):
 

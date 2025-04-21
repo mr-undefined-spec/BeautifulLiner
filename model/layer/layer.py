@@ -13,16 +13,19 @@ class EndpointStyle(Enum):
 #end
 
 class Layer:
-    def __init__(self, name):
+    def __init__(self, name, color):
         if not type(name) is str:
             raise TypeError("The 1st argument \"layer_name\" of the append method must be a str")
         #end
+        if not type(color) is str:
+            raise TypeError("The 1st argument \"color\" of the append method must be a str")
+        #end
         self.__name = name
+        self.__color   = color
 
         self.__curve_list = []   
 
         self.__is_fill = False
-        self.__color   = "#000000"
         self.__endpoint_style   = EndpointStyle.BOTH_POINTED
     #end
 

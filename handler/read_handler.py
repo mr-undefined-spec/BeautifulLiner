@@ -78,7 +78,8 @@ class ReadHandler(BasicHandler):
 
     @staticmethod
     def __make_layer(layer_name, paths):
-        layer = Layer(layer_name)
+        color_of_first_path = paths[0].getAttributeNode('stroke').nodeValue
+        layer = Layer(layer_name, color_of_first_path)
         for path in paths:
             layer.append(  ReadHandler.__make_cubic_bezier_curve( path.getAttributeNode('d').nodeValue )  )
         #end for
@@ -123,6 +124,7 @@ class ReadHandler(BasicHandler):
         #end
         root = doc.getElementsByTagName("svg")
         canvas.set_view_box( root[0].attributes["viewBox"].value )
+
 
         return canvas
     #end

@@ -121,7 +121,7 @@ def main():
     new_canvas.set_view_box(canvas.view_box)
     for layer in canvas:
         new_layer = layer
-        new_layer.set_write_options(True, args.output_color, EndpointStyle.BOTH_POINTED)
+        new_layer.set_write_options(True, layer.color, EndpointStyle.BOTH_POINTED)
         new_canvas.append(new_layer)
     #end
 
