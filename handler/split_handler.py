@@ -51,7 +51,6 @@ class SplitHandler(BasicHandler):
     def __create_curve_orientations_with_3points_relative_position(points, skip_size):
         curve_orientations = []
 
-
         # 点列を3点ずつ取り出す
         for i in range(skip_size, len(points)-skip_size):
             p1, p2, p3 = points[0], points[i], points[-1]
@@ -69,6 +68,7 @@ class SplitHandler(BasicHandler):
 
             theta = np.arcsin(cross_product)
             theta_degree = np.degrees(theta)
+
 
             """
             if theta_degree > 15:
@@ -204,6 +204,9 @@ class SplitHandler(BasicHandler):
 
         skip_ratio = 0.1
         skip_size = int( len(points)*skip_ratio ) 
+        if skip_size == 0:
+            skip_size = 1 
+        #end
 
         if SplitHandler.__are_all_points_close_to_line(points, skip_size, 1.0):
             return np.ones( len(points) )
