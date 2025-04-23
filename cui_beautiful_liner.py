@@ -104,10 +104,10 @@ def main():
         linearize_controller,
         thin_smoothen_controller,
         linearize_controller,
-        #qtree_controller,
-        #delete_edge_controller,
-        #broaden_controller,
-        #broad_smoothen_controller,
+        qtree_controller,
+        delete_edge_controller,
+        broaden_controller,
+        broad_smoothen_controller,
     ]
 
     canvas = read_canvas
