@@ -51,6 +51,8 @@ class SplitHandler(BasicHandler):
     def __create_curve_orientations_with_3points_relative_position(points, skip_size):
         curve_orientations = []
 
+        are_all_cross_products_less_than = True
+
         # 点列を3点ずつ取り出す
         for i in range(skip_size, len(points)-skip_size):
             p1, p2, p3 = points[0], points[i], points[-1]
@@ -98,6 +100,11 @@ class SplitHandler(BasicHandler):
             #curve_orientations.append(curvature)
         #end
 
+        if are_all_cross_products_less_than:
+            size = len(curve_orientations)
+            return np.ones(size)
+        #end
+
         first_element = curve_orientations[0]
         last_element = curve_orientations[-1]
         for i in range(skip_size):
@@ -105,15 +112,6 @@ class SplitHandler(BasicHandler):
             curve_orientations.append(last_element)
         #end
         return np.array(curve_orientations)
-
-        # old functions not used now
-        """
-        are_all_cross_products_less_than = True
-        if are_all_cross_products_less_than:
-            size = len(curve_orientations)
-            return np.ones(size)
-        else:
-        """
 
     #end
 
