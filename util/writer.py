@@ -2,13 +2,6 @@ import os
 import sys
 
 class Writer():
-    @classmethod
-    def process(cls, layer_set, output_file_name):
-        # write
-        WriteHandler.process(layer_set, output_file_name)
-    #end
-
-
     @staticmethod
     def write_file(layer_set, output_file_name):
         bbox = layer_set.get_bbox()
