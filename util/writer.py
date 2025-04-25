@@ -1,15 +1,16 @@
-#import numpy as np
+import os
+import sys
 
-#import os
-#import sys
-#sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
+class Writer():
+    @classmethod
+    def process(cls, layer_set, output_file_name):
+        # write
+        WriteHandler.process(layer_set, output_file_name)
+    #end
 
-from basic_handler import BasicHandler
-
-class WriteHandler(BasicHandler):
 
     @staticmethod
-    def process(layer_set, output_file_name):
+    def write_file(layer_set, output_file_name):
         bbox = layer_set.get_bbox()
         s = ""
         s += '<?xml version="1.0" encoding="UTF-8"?>\n'

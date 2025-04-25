@@ -10,14 +10,16 @@ from canvas import Canvas
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'controller'))
-from read_controller import ReadController
 from linearize_controller import LinearizeController
 from thin_smoothen_controller import ThinSmoothenController
 from qtree_controller import QtreeController
 from delete_edge_controller import DeleteEdgeController
 from broaden_controller import BroadenController
 from broad_smoothen_controller import BroadSmoothenController
-from write_controller import WriteController
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'util'))
+from reader import Reader
+from writer import Writer
 
 def print_canvas(layer_set):
     template = r'<path stroke="#00ff00" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"'
@@ -71,8 +73,7 @@ def main():
 
 
     # pre-process   
-    read_controller = ReadController()
-    read_canvas = read_controller.process(args.reading_file_path)
+    read_canvas = Reader.create_canvas_from_file(args.reading_file_path)
     #print_canvas(read_canvas)
 
     # initialize controllers
@@ -127,8 +128,7 @@ def main():
 
     output_file_name = args.reading_file_path.replace(".svg", "_BeauL.svg") 
 
-    write_controller = WriteController()
-    write_controller.process(new_canvas, output_file_name)
+    Writer.write_file(new_canvas, output_file_name)
     print("Create " + output_file_name )
     print("END OF JOB")
 #end

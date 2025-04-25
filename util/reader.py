@@ -14,9 +14,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../model/layer'))
 from layer import Layer
 from canvas import Canvas
 
-from basic_handler import BasicHandler
-
-class ReadHandler(BasicHandler):
+class Reader():
 
     @staticmethod
     def __split_to_xy(point_str):
@@ -36,7 +34,7 @@ class ReadHandler(BasicHandler):
         point_strs = re.split("[C|L|M|Z]", d_str)
         point_strs.pop(0)
         # exception handling for 1st point
-        items = ReadHandler.__split_to_xy( point_strs[0].strip() )
+        items = Reader.__split_to_xy( point_strs[0].strip() )
         last_point = Point( float(items[0]), float(items[1]) )
         point_strs.pop(0)
 
@@ -44,7 +42,7 @@ class ReadHandler(BasicHandler):
             if point_str.strip() == "":
                 break
             #end
-            items = ReadHandler.__split_to_xy( point_str.strip() )
+            items = Reader.__split_to_xy( point_str.strip() )
             if len(items)==2:
                 p3 = Point( float(items[0]), float(items[1]) )
                 x1, y1, x2, y2 = 0.0, 0.0, 0.0, 0.0
@@ -81,7 +79,7 @@ class ReadHandler(BasicHandler):
         color_of_first_path = paths[0].getAttributeNode('stroke').nodeValue
         layer = Layer(layer_name, color_of_first_path)
         for path in paths:
-            layer.append(  ReadHandler.__make_cubic_bezier_curve( path.getAttributeNode('d').nodeValue )  )
+            layer.append(  Reader.__make_cubic_bezier_curve( path.getAttributeNode('d').nodeValue )  )
         #end for
         return layer
     #end
@@ -105,7 +103,7 @@ class ReadHandler(BasicHandler):
     #end
 
     @staticmethod
-    def process(file_name):
+    def create_canvas_from_file(file_name):
         canvas = Canvas()
 
         if not type(file_name) is str:
@@ -115,12 +113,12 @@ class ReadHandler(BasicHandler):
         doc = minidom.parse(file_name)
         canvas.set_doc(doc)
 
-        for group_paths_set in ReadHandler.__get_group_paths_tuple(doc):
+        for group_paths_set in Reader.__get_group_paths_tuple(doc):
             group = group_paths_set[0]
             paths = group_paths_set[1]
             layer_name = group.getAttributeNode('id').nodeValue
 
-            canvas.append(ReadHandler.__make_layer(layer_name, paths) )
+            canvas.append(Reader.__make_layer(layer_name, paths) )
         #end
         root = doc.getElementsByTagName("svg")
         canvas.set_view_box( root[0].attributes["viewBox"].value )
@@ -128,5 +126,4 @@ class ReadHandler(BasicHandler):
 
         return canvas
     #end
-
 #end
