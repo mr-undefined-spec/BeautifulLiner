@@ -118,6 +118,10 @@ class Reader():
             paths = group_paths_set[1]
             layer_name = group.getAttributeNode('id').nodeValue
 
+            if len(paths) == 0:
+                continue
+            #end
+
             canvas.append(Reader.__make_layer(layer_name, paths) )
         #end
         root = doc.getElementsByTagName("svg")
