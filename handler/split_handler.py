@@ -230,10 +230,6 @@ class SplitHandler(BasicHandler):
 
         split_curve_ranges = []
         for ranges in once_split_curve_ranges:
-            if len(curve.get_points()) < 3:
-                split_curve_ranges.append((ranges[0] + index_offset, ranges[1] + index_offset))
-                continue
-            #end
             the_index = SplitHandler.__get_index_of_max_dist_less_than_angle_threshold(curve.get_points(), 
             ranges[0], ranges[1], 90.0)
             if the_index != -1:

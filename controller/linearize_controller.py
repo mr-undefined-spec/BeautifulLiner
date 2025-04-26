@@ -26,6 +26,9 @@ class LinearizeController(BasicController):
             for i, cubic_bezier_curve in enumerate(cubic_bezier_layer):
                 self.print_step("linearize", i)
                 linearized_curve = LinearizeHandler.process(cubic_bezier_curve, self.linear_approximate_length)
+                if len(linearized_curve) < 3:
+                    continue
+                #end
                 tmp_layer.append(linearized_curve)
             #end
             linearize_canvas.append(tmp_layer)
