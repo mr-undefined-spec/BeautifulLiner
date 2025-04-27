@@ -247,6 +247,11 @@ class SplitHandler(BasicHandler):
 
         split_curve_ranges = []
         for ranges in once_split_curve_ranges:
+            range_size = ranges[1] - ranges[0]
+            if(range_size < 30):
+                split_curve_ranges.append((ranges[0] + index_offset, ranges[1] + index_offset))
+                continue
+            #end
             the_ratio = 0.1
             min_divide_start_side_index = ranges[0] + int(the_ratio * (ranges[1] - ranges[0]))
             max_divide_end_side_index = ranges[1] - int(the_ratio * (ranges[1] - ranges[0]))
