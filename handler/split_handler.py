@@ -240,15 +240,19 @@ class SplitHandler(BasicHandler):
     def process(curve, index_offset):
         curve_orientations = SplitHandler.__create_curve_orientations(curve)
 
+
         curve_orientations = SplitHandler.remove_isolated_noise(curve_orientations)
 
         once_split_curve_ranges = SplitHandler.__create_split_curve_ranges(curve_orientations, 0)
 
         split_curve_ranges = []
         for ranges in once_split_curve_ranges:
+            the_ratio = 0.1
+            min_divide_start_side_index = ranges[0] + int(the_ratio * (ranges[1] - ranges[0]))
+            max_divide_end_side_index = ranges[1] - int(the_ratio * (ranges[1] - ranges[0]))
             the_index = SplitHandler.__get_index_of_max_dist_less_than_angle_threshold(curve.get_points(), 
             ranges[0], ranges[1], 90.0)
-            if the_index != -1:
+            if the_index != -1 and the_index > min_divide_start_side_index and the_index < max_divide_end_side_index:
                 split_curve_ranges.append((ranges[0] + index_offset, the_index + index_offset))
                 split_curve_ranges.append((the_index + 1 + index_offset, ranges[1] + index_offset))
             else:
