@@ -222,9 +222,25 @@ class SplitHandler(BasicHandler):
         return curve_orientations
     #end
 
+    def remove_isolated_noise(original_curve_orientations):
+        arr = np.asarray(original_curve_orientations)  # 念のため配列化
+
+        # 平滑化フィルタを適用（3点移動平均）
+        kernel_size = 3
+        kernel = np.ones(kernel_size) / kernel_size
+        smoothed = np.convolve(arr, kernel, mode='same')
+
+        # スムージング後に閾値で判定
+        cleaned = np.where(smoothed > 0, 1, -1)
+
+        return cleaned
+    #end
+
     @staticmethod
     def process(curve, index_offset):
         curve_orientations = SplitHandler.__create_curve_orientations(curve)
+
+        curve_orientations = SplitHandler.remove_isolated_noise(curve_orientations)
 
         once_split_curve_ranges = SplitHandler.__create_split_curve_ranges(curve_orientations, 0)
 
@@ -239,7 +255,7 @@ class SplitHandler(BasicHandler):
                 split_curve_ranges.append((ranges[0] + index_offset, ranges[1] + index_offset))
             #end
         #end
-        
+
         #SplitHandler.__create_split_curve_ranges(curve_orientations, index_offset)
 
         return split_curve_ranges
