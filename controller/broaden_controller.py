@@ -44,10 +44,12 @@ class BroadenController(BasicController):
 
         broad_canvas = Canvas()
 
+        step_count = 0
         for layer in linearize_canvas:
             tmp_layer = Layer(layer.name, layer.color)
             for step_num, curve in enumerate(layer):
-                self.print_step("broaden", step_num)
+                self.print_step("broaden", step_count)
+                step_count += 1
 
                 tmp_broad_curve_list = []
 

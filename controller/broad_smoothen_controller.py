@@ -25,10 +25,12 @@ class BroadSmoothenController(BasicController):
     def process(self, linearize_canvas):
         smooth_canvas = Canvas()
 
+        step_count = 0
         for layer in linearize_canvas:
             tmp_layer = Layer(layer.name, layer.color)
             for step_num, curve in enumerate(layer):
-                self.print_step("broad smoothen", step_num)
+                self.print_step("broad smoothen", step_count)
+                step_count += 1
 
                 curve_split_ranges = SplitHandler.process(curve, curve.start_index)
                 last_index = curve_split_ranges[-1][1]

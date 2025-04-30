@@ -21,10 +21,13 @@ class LinearizeController(BasicController):
 
         # linearize
         linearize_canvas = Canvas()
+        step_count = 0
         for cubic_bezier_layer in cubic_bezier_canvas:
             tmp_layer = Layer(cubic_bezier_layer.name, cubic_bezier_layer.color)
             for i, cubic_bezier_curve in enumerate(cubic_bezier_layer):
-                self.print_step("linearize", i)
+                self.print_step("linearize", step_count)
+                step_count += 1
+
                 linearized_curve = LinearizeHandler.process(cubic_bezier_curve, self.linear_approximate_length)
                 if len(linearized_curve) < 3:
                     continue

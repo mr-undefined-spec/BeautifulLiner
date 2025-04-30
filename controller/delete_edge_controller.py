@@ -33,11 +33,13 @@ class DeleteEdgeController(BasicController):
         #end
         
         # delete edge
+        step_count = 0
         for layer in linearize_canvas:
             tmp_layer = Layer(layer.name, layer.color)
             for i, target_curve in enumerate(layer):
 
-                self.print_step("delete edge", i)
+                self.print_step("delete edge", step_count)
+                step_count += 1
 
                 candidates = pickup_intersection_candidates_handler.process(target_curve, other_curves)
 

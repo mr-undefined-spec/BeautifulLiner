@@ -1,4 +1,4 @@
-import math
+import tkinter as tk
 
 class BasicController():
     def __init__(self, mode="CUI", progress_bar=None, log_text=None):
@@ -24,11 +24,17 @@ class BasicController():
 
     def print_step(self, step_name, step_num):
         relative_step_num = round( 100*(step_num + 1 + self.step_offset) / self.total_step_num, 1 )
+        print_str = "{} % complete @ {}".format(relative_step_num, step_name)
         if self.mode == "CUI" or self.mode == "TEST":
-            print("{} % complete @ {}".format(relative_step_num, step_name))
+            print(print_str)
         elif self.mode == "GUI":
-            self.progress_bar.setValue(step_num + 1 + self.step_offset)
-            self.log_text.append("{} {} / {}".format(step_name, step_num + 1 + self.step_offset, self.total_step_num))
+            self.progress_bar["value"] = relative_step_num
+            self.progress_bar.update()
+
+#            self.log_text.insert(tk.END, "END OF JOB\n")
+            self.log_text.insert(tk.END, print_str + "\n")
+            self.log_text.see(tk.END)
+            #self.log_text.append("{} {} / {}".format(step_name, step_num + 1 + self.step_offset, self.total_step_num))
         #end
     #end
 #end
