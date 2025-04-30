@@ -39,7 +39,9 @@ class Curve:
     #end
 
     def update_start_index(self, start_index):
-        if( self._start_index < start_index ):
+        if( self._start_index == 0 ):
+            self._start_index = start_index
+        elif( self._start_index > start_index ):
             self._start_index = start_index
         #end
     #end
@@ -47,7 +49,7 @@ class Curve:
     def update_end_index(self, end_index):
         if( self._end_index == -1):
             self._end_index = end_index
-        elif( end_index < self._end_index ):
+        elif( end_index > self._end_index ):
             self._end_index = end_index
         #end
     #end
