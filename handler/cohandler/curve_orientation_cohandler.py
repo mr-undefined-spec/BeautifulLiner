@@ -35,13 +35,15 @@ class CurveOrientationCohandler:
         # end for
 
         if all_small:
-            return np.ones(len(orientations))
+            return np.ones(len(points))
         # end if
 
         first, last = orientations[0], orientations[-1]
         for _ in range(skip_size):
             orientations.insert(0, first)
             orientations.append(last)
+        # end for
+
         return np.array(orientations)
     # end create_curve_orientations
 
