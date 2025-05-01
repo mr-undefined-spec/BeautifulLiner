@@ -27,15 +27,19 @@ class DeleteEdgeController(BasicController):
 
         delete_edge_canvas = Canvas()
 
+        """
+        # all curve mode
         other_curves = []
         for layer in linearize_canvas:
             other_curves.extend(layer.get_curves())
         #end
+        """
         
         # delete edge
         step_count = 0
         for layer in linearize_canvas:
             tmp_layer = Layer(layer.name, layer.color)
+            other_curves = layer.get_curves()
             for i, target_curve in enumerate(layer):
 
                 self.print_step("delete edge", step_count)
