@@ -64,5 +64,7 @@ def create_mock_layer(curve_set_list):
     layer.name = "test_layer"
     layer.__getitem__.side_effect = lambda index : curve_set_list[index]
     layer.__iter__.return_value = iter(curve_set_list)
+    layer.color = "black"
+    layer.is_fill = True
     return layer
 #end

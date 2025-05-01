@@ -1,14 +1,14 @@
 import math
 import numpy as np
 
-#import os
-#import sys
-#sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '../handler/cohandler'))
 
 import numpy as np
-from handler.basic_handler import BasicHandler
-from handler.cohandler.curve_orientation_cohandler import CurveOrientationCohandler
-from handler.cohandler.split_range_cohandler import SplitRangeCohandler
+from basic_handler import BasicHandler
+from curve_orientation_cohandler import CurveOrientationCohandler
+from split_range_cohandler import SplitRangeCohandler
 
 class SplitHandler(BasicHandler):
 

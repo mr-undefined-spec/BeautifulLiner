@@ -31,7 +31,7 @@ class TestLayer(unittest.TestCase):
 
         linear_approximate_curve = model_mocks.create_mock_linear_approximate_curve(linear_ctrl_p_set)
 
-        self.layer = Layer("layer_name")
+        self.layer = Layer("layer_name", "black")
         self.layer.append(linear_approximate_curve)
     #end
 

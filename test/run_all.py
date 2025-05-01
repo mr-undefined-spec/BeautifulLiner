@@ -34,3 +34,5 @@ os.chdir(cwd)
 doTestIn(r".\handler")
 os.chdir(cwd)
 
+doTestIn(r".\util")
+os.chdir(cwd)

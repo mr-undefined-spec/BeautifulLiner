@@ -6,8 +6,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../model/layer'))
 from layer import Layer
 from canvas import Canvas
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../handler'))
-from write_handler import WriteHandler
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../util'))
+from writer import Writer
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../helper'))
 import model_mocks
@@ -28,7 +28,7 @@ class TestWriteHandler(unittest.TestCase):
         self.canvas.view_box = "0,0,100,100"
         self.canvas.__iter__.return_value = iter([layer])
 
-        WriteHandler.process(self.canvas, "out.svg")
+        Writer.write_file(self.canvas, "out.svg")
 
     #end
 

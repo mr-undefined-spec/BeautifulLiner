@@ -43,6 +43,7 @@ class TestSplitHandler(unittest.TestCase):
     def test_split(self):
         #curve_orientations = [1, 1, 1, -1, -1, -1, 1, 1, 1]
 
+        
         split_curve_ranges = SplitHandler.process(self.curve, 0)
 
         self.assertEqual(split_curve_ranges, [(0, 100), (100, 201), (201, 301)])

@@ -1,5 +1,10 @@
 import numpy as np
-from handler.cohandler.geometry_cohandler import GeometryCohandler
+
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '../cohandler'))
+
+from geometry_cohandler import GeometryCohandler
 
 class CurveOrientationCohandler:
 

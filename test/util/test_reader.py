@@ -3,12 +3,12 @@ import unittest
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../handler'))
-from read_handler import ReadHandler
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../util'))
+from reader import Reader
 
-class TestReadHandler(unittest.TestCase):
+class TestReader(unittest.TestCase):
     def test_read(self):
-        self.layer_set = ReadHandler.process("data/test.svg")
+        self.layer_set = Reader.create_canvas_from_file("data/test.svg")
 
         the_answer = [[402.67,127.291],
                     [399.823,128.714],

@@ -1,12 +1,10 @@
 import math
-import numpy as np
 
-#import os
-#import sys
-#sys.path.append(os.path.join(os.path.dirname(__file__), '../model/primitive'))
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '../cohandler'))
 
-import math
-from handler.cohandler.geometry_cohandler import GeometryCohandler
+from geometry_cohandler import GeometryCohandler
 
 class SplitRangeCohandler:
 
