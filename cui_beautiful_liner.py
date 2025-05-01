@@ -47,14 +47,9 @@ def main():
                             dest='broad_width',
                             default=1.0,
                             help='Width size when broadening the curve')
-    argparser.add_argument('-c', '--color',
-                            type=str,
-                            dest='output_color',
-                            default="black",
-                            help='Output line color')
     args = argparser.parse_args()
 
-    ExecuteManager.execute(args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width, args.output_color)
+    ExecuteManager.execute(args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width)
 
 #end
 

@@ -23,7 +23,7 @@ from writer import Writer
 
 class ExecuteManager:
     @staticmethod
-    def execute(reading_file_path, linear_approximate_length, delete_ratio, broad_width, output_color,
+    def execute(reading_file_path, linear_approximate_length, delete_ratio, broad_width, 
                 mode="CUI", progress_bar=None, log_text=None):
         # pre-process   
         read_canvas = Reader.create_canvas_from_file(reading_file_path)
@@ -84,7 +84,6 @@ class ExecuteManager:
         #end
 
         output_file_name = reading_file_path.replace(".svg", "_BeauL.svg") 
-
         Writer.write_file(new_canvas, output_file_name)
 
         if mode == "CUI":

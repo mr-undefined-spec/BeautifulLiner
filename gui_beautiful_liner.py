@@ -22,7 +22,6 @@ class GuiBeautifulLiner:
     LINEALIZE_PARAM    = ["linearize param",   "線形化近似の細かさ"]
     DELETE_EDGE_RATIO  = ["delete edge ratio", "端部除去率"]
     BROAD_WIDTH        = ["broaden width",     "線の幅"]
-    OUTPUT_LINE_COLOR  = ["output color",      "線の色"]
     EXECUTE_BUTTON     = ["execute",           "実行"]
         
     ITEMS = ["black", "red", "blue", "green"]
@@ -45,7 +44,6 @@ class GuiBeautifulLiner:
         self.__add_scale(label_text="linearize param", scale_from=0.01, scale_to=1.0, scale_resolution=0.01, scale_default=0.1)
         self.__add_scale(label_text="delete edge ratio",           scale_from=0.0,  scale_to=0.5, scale_resolution=0.01, scale_default=0.25)
         self.__add_scale(label_text="broad witdh", scale_from=0.1,  scale_to=5.0, scale_resolution=0.1,  scale_default=1.0)
-        self.__add_output_color()
         self.__add_execute_button(button_text="exece")
         self.__add_progress_bar()
         self.__add_menu_bar()
@@ -93,7 +91,6 @@ class GuiBeautifulLiner:
         self.scale_labels[0].config(text=self.LINEALIZE_PARAM[index])
         self.scale_labels[1].config(text=self.DELETE_EDGE_RATIO[index])
         self.scale_labels[2].config(text=self.BROAD_WIDTH[index])
-        self.output_color_label.config(text=self.OUTPUT_LINE_COLOR[index])
         self.execute_button.config(text=self.EXECUTE_BUTTON[index])
     #end
 
@@ -146,7 +143,6 @@ class GuiBeautifulLiner:
         linear_approximate_length = float( self.entries[1].get() )
         delete_ratio              = float( self.entries[2].get() )
         broad_width               = float( self.entries[3].get() )
-        output_color              = str( self.output_color_var.get() )
 
         if not os.path.exists(reading_file_path):
             self.log_text.insert(tk.END, f"File not found\n")
@@ -156,7 +152,7 @@ class GuiBeautifulLiner:
 
             self.execute_button.config(state=tk.DISABLED)
             #self.do_something(self.progress_bar)
-            ExecuteManager.execute(reading_file_path, linear_approximate_length, delete_ratio, broad_width, output_color,
+            ExecuteManager.execute(reading_file_path, linear_approximate_length, delete_ratio, broad_width, 
                                     mode="GUI", progress_bar=self.progress_bar, log_text=self.log_text)
             self.execute_button.config(state=tk.NORMAL)
 
@@ -167,18 +163,6 @@ class GuiBeautifulLiner:
             self.log_text.insert(tk.END, "END OF JOB\n")
             self.log_text.see(tk.END)
         #end
-    #end
-
-    def __add_output_color(self):
-        self.output_color_label = tk.Label(self.window, text="")
-        self.output_color_label.grid(row=self.current_row, column=0, padx=10, pady=5)
-
-        self.output_color_var = tk.StringVar(value="black")
-        self.output_color_menu = tk.OptionMenu(self.window, self.output_color_var, *self.ITEMS)
-        self.output_color_menu.config(width=50)
-        self.output_color_menu.grid(row=self.current_row, column=1, padx=10, pady=5)
-
-        self.current_row += 1
     #end
 
     def __add_execute_button(self, button_text):
