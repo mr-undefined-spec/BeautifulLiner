@@ -43,6 +43,7 @@ class BroadCubicBezierCurve(Curve):
         for i, ctrl_p in enumerate(self._returning_ctrl_p_list):
             s += ctrl_p.to_str(False, i==0)
         #end
+        s += " Z"
         return s
     #end
 

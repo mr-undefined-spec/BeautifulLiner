@@ -83,9 +83,10 @@ class CubicBezierCurveControlPoint():
         if is_going_first:
             s += "M " + str(self.__p0) + " "
         #end
-        if is_returning_first:
-            s += "L " + str(self.__p0) + " "
-        #end
+# not used for BOTH_POINTED form
+#        if is_returning_first:
+#            s += "L " + str(self.__p0) + " "
+#        #end
         s += "C " + str(self.__p1) + " "
         s += str(self.__p2) + " "
         s += str(self.__p3) + " "
