@@ -34,6 +34,14 @@ class Writer():
             #end
             s += '</g>\n'
         #end
+
+        s += '<g id="BOX" inkpad:layerName="BOX">\n'
+        s += '  <path d="M -10 -10 L 10 -10 L 10 10 L -10 10 Z" opacity="1" fill="#000000"/>\n'
+        s += '  <path d="M ' + str(bbox[2]-10) + ' -10 L ' + str(bbox[2]+10) + ' -10 L ' + str(bbox[2]+10) + ' 10 L ' + str(bbox[2]-10) + ' 10 Z" opacity="1" fill="#000000"/>\n'
+        s += '  <path d="M ' + str(bbox[2]-10) + ' ' + str(bbox[3]-10) + ' L ' + str(bbox[2]+10) + ' ' + str(bbox[3]-10) + ' L ' + str(bbox[2]+10) + ' ' + str(bbox[3]+10) + ' L ' + str(bbox[2]-10) + ' ' + str(bbox[3]+10) + ' Z" opacity="1" fill="#000000"/>\n'
+        s += '  <path d="M -10 ' + str(bbox[3]-10) + ' L 10 ' + str(bbox[3]-10) + ' L 10 ' + str(bbox[3]+10) + ' L 10 ' + str(bbox[3]+10) + ' Z" opacity="1" fill="#000000"/>\n'
+        s += '</g>\n'
+
         s += '</svg>'
         with open(output_file_name, mode='w', encoding='utf-8') as f:
             f.write(s)
