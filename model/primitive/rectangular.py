@@ -10,7 +10,7 @@ class Rectangular:
       |                     |
       z ------------------- m
 
-    The characters (q, p, z and m) is the keys in the four corners of a "qwerty" keyboard.
+    The characters (q, p, z and m) are the keys in the four corners of a "qwerty" keyboard.
 
     """
     def __init__(self, min_x, max_x, min_y, max_y):

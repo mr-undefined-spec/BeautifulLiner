@@ -14,8 +14,16 @@ class TestRectangular(unittest.TestCase):
     def testInit(self):
         self.assertAlmostEqual(self.rect.q.x, 10.0)
         self.assertAlmostEqual(self.rect.q.y, 30.0)
+        self.assertAlmostEqual(self.rect.z.x, 10.0)
+        self.assertAlmostEqual(self.rect.z.y, 40.0)
         self.assertAlmostEqual(self.rect.m.x, 20.0)
         self.assertAlmostEqual(self.rect.m.y, 40.0)
+        self.assertAlmostEqual(self.rect.p.x, 20.0)
+        self.assertAlmostEqual(self.rect.p.y, 30.0)
+
+        self.assertAlmostEqual(self.rect.width, 10.0)
+        self.assertAlmostEqual(self.rect.height, 10.0)
+
     #end
 
     def testCollision(self):
