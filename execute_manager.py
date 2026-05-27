@@ -11,6 +11,7 @@ from process.pipeline.delete_edge_pipeline import DeleteEdgePipeline
 
 from process.converter.linearize_converter import LinearizeConverter 
 from process.converter.smoothen_converter import SmoothenConverter
+from process.generator.rough_fill_generator import RoughFillGenerator
 
 from util.reader import Reader
 from util.writer import Writer
@@ -48,11 +49,8 @@ class ExecuteManager:
         delete_edge_pipeline = DeleteEdgePipeline("delete_edge", delete_ratio)
 
         pipelines = [
-            thin_smoothen_pipeline,
+            #thin_smoothen_pipeline,
             linearize_pipeline,
-            delete_edge_pipeline,
-            #broaden_pipeline,
-            #broad_smoothen_pipeline,
         ]
 
         canvas = read_canvas
@@ -61,6 +59,18 @@ class ExecuteManager:
             pipeline.set_step_offset(i*total_curve_num)
             canvas = pipeline.process(canvas)
         #end
+
+        # ─── フェーズ7：ラフ塗り作成のための閉領域判定 ───
+        # 完成した美しい線画を元に、別系統の「塗りつぶしキャンバス」をジェネレート！
+        if mode == "CUI":
+            print("Generating rough fill areas...")
+        #end if
+        
+        fill_canvas = RoughFillGenerator.generate(canvas)
+
+        delete_edge_pipeline.set_step_offset(total_step_num)
+        canvas = delete_edge_pipeline.process(canvas)
+
 
         new_canvas = Canvas()
         new_canvas.set_view_box(canvas.view_box)
@@ -78,7 +88,7 @@ class ExecuteManager:
         #print_canvas(new_canvas)
 
         output_file_name = reading_file_path.replace(".svg", "_BeauL.svg") 
-        Writer.write_file(new_canvas, output_file_name)
+        Writer.write_file(new_canvas, fill_canvas, output_file_name)
 
         if mode == "CUI":
             print("Create " + output_file_name )
