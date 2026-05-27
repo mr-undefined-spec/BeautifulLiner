@@ -6,9 +6,9 @@ import sys
 from model.container.layer import Layer, EndpointStyle
 from model.container.canvas import Canvas
 
-#from process.pipeline.linearize_pipeline import LinearizePipeline
 from process.pipeline.canvas_pipeline import CanvasPipeline
 
+from process.converter.linearize_converter import LinearizeConverter 
 from process.converter.smoothen_converter import SmoothenConverter
 
 from util.reader import Reader
@@ -42,10 +42,11 @@ class ExecuteManager:
         total_step_num = total_curve_num * 7
 
         thin_smoothen_pipeline = CanvasPipeline("smoothen", SmoothenConverter())
+        linearize_pipeline = CanvasPipeline("linearize", LinearizeConverter())
 
         pipelines = [
             thin_smoothen_pipeline,
-            # linearize_controller,
+            linearize_pipeline,
             # qtree_controller,
             #delete_edge_controller,
             #broaden_controller,
