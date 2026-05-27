@@ -4,17 +4,7 @@ from argparse import ArgumentParser
 #import sys
 from execute_manager import ExecuteManager
 
-def print_canvas(layer_set):
-    template = r'<path stroke="#00ff00" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"'
-    for layer in layer_set:
-        for i, curve in enumerate(layer):
-            s = ""
-            s += template
-            s += r' d="'
-            s += curve.to_str()
-            s += r'" />'
-            print(s)
-        #end
+
 
 def main():
     usage = 'Usage: python {} FILE [-C|--continuous_ratio <value>(default: 0.25)] [-d|--delete_ratio <value>(default: 0.25)] [-l|--linear_approximate_length <value>(default: 1.0)] [-b|--broad_width <value>(default: 1.0)] [-n|--no_broad] [--help]'\

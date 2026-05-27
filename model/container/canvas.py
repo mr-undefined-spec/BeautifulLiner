@@ -58,4 +58,11 @@ class Canvas:
         #end for
         return total_curve_num
     #end def
+
+    def clone_empty(self) -> 'Canvas':
+        """自身の設定（view_boxなど）を維持した、空のCanvasを生成する"""
+        cloned = Canvas()
+        cloned.set_view_box(self.view_box) # 既存のプロパティをコピー
+        return cloned
+    #end def
 #end class

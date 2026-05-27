@@ -75,4 +75,12 @@ class Layer:
         self._color = color
         self._endpoint_style = endpoint_style
     #end def
+
+    def clone_empty(self) -> 'Layer':
+        """自身の設定（名前、色、線のスタイルなど）を維持した、空のLayerを生成する"""
+        cloned = Layer(self._name, self._color)
+        cloned._is_fill = self._is_fill
+        cloned._endpoint_style = self._endpoint_style
+        return cloned
+    #end def
 #end class
