@@ -12,7 +12,7 @@ from process.pipeline.canvas_pipeline import CanvasPipeline
 from process.converter.smoothen_converter import SmoothenConverter
 
 from util.reader import Reader
-#from util.writer import Writer
+from util.writer import Writer
 
 # debug function
 def print_canvas(layer_set):
@@ -72,10 +72,10 @@ class ExecuteManager:
             print("{} % complete @ {}".format(100.0, "finalize"))
         #end
 
-        print_canvas(new_canvas)
+        #print_canvas(new_canvas)
 
         output_file_name = reading_file_path.replace(".svg", "_BeauL.svg") 
-        # Writer.write_file(new_canvas, output_file_name)
+        Writer.write_file(new_canvas, output_file_name)
 
         if mode == "CUI":
             print("Create " + output_file_name )

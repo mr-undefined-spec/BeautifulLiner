@@ -1,0 +1,51 @@
+import os
+import sys
+
+class Writer():
+    @staticmethod
+    def write_file(layer_set, output_file_name):
+        bbox = layer_set.get_bbox()
+        s = ""
+        s += '<?xml version="1.0" encoding="UTF-8"?>\n'
+        s += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
+        s += '<!-- Created with Inkpad (http://www.taptrix.com/) -->\n'
+        s += '<svg xmlns:inkpad="http://taptrix.com/inkpad/svg_extensions" '
+        s += 'height="' + str(bbox[3]) + 'pt" '
+        s += 'xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" '
+        s += 'width="' + str(bbox[2]) + 'pt" version="1.1" '
+        s += ' viewBox="' + layer_set.view_box + '" '
+        s += '>\n'
+
+
+        for layer in layer_set:
+            #s += '<g id="' + layer.name + '" vectornator:layerName="' + layer.name + '">\n'
+            s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
+
+
+            for i, curve in enumerate(layer):
+                if layer.is_fill:
+                    s += '  <path stroke="none" stroke-width="1.0" fill="' + layer.color + '" stroke-linecap="round" opacity="1" stroke-linejoin="round" '
+                else:
+                    s += '  <path stroke="' + layer.color + '" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round" '
+                #end
+                s += r' d="'
+                s += curve.to_str()
+                s += r'" />' + '\n'
+            #end
+            s += '</g>\n'
+        #end
+
+        s += '<g id="BOX" inkpad:layerName="BOX">\n'
+        s += '  <path d="M -10 -10 L 10 -10 L 10 10 L -10 10 Z" opacity="1" fill="#000000"/>\n'
+        s += '  <path d="M ' + str(bbox[2]-10) + ' -10 L ' + str(bbox[2]+10) + ' -10 L ' + str(bbox[2]+10) + ' 10 L ' + str(bbox[2]-10) + ' 10 Z" opacity="1" fill="#000000"/>\n'
+        s += '  <path d="M ' + str(bbox[2]-10) + ' ' + str(bbox[3]-10) + ' L ' + str(bbox[2]+10) + ' ' + str(bbox[3]-10) + ' L ' + str(bbox[2]+10) + ' ' + str(bbox[3]+10) + ' L ' + str(bbox[2]-10) + ' ' + str(bbox[3]+10) + ' Z" opacity="1" fill="#000000"/>\n'
+        s += '  <path d="M -10 ' + str(bbox[3]-10) + ' L 10 ' + str(bbox[3]-10) + ' L 10 ' + str(bbox[3]+10) + ' L 10 ' + str(bbox[3]+10) + ' Z" opacity="1" fill="#000000"/>\n'
+        s += '</g>\n'
+
+        s += '</svg>'
+        with open(output_file_name, mode='w', encoding='utf-8') as f:
+            f.write(s)
+        #end
+    #end
+
+#end
