@@ -7,6 +7,7 @@ from model.container.layer import Layer, EndpointStyle
 from model.container.canvas import Canvas
 
 from process.pipeline.canvas_pipeline import CanvasPipeline
+from process.pipeline.delete_edge_pipeline import DeleteEdgePipeline
 
 from process.converter.linearize_converter import LinearizeConverter 
 from process.converter.smoothen_converter import SmoothenConverter
@@ -44,13 +45,14 @@ class ExecuteManager:
         thin_smoothen_pipeline = CanvasPipeline("smoothen", SmoothenConverter())
         linearize_pipeline = CanvasPipeline("linearize", LinearizeConverter())
 
+        delete_edge_pipeline = DeleteEdgePipeline("delete_edge", delete_ratio)
+
         pipelines = [
             thin_smoothen_pipeline,
             linearize_pipeline,
-            # qtree_controller,
-            #delete_edge_controller,
-            #broaden_controller,
-            #broad_smoothen_controller,
+            delete_edge_pipeline,
+            #broaden_pipeline,
+            #broad_smoothen_pipeline,
         ]
 
         canvas = read_canvas
