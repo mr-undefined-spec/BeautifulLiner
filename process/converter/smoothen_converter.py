@@ -4,24 +4,25 @@ from scipy.special import comb
 from model.primitive.point import Point
 from model.primitive.curve import Curve, CurveType
 from process.converter.converter_base import ConverterBase
+from process.converter.smoother.split_co_converter import SplitCoConverter
+
 
 class SmoothenConverter(ConverterBase):
 
     @staticmethod
-    def __get_bernstein_polynomial(n, t, k):
+    def __get_bernstein_polynomial(n: int, t: float, k: int) -> float:
         """ Bernstein polynomial when a = 0 and b = 1. """
         return t ** k * (1 - t) ** (n - k) * comb(n, k)
     #end
 
     @staticmethod
-    def __get_bernstein_matrix(degree, T):
+    def __get_bernstein_matrix(degree: int, T: np.ndarray) -> np.ndarray:
         """ Bernstein matrix for Bezier curves. """
         matrix = []
         for t in T:
             row = []
             for k in range(degree + 1):
-                # 旧SmoothenHandlerからSmoothenConverterに修正
-                row.append( SmoothenConverter.__get_bernstein_polynomial(degree, t, k) )
+                row.append(SmoothenConverter.__get_bernstein_polynomial(degree, t, k))
             #end
             matrix.append(row)
         #end
@@ -29,60 +30,63 @@ class SmoothenConverter(ConverterBase):
     #end
 
     @staticmethod
-    def __least_square_fit(points, M):
+    def __least_square_fit(points: np.ndarray, M: np.ndarray) -> np.ndarray:
         M_ = np.linalg.pinv(M)
         return np.matmul(M_, points)
     #end
 
     @staticmethod
-    def convert(linear_approximate_curve: Curve) -> Curve:
-        """ Least square qbezier fit using penrose pseudoinverse.
+    def __fit_single_curve(sub_curve: Curve) -> list[Point]:
+        """単一の直線近似曲線を1本の3次ベジェ曲線（4つのPoint）にフィッティングする（内部用ヘルパー）"""
+        degree = 3
+        src_points = sub_curve.points
 
-        Based on https://stackoverflow.com/questions/12643079/b%C3%A9zier-curve-fitting-with-scipy
-        and probably on the 1998 thesis by Tim Andrew Pastva, "Bezier Curve Fitting".
-        """
-
-        degree = 3 # only cubic bezier curve
-
-        # 新生Curveのpointsプロパティから直接点列を取得
-        src_points = linear_approximate_curve.points
-
-        x_array = [p.x for p in src_points]
-        y_array = [p.y for p in src_points]
-
-        x_data = np.array(x_array)
-        y_data = np.array(y_array)
+        x_data = np.array([p.x for p in src_points])
+        y_data = np.array([p.y for p in src_points])
 
         T = np.linspace(0, 1, len(x_data))
-        # 旧SmoothenHandlerからSmoothenConverterに修正
         M = SmoothenConverter.__get_bernstein_matrix(degree, T)
-        points = np.array(list(zip(x_data, y_data)))
+        points_matrix = np.array(list(zip(x_data, y_data)))
 
-        # 旧SmoothenHandlerからSmoothenConverterに修正
-        fit = SmoothenConverter.__least_square_fit(points, M).tolist()
+        fit = SmoothenConverter.__least_square_fit(points_matrix, M).tolist()
 
-        # 始点と終点は元のデータから完全に一致させる
+        # 幾何的な連続性を厳密に守るため、始点と終点は元の実データを最優先する
         first_point = Point(x_data[0], y_data[0])
-        last_point  = Point(x_data[-1], y_data[-1])
-
-        # フィッティングによって得られた制御点をPointオブジェクトに変換
-        # fit[0] は始点、fit[3] は終点に対応しますが、誤差をなくすため元の端点を使用します
         control_point_1 = Point(fit[1][0], fit[1][1])
         control_point_2 = Point(fit[2][0], fit[2][1])
+        last_point = Point(x_data[-1], y_data[-1])
 
-        # 新生Curveの「3次ベジェ（4点）」の仕様に合わせてリスト化
-        bezier_points = [
-            first_point,
-            control_point_1,
-            control_point_2,
-            last_point
-        ]
+        return [first_point, control_point_1, control_point_2, last_point]
+    #end
 
-        # CUBIC_BEZIERを指定して、新生Curveのインスタンスを生成して返す
+    @staticmethod
+    def convert(linear_approximate_curve: Curve) -> Curve:
+        """長い1本の直線近似曲線を内部で適切に分割し、連結された3次ベジェ曲線群として平滑化する"""
+        
+        # 1. 下請け職人（SplitCoConverter）に依頼して、変曲点や急角で小分けにしてもらう
+        sub_curves = SplitCoConverter.convert_to_multiple(linear_approximate_curve)
+        
+        combined_bezier_points = []
+        
+        # 2. 小分けにされた各セグメントをフィッティング
+        for i, sub_curve in enumerate(sub_curves):
+            bezier_four_points = SmoothenConverter.__fit_single_curve(sub_curve)
+            
+            if i == 0:
+                # 最初のセグメントは4点すべてをそのまま追加
+                combined_bezier_points.extend(bezier_four_points)
+            else:
+                # 2本目以降は「前のセグメントの終点」と「現在のセグメントの始点」が重複するため、
+                # 始点（0番目）をスキップして、制御点2つと終点の計3点を追加していく (3N + 1 のルールを自然に満たす)
+                combined_bezier_points.extend(bezier_four_points[1:])
+            #end if
+        #end for
+
+        # 3. 連結された1本の新生CUBIC_BEZIERオブジェクトとしてガツンと返す
         return Curve(
-            points=bezier_points, 
-            curve_type=CurveType.CUBIC_BEZIER, 
+            points=combined_bezier_points,
+            curve_type=CurveType.CUBIC_BEZIER,
             is_broad=linear_approximate_curve.is_broad
         )
     #end
-#end
+#end class

@@ -5,6 +5,12 @@ import sys
 
 from model.container.layer import Layer, EndpointStyle
 from model.container.canvas import Canvas
+
+#from process.pipeline.linearize_pipeline import LinearizePipeline
+from process.pipeline.canvas_pipeline import CanvasPipeline
+
+from process.converter.smoothen_converter import SmoothenConverter
+
 from util.reader import Reader
 #from util.writer import Writer
 
@@ -31,13 +37,14 @@ class ExecuteManager:
         read_canvas = Reader.create_canvas_from_file(reading_file_path)
         #print_canvas(read_canvas)
 
-        # initialize controllers
+        # initialize pipelines
         total_curve_num = read_canvas.get_total_curve_num()
         total_step_num = total_curve_num * 7
 
-        controllers = [
-            # linearize_controller,
-            # thin_smoothen_controller,
+        thin_smoothen_pipeline = CanvasPipeline("smoothen", SmoothenConverter())
+
+        pipelines = [
+            thin_smoothen_pipeline,
             # linearize_controller,
             # qtree_controller,
             #delete_edge_controller,
@@ -47,9 +54,9 @@ class ExecuteManager:
 
         canvas = read_canvas
 
-        for i, controller in enumerate(controllers):
-            controller.set_step_offset(i*total_curve_num)
-            canvas = controller.process(canvas)
+        for i, pipeline in enumerate(pipelines):
+            pipeline.set_step_offset(i*total_curve_num)
+            canvas = pipeline.process(canvas)
         #end
 
         new_canvas = Canvas()
