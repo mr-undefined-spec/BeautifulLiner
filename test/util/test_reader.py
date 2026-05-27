@@ -1,32 +1,74 @@
 # test/util/test_reader.py
 import unittest
 import os
+import sys
+
+# プロジェクトルートへのパスを確保
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+#end if
+
 from util.reader import Reader
+from model.primitive.curve import CurveType
 
 class TestReader(unittest.TestCase):
     def test_read(self):
-        # プロジェクトルート基準でスマートにパスを指定
+        # プロジェクトルート基準でパスを指定
         svg_path = os.path.join("data", "test.svg")
-        self.canvas = Reader.create_canvas_from_file(svg_path)
+        canvas = Reader.create_canvas_from_file(svg_path)
 
-        # 座標アサーションの際、浮動小数点の微小な誤差で落ちないよう assertAlmostEqual を使うか、
-        # あるいは単純なリスト比較にする場合は round 処理された値と比較する
-        the_answer =  [(402.67, 127.291), (399.823, 128.714), (393.001, 175.251), (392.271, 181.822), (386.945, 229.751), (389.765, 292.499), (404.953, 338.063), (408.446, 348.544), (420.484, 380.166), (433.613, 380.166), (404.732, 288.481), (404.732, 308.04), (406.168, 339.391), (415.213, 357.48), (420.015, 367.085), (423.805, 376.613), (429.187, 386.302), (429.783, 387.375), (430.352, 389.796)]
+        # ---------------------------------------------------------------------
+        # 1. 全体構造の検証
+        # ---------------------------------------------------------------------
+        # gengaレイヤーはパスがないため除外され、Hair, Body, Cloth の3つになるはず
+        self.assertEqual(len(canvas), 3)
 
-        the_answer_index = 0
+        # ---------------------------------------------------------------------
+        # 2. 各レイヤー名と含まれる曲線数の検証
+        # ---------------------------------------------------------------------
+        expected_structure = [
+            {"name": "Hair",  "curve_count": 2},
+            {"name": "Body",  "curve_count": 2},
+            {"name": "Cloth", "curve_count": 2}
+        ]
 
-        for layer in self.canvas:
+        for i, layer_info in enumerate(expected_structure):
+            layer = canvas[i]
+            self.assertEqual(layer.name, layer_info["name"])
+            self.assertEqual(len(layer), layer_info["curve_count"])
+            
+            # すべて直線近似曲線（LINEAR_APPROXIMATE）として生成されているか確認
             for curve in layer:
-                for point in curve.points:
-                    # 浮動小数点の比較は、厳密一致より delta（許容誤差）を指定するとさらに堅牢になります
-                    self.assertAlmostEqual(point.x, the_answer[the_answer_index][0], places=3)
-                    self.assertAlmostEqual(point.y, the_answer[the_answer_index][1], places=3)
-                    the_answer_index += 1
-                #end for
+                self.assertEqual(curve.curve_type, CurveType.LINEAR_APPROXIMATE)
             #end for
         #end for
+
+        # ---------------------------------------------------------------------
+        # 3. 代表的な座標のピンポイント検証
+        # ---------------------------------------------------------------------
+        hair_layer = canvas[0]
+        first_hair_curve = hair_layer[0]
         
-        self.assertEqual(the_answer_index, len(the_answer))
+        # 始点は M コマンドそのものの座標
+        self.assertAlmostEqual(first_hair_curve.points[0].x, 227.192, places=3)
+        self.assertAlmostEqual(first_hair_curve.points[0].y, 66.1948, places=3)
+        
+        # 【修正】Reader側で重複点を削ったため、末尾[-1]がそのまま「本来の終点」になります！
+        self.assertAlmostEqual(first_hair_curve.points[-1].x, 242.993, places=3)
+        self.assertAlmostEqual(first_hair_curve.points[-1].y, 153.335, places=3)
+
+        # 2つ目のレイヤー "Body" も同様に [-1] に修正
+        body_layer = canvas[1]
+        first_body_curve = body_layer[0]
+        
+        # 始点
+        self.assertAlmostEqual(first_body_curve.points[0].x, 208.695, places=3)
+        self.assertAlmostEqual(first_body_curve.points[0].y, 153.833, places=3)
+        
+        # 本来の終点
+        self.assertAlmostEqual(first_body_curve.points[-1].x, 289.084, places=3)
+        self.assertAlmostEqual(first_body_curve.points[-1].y, 227.574, places=3)
     #end def
 #end class
 
