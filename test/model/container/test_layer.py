@@ -1,14 +1,13 @@
-# test/model/container/test_layer.py
 import unittest
 from model.primitive.point import Point
-from model.curve.thin_linear_approximate_curve import ThinLinearApproximateCurve
 from model.container.layer import Layer, EndpointStyle
-from model.curve.curve import Curve
+from model.primitive.curve import Curve, CurveType  # CurveTypeをインポートに追加
 
 class TestLayer(unittest.TestCase):
     def setUp(self):
         points = [Point(0.0, 0.0), Point(1.0, 1.0), Point(2.0, 1.0)]
-        linear_curve = ThinLinearApproximateCurve(points)
+        # 引数に CurveType.LINEAR_APPROXIMATE を追加して修正
+        linear_curve = Curve(points, CurveType.LINEAR_APPROXIMATE)
 
         self.layer = Layer("layer_name", "black")
         self.layer.append(linear_curve)

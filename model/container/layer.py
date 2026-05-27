@@ -1,6 +1,6 @@
 # model/container/layer.py
 from enum import Enum
-from model.curve.curve import Curve
+from model.primitive.curve import Curve
 
 class EndpointStyle(Enum):
     BOTH_POINTED = "both_pointed"
