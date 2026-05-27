@@ -24,12 +24,9 @@ class DeleteEdgePipeline(CanvasPipeline):
         for layer in canvas:
             new_layer = Layer(layer.name, layer.color)
             
-            # レイヤーに属するすべての曲線を取得（これが交差判定のコンテキストになる）
-            all_curves_in_layer = list(layer)  # または layer.get_curves()
+            # レイヤーに属するすべての曲線を取得
+            all_curves_in_layer = list(layer)
 
-            # --- ★ ここがポイント！ ---
-            # このレイヤーの全線を環境として持ったコンバータを「この瞬間に」生成する
-            # これにより、STRtree がこのレイヤー専用に爆速ビルドされます
             converter = DeleteEdgeConverter(
                 other_curves=all_curves_in_layer, 
                 delete_ratio=self.delete_ratio
