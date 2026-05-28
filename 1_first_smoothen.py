@@ -1,9 +1,50 @@
 from argparse import ArgumentParser
 
-#import os
-#import sys
-from execute_manager import ExecuteManager
+import os
+import sys
 
+from model.container.layer import Layer, EndpointStyle
+from model.container.canvas import Canvas
+
+from process.pipeline.canvas_pipeline import CanvasPipeline
+from process.pipeline.delete_edge_pipeline import DeleteEdgePipeline
+
+from process.converter.linearize_converter import LinearizeConverter 
+from process.converter.smoothen_converter import SmoothenConverter
+from process.generator.rough_fill_generator import RoughFillGenerator
+
+from util.reader import Reader
+from util.writer import Writer
+
+
+
+
+def execute(reading_file_path, linear_approximate_length, delete_ratio, broad_width, 
+            mode="CUI", progress_bar=None, log_text=None):
+    # pre-process   
+    read_canvas = Reader.create_canvas_from_file(reading_file_path)
+    #print_canvas(read_canvas)
+
+    # initialize pipelines
+    total_curve_num = read_canvas.get_total_curve_num()
+    total_step_num = total_curve_num * 7
+
+    thin_smoothen_pipeline = CanvasPipeline("smoothen", SmoothenConverter())
+
+    canvas = read_canvas
+
+    thin_smoothen_pipeline.set_step_offset(0)
+    canvas = thin_smoothen_pipeline.process(canvas)
+
+    output_file_name = reading_file_path.replace(".svg", "_a.svg") 
+    Writer.write_file(output_file_name, canvas)
+
+    if mode == "CUI":
+        print("Create " + output_file_name )
+        print("END OF JOB")
+    #end
+
+#end
 
 
 def main():
@@ -39,10 +80,11 @@ def main():
                             help='Width size when broadening the curve')
     args = argparser.parse_args()
 
-    ExecuteManager.execute(args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width)
+    execute(args.reading_file_path, args.linear_approximate_length, args.delete_ratio, args.broad_width)
 
 #end
 
 if __name__ == '__main__':
     main()
 #end
+

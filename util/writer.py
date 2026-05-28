@@ -5,10 +5,14 @@ import random
 
 class Writer():
     @staticmethod
-    def write_file(canvas, fill_canvas, output_file_name):
+    def write_file(output_file_name, canvas, fill_canvas=None):
         """
-        線画キャンバス（canvas）と塗りキャンバス（fill_canvas）を重ね合わせて
+        指定されたキャンバス（canvas）および、オプショナルな塗りキャンバス（fill_canvas）を
         1つのSVGファイルとして出力する。
+        
+        :param output_file_name: 出力するSVGファイルのパス
+        :param canvas: 線画（主線）データが格納されたCanvas
+        :param fill_canvas: ラフ塗りデータが格納されたCanvas（省略可能）
         """
         # 基準となるキャンバスのサイズ（bbox）を取得
         bbox = canvas.get_bbox()
@@ -23,7 +27,7 @@ class Writer():
         s += ' viewBox="' + canvas.view_box + '" '
         s += '>\n'
 
-        # ─── 1. 先に fill_canvas（塗り領域）を出力して背景にする ───
+        # ─── 1. fill_canvas が指定されている場合のみ、先に塗り領域を出力して背景にする ───
         if fill_canvas is not None:
             for layer in fill_canvas:
                 s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
@@ -35,7 +39,6 @@ class Writer():
                     b = random.randint(100, 230)
                     fill_color = f"rgb({r},{g},{b})"
                     
-                    # 塗りなので strokeはnone、fillに色を指定
                     s += f'  <path stroke="none" stroke-width="1.0" fill="{fill_color}" stroke-linecap="round" opacity="0.6" stroke-linejoin="round" '
                     s += r' d="'
                     s += curve.to_str()
@@ -45,7 +48,7 @@ class Writer():
             #end for
         #end if
 
-        # ─── 2. 後から canvas（線画・主線）を重ねて描画する ───
+        # ─── 2. canvas（線画・主線）を重ねて描画する ───
         for layer in canvas:
             s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
 
