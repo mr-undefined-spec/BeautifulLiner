@@ -33,13 +33,19 @@ class Writer():
                 s += '<g id="' + layer.name + '" inkpad:layerName="' + layer.name + '">\n'
 
                 for i, curve in enumerate(layer):
-                    # 各閉領域ごとにランダムなRGB色を生成（半透明 opacity=0.6）
-                    r = random.randint(100, 230)
-                    g = random.randint(100, 230)
-                    b = random.randint(100, 230)
-                    fill_color = f"rgb({r},{g},{b})"
+                    # ★ 各Curveが個別にカラー属性を持っていればそれを使用、なければランダム
+                    if hasattr(curve, 'color') and curve.color is not None:
+                        fill_color = curve.color
+                        opacity = "1.0" # 画像から抜いた色なら不透明で綺麗に塗る
+                    else:
+                        r = random.randint(100, 230)
+                        g = random.randint(100, 230)
+                        b = random.randint(100, 230)
+                        fill_color = f"rgb({r},{g},{b})"
+                        opacity = "0.6"
+                    #end if
                     
-                    s += f'  <path stroke="none" stroke-width="1.0" fill="{fill_color}" stroke-linecap="round" opacity="0.6" stroke-linejoin="round" '
+                    s += f'  <path stroke="none" stroke-width="1.0" fill="{fill_color}" stroke-linecap="round" opacity="{opacity}" stroke-linejoin="round" '
                     s += r' d="'
                     s += curve.to_str()
                     s += r'" />' + '\n'

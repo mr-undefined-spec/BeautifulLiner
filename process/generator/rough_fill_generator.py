@@ -1,5 +1,7 @@
 from shapely.geometry import LineString, MultiLineString, box
 from shapely.ops import unary_union, polygonize
+from PIL import Image, ImageDraw
+from collections import Counter
 
 from model.primitive.point import Point
 from model.primitive.curve import Curve, CurveType
@@ -11,10 +13,14 @@ class RoughFillGenerator:
     IS_DEBUG = False
 
     @staticmethod
-    def generate(stroke_canvas: Canvas) -> Canvas:
+    def generate(stroke_canvas: Canvas, reference_image: Image.Image = None) -> Canvas:
         """
-        キャンバス全体を取り囲む矩形（外枠）を追加し、全レイヤーの曲線と統合。
-        外枠にぶつかって閉じた領域も含めて、すべての閉領域（面）を抽出する。
+        キャンバス全体を取り囲む矩形（外枠）を追加し、全レイヤーの曲線と統合して閉領域を抽出。
+        引数に reference_image (PIL Image) が与えられた場合、領域内で最も多く使われている色で塗りつぶす。
+        与えられない場合は、従来どおり色指定なし（Writer側でランダム着色）として生成する。
+        
+        :param stroke_canvas: 線画データが格納されたCanvas
+        :param reference_image: カラー参照用のPIL Imageオブジェクト（オプショナル）
         """
         fill_canvas = Canvas()
         fill_canvas.set_view_box(stroke_canvas.view_box)
@@ -23,7 +29,7 @@ class RoughFillGenerator:
             print("\n--- [RoughFillGenerator] Start Generation (Global Outer Boundary Mode) ---")
         #end if
 
-        # 1. view_box からキャンバス全体を囲む外枠の線分（矩形）を生成する
+        # 1. view_box からキャンバス全体を囲む外枠の線分（矩形）を生成
         try:
             if isinstance(stroke_canvas.view_box, str):
                 vb = [float(x) for x in stroke_canvas.view_box.split()]
@@ -37,19 +43,13 @@ class RoughFillGenerator:
             minx, miny, maxx, maxy = 0.0, 0.0, bbox[2], bbox[3]
         #end try
 
-        if RoughFillGenerator.IS_DEBUG:
-            print(f"  - Canvas Boundary Detected: L:{minx}, T:{miny}, R:{maxx}, B:{maxy}")
-        #end if
-
-        # Shapelyのbox関数から外枠のポリゴンを作り、その外周をLineString（線分データ）として取得
         outer_box = box(minx, miny, maxx, maxy)
         outer_boundary_line = LineString(outer_box.exterior.coords)
 
-        # 全ての線分を集めるリスト（最初に外枠を入れておく）
         all_lines = [outer_boundary_line]
         total_input_curves = 0
 
-        # 2. 全レイヤーのすべてのCurveから一挙にShapelyのLineStringを抽出して追加
+        # 2. 全レイヤーのすべてのCurveからLineStringを抽出して追加
         for stroke_layer in stroke_canvas:
             total_input_curves += len(stroke_layer)
             for curve in stroke_layer:
@@ -61,28 +61,72 @@ class RoughFillGenerator:
             #end for
         #end for
 
-        if RoughFillGenerator.IS_DEBUG:
-            print(f"  - Total input curves across all layers: {total_input_curves}")
-            print(f"  - Combined LineString count (including Outer Box): {len(all_lines)}")
-        #end if
-
         fill_layer = Layer("rough_fill", "#000000")
 
-        # 3. 外枠＋全線分をまとめて交差点で分解（ノード化）し、閉じた面（Polygon）を自動抽出
+        # 3. 外枠＋全線分をまとめて交差点で分解し、閉じた面（Polygon）を自動抽出
         intersected_lines = unary_union(all_lines)
         polygons = list(polygonize(intersected_lines))
         
         if RoughFillGenerator.IS_DEBUG:
-            print(f"  - Total extracted polygons (with Outer Boundary): {len(polygons)}")
+            print(f"  - Total extracted polygons: {len(polygons)}")
         #end if
 
-        # 4. 抽出されたすべてのPolygon群を、Curveオブジェクトにパックして単一レイヤーへ格納
+        # カラー参照画像が存在する場合、RGBモードに変換してピクセルアクセスを高速化
+        img_rgb = None
+        if reference_image is not None:
+            img_rgb = reference_image.convert("RGB")
+        #end if
+
+        # 4. 抽出されたすべてのPolygon群を、Curveオブジェクトにパック
         for idx, poly in enumerate(polygons):
             coords = list(poly.exterior.coords)
             points = [Point(c[0], c[1]) for c in coords]
             
+            # デフォルトは色指定なし（None）
+            sampled_color_str = None
+
+            # 画像から最頻色をサンプリングするロジック
+            if img_rgb is not None and poly.area > 0:
+                # ポリゴンの外接矩形を取得して画像範囲内にクリップ（高速化のため）
+                p_minx, p_miny, p_maxx, p_maxy = poly.bounds
+                ix_min = max(0, int(p_minx))
+                iy_min = max(0, int(p_miny))
+                ix_max = min(img_rgb.width - 1, int(p_maxx))
+                iy_max = min(img_rgb.height - 1, int(p_maxy))
+
+                if ix_max >= ix_min and iy_max >= iy_min:
+                    # ポリゴンのローカルマスク画像を生成
+                    w = ix_max - ix_min + 1
+                    h = iy_max - iy_min + 1
+                    mask = Image.new("L", (w, h), 0)
+                    draw = ImageDraw.Draw(mask)
+                    
+                    # ローカル座標系に変換してポリゴンを描画（塗りつぶし）
+                    local_coords = [(c[0] - ix_min, c[1] - iy_min) for c in coords]
+                    draw.polygon(local_coords, fill=255)
+
+                    # マスク内部のピクセルの色を集計
+                    pixels_in_poly = []
+                    for dy in range(h):
+                        for dx in range(w):
+                            if mask.getpixel((dx, dy)) == 255:
+                                px = img_rgb.getpixel((ix_min + dx, iy_min + dy))
+                                pixels_in_poly.append(px)
+                            #end if
+                        #end for
+                    #end for
+
+                    # 最も頻出する（多く含まれる）色を決定
+                    if pixels_in_poly:
+                        color_counts = Counter(pixels_in_poly)
+                        most_common_color, _ = color_counts.most_common(1)[0]
+                        sampled_color_str = f"rgb({most_common_color[0]},{most_common_color[1]},{most_common_color[2]})"
+                    #end if
+                #end if
+            #end if
+
             if RoughFillGenerator.IS_DEBUG:
-                print(f"    -> Polygon [{idx}]: Area = {poly.area:.2f}, Points = {len(points)}")
+                print(f"    -> Polygon [{idx}]: Area = {poly.area:.2f}, Color = {sampled_color_str}")
             #end if
 
             poly_curve = Curve(
@@ -90,6 +134,9 @@ class RoughFillGenerator:
                 curve_type=CurveType.LINEAR_APPROXIMATE,
                 is_broad=False
             )
+            # 動的にcolorプロパティを持たせる
+            poly_curve.color = sampled_color_str
+            
             fill_layer.append(poly_curve)
         #end for
         
