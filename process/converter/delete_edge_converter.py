@@ -8,13 +8,11 @@ from process.converter.converter_base import ConverterBase
 
 class DeleteEdgeConverter(ConverterBase):
 
-    def __init__(self, other_curves: list[Curve], delete_ratio: float = 0.2):
+    def __init__(self, other_curves: list[Curve], delete_ratio: float = 0.25):
         """
-        交差対象となる他の曲線リストと、切り取り比率をコンストラクタで受け取る。
+        交差対象となる他の曲線リストと、端部とみなす切り取り比率（閾値）を受け取る。
         """
         self.delete_ratio = delete_ratio
-        
-        # 1. リストと空間インデックスの構築
         self.other_curves = other_curves
         self.shapely_lines = []
         
@@ -22,24 +20,22 @@ class DeleteEdgeConverter(ConverterBase):
             line = LineString([(p.x, p.y) for p in c.points])
             self.shapely_lines.append(line)
             
-        # STRtree を構築（内部で高速なR-Treeが作られます）
         self.tree = STRtree(self.shapely_lines)
 
     def convert(self, target_curve: Curve) -> Curve:
         """
-        【原則準拠】1つのCurveを受け取り、端部を切り落とした新しいCurveを返す。
+        1つのCurveを受け取り、両端から delete_ratio の範囲内にある交差点のうち、
+        最も本来の端点に近い位置でトリムした新しいCurveを返す。
         """
         target_line = LineString([(p.x, p.y) for p in target_curve.points])
 
-        # 2. 空間インデックスから、交差候補の「インデックス（整数のNumPy配列）」を爆速抽出
+        # 1. 空間インデックスから交差候補を抽出
         candidate_indices = self.tree.query(target_line)
         
         intersect_points = []
         for idx in candidate_indices:
-            # インデックスから対応する LineString の実体を取り出す
             other_line = self.shapely_lines[idx]
             
-            # 自分自身の幾何構造と完全に一致する場合はスキップ
             if other_line.equals(target_line):
                 continue
                 
@@ -54,32 +50,51 @@ class DeleteEdgeConverter(ConverterBase):
                     intersect_points.extend(list(intersection.geoms))
         #end for
 
-        # 交差点がなければ、何もせず元の曲線をそのまま返す
         if not intersect_points:
             return target_curve
 
         total_length = target_line.length
+        
+        # 🌟 delete_ratio から「ここより端っこ側だけを見る」という閾値を計算
         start_threshold = total_length * self.delete_ratio
         end_threshold = total_length * (1.0 - self.delete_ratio)
 
-        new_start_dist = 0.0
-        new_end_dist = total_length
+        # 最も端に近い（始点は最小、終点は最大）交差位置を保持する変数
+        min_start_dist = None
+        max_end_dist = None
 
-        # 3. 各交点が「端部」にあるかチェック
+        # 2. 閾値の内側（端部領域）にある交差点の中から、最も端に近いものを探索
         for ip in intersect_points:
             dist = target_line.project(ip)
 
+            # 完全に同一の端点はノイズ防止のため除外
+            eps = 1e-5
+            if dist < eps or dist > total_length - eps:
+                continue
+            #end if
+
+            # 【始点側】閾値（例: 全長の25%）より手前にある交差点の中から、最も0に近いものを探す
             if dist <= start_threshold:
-                new_start_dist = max(new_start_dist, dist)
+                if min_start_dist is None or dist < min_start_dist:
+                    min_start_dist = dist
+                #end if
+            # 【終点側】閾値（例: 全長の75%）より後ろにある交差点の中から、最もtotal_lengthに近いものを探す
             elif dist >= end_threshold:
-                new_end_dist = min(new_end_dist, dist)
+                if max_end_dist is None or dist > max_end_dist:
+                    max_end_dist = dist
+                #end if
             #end if
         #end for
 
+        # トリム位置の確定（交差点がなかった、または閾値内に無かった場合は元の端点のまま）
+        new_start_dist = min_start_dist if min_start_dist is not None else 0.0
+        new_end_dist = max_end_dist if max_end_dist is not None else total_length
+
         if new_start_dist == 0.0 and new_end_dist == total_length:
             return target_curve
+        #end if
 
-        # 4. 新しい点列の再構成
+        # 3. 新しい点列の再構成
         trimmed_coords = []
         
         if new_start_dist > 0.0:

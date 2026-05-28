@@ -5,10 +5,9 @@ from model.container.layer import Layer
 
 
 class DeleteEdgePipeline(CanvasPipeline):
-    def __init__(self, name: str, delete_ratio: float):
-        # 親クラスの初期化。converter には一旦 None（またはダミー）を渡します
+    def __init__(self, name, delete_ratio=0.2):
         super().__init__(name, None)
-        self.delete_ratio = delete_ratio
+        self.delete_ratio = delete_ratio # CLI互換のために残す（コンバータでは使わない）
 
     def process(self, canvas: Canvas) -> Canvas:
         """
