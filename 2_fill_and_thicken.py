@@ -13,6 +13,7 @@ from process.pipeline.delete_edge_pipeline import DeleteEdgePipeline
 from process.converter.linearize_converter import LinearizeConverter 
 from process.converter.smoothen_converter import SmoothenConverter
 from process.generator.rough_fill_generator import RoughFillGenerator
+from process.generator.thicken_generator import ThickenGenerator
 
 from util.reader import Reader
 from util.writer import Writer
@@ -53,20 +54,17 @@ def execute(reading_file_path, linear_approximate_length, delete_ratio, broad_wi
     canvas = delete_edge_pipeline.process(canvas)
 
 
-    new_canvas = Canvas()
-    new_canvas.set_view_box(canvas.view_box)
-    for layer in canvas:
-        new_layer = layer
-        new_layer.set_write_options(False, layer.color, EndpointStyle.BOTH_POINTED)
-        new_canvas.append(new_layer)
-    #end
+    # 🌟 新機能をここで適用！ 主線を強弱のある「面」にコンバートする
+    # base_max_width=4.0 などのパラメータは CLI から弄れるようにするとさらに最高です
+    thick_main_canvas = ThickenGenerator.generate(canvas, base_max_width=4.0)
+
+    # 🌟 Writerへは、通常の canvas ではなく、強弱化された thick_main_canvas を渡して出力！
+    output_file_name = reading_file_path.replace(".svg", "_b.svg") 
+    Writer.write_file(output_file_name, thick_main_canvas, fill_canvas)
 
     if mode == "CUI":
         print("{} % complete @ {}".format(100.0, "finalize"))
     #end
-
-    output_file_name = reading_file_path.replace(".svg", "_b.svg") 
-    Writer.write_file(output_file_name, new_canvas, fill_canvas)
 
     if mode == "CUI":
         print("Create " + output_file_name )
