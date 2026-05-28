@@ -8,6 +8,7 @@ from model.container.canvas import Canvas
 
 
 class RoughFillGenerator:
+    IS_DEBUG = False
 
     @staticmethod
     def generate(stroke_canvas: Canvas) -> Canvas:
@@ -18,28 +19,27 @@ class RoughFillGenerator:
         fill_canvas = Canvas()
         fill_canvas.set_view_box(stroke_canvas.view_box)
 
-        print("\n--- [RoughFillGenerator] Start Generation (Global Outer Boundary Mode) ---")
+        if RoughFillGenerator.IS_DEBUG:
+            print("\n--- [RoughFillGenerator] Start Generation (Global Outer Boundary Mode) ---")
+        #end if
 
         # 1. view_box からキャンバス全体を囲む外枠の線分（矩形）を生成する
-        # view_box は通常 "x y width height" またはそれに準ずるタプル/文字列です
-        # get_bbox() や view_box のパース方法に合わせて、上下左右の限界座標（minx, miny, maxx, maxy）を取得します
         try:
-            # view_box が文字列 "0 0 800 1000" などの場合はパースする
             if isinstance(stroke_canvas.view_box, str):
                 vb = [float(x) for x in stroke_canvas.view_box.split()]
                 minx, miny, maxx, maxy = vb[0], vb[1], vb[0] + vb[2], vb[1] + vb[3]
             else:
-                # すでにタプルやリストの場合はそれを利用（念のため canvas.get_bbox() から取るのも安全です）
                 bbox = stroke_canvas.get_bbox()
                 minx, miny, maxx, maxy = 0.0, 0.0, bbox[2], bbox[3]
             #end if
         except Exception:
-            # 取得に失敗した場合の安全なフォールバック（トンボのサイズ等に合わせる）
             bbox = stroke_canvas.get_bbox()
             minx, miny, maxx, maxy = 0.0, 0.0, bbox[2], bbox[3]
         #end try
 
-        print(f"  - Canvas Boundary Detected: L:{minx}, T:{miny}, R:{maxx}, B:{maxy}")
+        if RoughFillGenerator.IS_DEBUG:
+            print(f"  - Canvas Boundary Detected: L:{minx}, T:{miny}, R:{maxx}, B:{maxy}")
+        #end if
 
         # Shapelyのbox関数から外枠のポリゴンを作り、その外周をLineString（線分データ）として取得
         outer_box = box(minx, miny, maxx, maxy)
@@ -61,8 +61,10 @@ class RoughFillGenerator:
             #end for
         #end for
 
-        print(f"  - Total input curves across all layers: {total_input_curves}")
-        print(f"  - Combined LineString count (including Outer Box): {len(all_lines)}")
+        if RoughFillGenerator.IS_DEBUG:
+            print(f"  - Total input curves across all layers: {total_input_curves}")
+            print(f"  - Combined LineString count (including Outer Box): {len(all_lines)}")
+        #end if
 
         fill_layer = Layer("rough_fill", "#000000")
 
@@ -70,14 +72,18 @@ class RoughFillGenerator:
         intersected_lines = unary_union(all_lines)
         polygons = list(polygonize(intersected_lines))
         
-        print(f"  - Total extracted polygons (with Outer Boundary): {len(polygons)}")
+        if RoughFillGenerator.IS_DEBUG:
+            print(f"  - Total extracted polygons (with Outer Boundary): {len(polygons)}")
+        #end if
 
         # 4. 抽出されたすべてのPolygon群を、Curveオブジェクトにパックして単一レイヤーへ格納
         for idx, poly in enumerate(polygons):
             coords = list(poly.exterior.coords)
             points = [Point(c[0], c[1]) for c in coords]
             
-            print(f"    -> Polygon [{idx}]: Area = {poly.area:.2f}, Points = {len(points)}")
+            if RoughFillGenerator.IS_DEBUG:
+                print(f"    -> Polygon [{idx}]: Area = {poly.area:.2f}, Points = {len(points)}")
+            #end if
 
             poly_curve = Curve(
                 points=points,
@@ -89,7 +95,10 @@ class RoughFillGenerator:
         
         fill_canvas.append(fill_layer)
 
-        print("--- [RoughFillGenerator] End Generation ---\n")
+        if RoughFillGenerator.IS_DEBUG:
+            print("--- [RoughFillGenerator] End Generation ---\n")
+        #end if
+        
         return fill_canvas
     #end
 #end class
