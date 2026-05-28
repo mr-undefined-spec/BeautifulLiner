@@ -29,6 +29,11 @@ class Curve:
         self._curve_type: CurveType = curve_type
         self._is_broad: bool = is_broad
         self._shapely_cache = None
+
+        # 🌟 幾何トポロジー連携用のメタデータ（初期値はすべて None）
+        self._id_before_trim: int | None = None
+        self._start_trimmed_by: int | None = None
+        self._end_trimmed_by: int | None = None
     #end def
 
     @property
@@ -46,6 +51,33 @@ class Curve:
         """厚みがある（面表現である）かどうかのフラグ"""
         return self._is_broad
     #end def
+
+    # 🌟 トポロジー解析用のプロパティ群（Getter / Setter）
+
+    @property
+    def id_before_trim(self) -> int | None:
+        """トリム前（DeleteEdge適用前）の元のCurveオブジェクトの id()"""
+        return self._id_before_trim
+    @id_before_trim.setter
+    def id_before_trim(self, value: int | None):
+        self._id_before_trim = value
+
+    @property
+    def start_trimmed_by(self) -> int | None:
+        """始点側のトリム原因となった相方のCurveオブジェクトの id()"""
+        return self._start_trimmed_by
+    @start_trimmed_by.setter
+    def start_trimmed_by(self, value: int | None):
+        self._start_trimmed_by = value
+
+    @property
+    def end_trimmed_by(self) -> int | None:
+        """終点側のトリム原因となった相方のCurveオブジェクトの id()"""
+        return self._end_trimmed_by
+    @end_trimmed_by.setter
+    def end_trimmed_by(self, value: int | None):
+        self._end_trimmed_by = value
+
 
     @property
     def shapely(self) -> BaseGeometry:
