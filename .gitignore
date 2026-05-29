@@ -162,3 +162,7 @@ cython_debug/
 
 # SVG files
 *.svg
+
+# Pictures
+*.png
+*.jpg
