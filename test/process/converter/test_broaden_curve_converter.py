@@ -5,10 +5,10 @@ import numpy as np
 from model.primitive.point import Point
 from model.primitive.curve import Curve, CurveType
 from process.analyzer.topology_analyzer import CurveEdgeTopology
-from process.converter.thicken_curve_converter import ThickenCurveConverter
+from process.converter.broaden_curve_converter import BroadenCurveConverter
 
 
-class TestThickenCurveConverter(unittest.TestCase):
+class TestBroadenCurveConverter(unittest.TestCase):
 
     @patch('process.analyzer.topology_analyzer.TopologyAnalyzer.analyze')
     def test_convert_with_mocked_thin_thin_topology(self, mock_analyze):
@@ -21,7 +21,7 @@ class TestThickenCurveConverter(unittest.TestCase):
         fake_topology = CurveEdgeTopology(curve=curve, start_is_thick=False, end_is_thick=False)
         mock_analyze.return_value = {id(curve): fake_topology}
 
-        converter = ThickenCurveConverter(base_max_width=4.0)
+        converter = BroadenCurveConverter(base_max_width=4.0)
         output = converter.convert([curve])
 
         self.assertEqual(len(output), 1)
@@ -42,7 +42,7 @@ class TestThickenCurveConverter(unittest.TestCase):
         fake_topology = CurveEdgeTopology(curve=curve, start_is_thick=True, end_is_thick=False)
         mock_analyze.return_value = {id(curve): fake_topology}
 
-        converter = ThickenCurveConverter(base_max_width=4.0)
+        converter = BroadenCurveConverter(base_max_width=4.0)
         output = converter.convert([curve])
 
         poly_curve = output[0]

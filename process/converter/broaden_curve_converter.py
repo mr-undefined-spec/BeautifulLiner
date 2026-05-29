@@ -7,7 +7,7 @@ from process.converter.curve_list_converter_base import CurveListConverterBase
 from process.analyzer.topology_analyzer import TopologyAnalyzer
 
 
-class ThickenCurveConverter(CurveListConverterBase):
+class BroadenCurveConverter(CurveListConverterBase):
     """トポロジー解析結果に基づき、各曲線の法線方向へ幅変調（肉付け）を行い、
     閉じられたポリゴン（輪郭線）へと一括変換するコンバーター。
     """
