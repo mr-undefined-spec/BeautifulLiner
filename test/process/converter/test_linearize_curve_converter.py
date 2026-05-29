@@ -2,27 +2,34 @@ import unittest
 import math
 
 from model.primitive.curve import Curve, CurveType
-from process.converter.linearize_converter import LinearizeConverter
+from process.converter.linearize_curve_converter import LinearizeCurveConverter
 
-# 新しく作った綺麗なデータ生成関数群をインポート
+# データ生成関数群のインポート
 from test.helper.converter_mocks import create_mock_layer_set_of_cubic_bezier_curve_arc
 
 
-class TestLinearizeConverter(unittest.TestCase):
+class TestLinearizeCurveConverter(unittest.TestCase):
     def setUp(self):
-        # 1. 3次ベジェ曲線を含んだ本物のLayerリストを取得
+        # 3次ベジェ曲線を含んだ本物のLayerリストを取得
         layers = create_mock_layer_set_of_cubic_bezier_curve_arc()
         
-        # 2. 最初のレイヤーの最初の曲線（これが3次ベジェの円弧）をテスト対象にする
+        # 最初のレイヤーの最初の曲線（3次ベジェの円弧）をテスト対象にする
         self.bezier_curve = layers[0][0]
+        
+        # テスト対象コンバーターのインスタンス化
+        self.converter = LinearizeCurveConverter()
 
-    def test_convert(self):
-        # 変換処理の実行
-        linearized_curve = LinearizeConverter.convert(self.bezier_curve)
+    def test_convert_multiple_curves(self):
+        # 単一要素のリストとして、あるいは複数要素のリストとして同様に扱えるか検証
+        input_curves = [self.bezier_curve]
+        output_curves = self.converter.convert(input_curves)
+
+        # 戻り値の要素数検証
+        self.assertEqual(len(output_curves), 1)
+        linearized_curve = output_curves[0]
 
         # 戻り値の型と属性の検証
         self.assertIsInstance(linearized_curve, Curve)
-        
         self.assertEqual(linearized_curve.curve_type, CurveType.LINEAR_APPROXIMATE)
         self.assertEqual(linearized_curve.is_broad, self.bezier_curve.is_broad)
         
@@ -39,3 +46,4 @@ class TestLinearizeConverter(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+#end
